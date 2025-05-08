@@ -32,7 +32,7 @@ public class HelloApplication extends Application {
 
         Menu scenesMenu = new Menu("Scenes");
         MenuItem scene1Item = new MenuItem("Scene 1");
-        MenuItem scene2Item = new MenuItem("Scene 2 Виктор");
+        MenuItem scene2Item = new MenuItem("Scene 2Виктор");
 
         scene1Item.setOnAction(e -> showScene1());
         scene2Item.setOnAction(e -> showSceneDev7Viktor());
