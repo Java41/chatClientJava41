@@ -32,10 +32,10 @@ public class HelloApplication extends Application {
 
         Menu scenesMenu = new Menu("Scenes");
         MenuItem scene1Item = new MenuItem("Scene 1");
-        MenuItem scene2Item = new MenuItem("Scene 2");
+        MenuItem scene2Item = new MenuItem("Scene 2 Виктор");
 
         scene1Item.setOnAction(e -> showScene1());
-        scene2Item.setOnAction(e -> showScene2());
+        scene2Item.setOnAction(e -> showSceneDev7Viktor());
 
         scenesMenu.getItems().addAll(scene1Item, scene2Item);
         menuBar.getMenus().add(scenesMenu);
@@ -52,7 +52,7 @@ public class HelloApplication extends Application {
         rootLayout.setCenter(content);
     }
 
-    private void showScene2() {
+    private void showSceneDev7Viktor() {
         TextField nameField = new TextField();
         nameField.setPromptText("Введите имя");
 
