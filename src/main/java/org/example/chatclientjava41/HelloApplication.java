@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class HelloApplication extends Application {
-    private Stage primaryStage; //Неиспользованная, для перехода на предыдущие сцены
+    private Stage primaryStage;
     private BorderPane rootLayout;
 
     @Override
@@ -32,11 +32,12 @@ public class HelloApplication extends Application {
 
         Menu scenesMenu = new Menu("Scenes");
         MenuItem scene1Item = new MenuItem("Scene 1");
-        MenuItem scene2Item = new MenuItem("Scene 2");
         MenuItem scene3Item = new MenuItem("Auth scene");
         MenuItem scene8Item = new MenuItem("Scene Dev8");
+        MenuItem scene2Item = new MenuItem("Scene 2 Виктор");
 
         scene1Item.setOnAction(e -> showScene1());
+        scene2Item.setOnAction(e -> showSceneDev7Viktor());
         scene2Item.setOnAction(e -> showScene2());
         scene8Item.setOnAction(e -> showSceneDev8());
         scene3Item.setOnAction(e -> authorizationScene());
@@ -54,6 +55,24 @@ public class HelloApplication extends Application {
                 new Label("Это сцена 1"),
                 new Button("Изменение в кнопке")
         );
+        content.setAlignment(Pos.CENTER);
+        rootLayout.setCenter(content);
+    }
+
+    private void showSceneDev7Viktor() {
+        TextField nameField = new TextField();
+        nameField.setPromptText("Введите имя");
+
+        TextField surnameField = new TextField();
+        surnameField.setPromptText("Введите фамилию");
+        String name = nameField.getText();
+        String surname = surnameField.getText();
+        VBox content = new VBox(10,
+                nameField,
+                surnameField,
+                new Button("Зарегистрироваться")
+        );
+
         content.setAlignment(Pos.CENTER);
         rootLayout.setCenter(content);
     }
