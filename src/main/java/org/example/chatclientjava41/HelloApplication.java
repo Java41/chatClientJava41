@@ -48,7 +48,7 @@ public class HelloApplication extends Application {
     private void showScene1() {
         VBox content = new VBox(10,
                 new Label("Это сцена 1"),
-                new Button("Изменение в кнопке")
+                new Button("Изменение в кнопке еще")
         );
         content.setAlignment(Pos.CENTER);
         rootLayout.setCenter(content);
