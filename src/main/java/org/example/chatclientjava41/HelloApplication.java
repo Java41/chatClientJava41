@@ -38,11 +38,12 @@ public class HelloApplication extends Application {
 
         scene1Item.setOnAction(e -> showScene1());
         scene2Item.setOnAction(e -> showScene2());
-        scene3Item.setOnAction(e -> authorizationScene());
         scene8Item.setOnAction(e -> showSceneDev8());
+        scene3Item.setOnAction(e -> authorizationScene());
 
 
         scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item);
+
         menuBar.getMenus().add(scenesMenu);
 
         rootLayout.setTop(menuBar);
@@ -89,7 +90,8 @@ public class HelloApplication extends Application {
         //Aleksandr Borodavkin
         VBox content = new VBox(10,
                 new Label("Это сцена Dev8"),
-                new Button(" Это кнопка Dev8")
+                new Button(" Это кнопка Dev8"),
+                new Button("Изменение в кнопке")
         );
         content.setAlignment(Pos.CENTER);
         rootLayout.setCenter(content);
