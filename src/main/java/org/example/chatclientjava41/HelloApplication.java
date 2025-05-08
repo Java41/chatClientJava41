@@ -36,10 +36,12 @@ public class HelloApplication extends Application {
 
         Menu scenesMenu = new Menu("Scenes");
         MenuItem scene1Item = new MenuItem("Scene 1");
+        MenuItem scene8Item = new MenuItem("Scene Dev8");
 
         scene1Item.setOnAction(e -> showScene1());
+        scene8Item.setOnAction(e -> showSceneDev8());
 
-        scenesMenu.getItems().addAll(scene1Item);
+        scenesMenu.getItems().addAll(scene1Item,scene8Item);
         menuBar.getMenus().add(scenesMenu);
 
         rootLayout.setTop(menuBar);
@@ -49,6 +51,16 @@ public class HelloApplication extends Application {
         VBox content = new VBox(10,
                 new Label("Это сцена 1"),
                 new Button("Изменение в кнопке еще")
+        );
+        content.setAlignment(Pos.CENTER);
+        rootLayout.setCenter(content);
+    }
+
+    private void showSceneDev8() {
+        //Aleksandr Borodavkin
+        VBox content = new VBox(10,
+                new Label("Это сцена Dev8"),
+                new Button(" Это кнопка Dev8")
         );
         content.setAlignment(Pos.CENTER);
         rootLayout.setCenter(content);
