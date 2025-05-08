@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class HelloApplication extends Application {
-    private Stage primaryStage; //Неиспользованная, для перехода на предыдущие сцены
+    private Stage primaryStage;
     private BorderPane rootLayout;
 
     @Override
