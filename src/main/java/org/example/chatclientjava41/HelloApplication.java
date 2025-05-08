@@ -31,6 +31,7 @@ public class HelloApplication extends Application {
         stage.show();
     }
 
+    //Создание компонента меню
     private void createMenuBar() {
         MenuBar menuBar = new MenuBar();
 
@@ -45,10 +46,11 @@ public class HelloApplication extends Application {
         rootLayout.setTop(menuBar);
     }
 
+    //Пример создания сцены
     private void showScene1() {
         VBox content = new VBox(10,
                 new Label("Это сцена 1"),
-                new Button("Изменение в кнопке")
+                new Button("Изменение в кнопке еще одно")
         );
         content.setAlignment(Pos.CENTER);
         rootLayout.setCenter(content);
