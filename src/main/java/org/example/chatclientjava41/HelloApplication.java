@@ -12,6 +12,8 @@ public class HelloApplication extends Application {
     private Stage primaryStage;
     private BorderPane rootLayout;
 
+    //Мастер
+
     @Override
     public void start(Stage stage) {
         this.primaryStage = stage;
