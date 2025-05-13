@@ -47,13 +47,17 @@ public class HelloApplication extends Application {
         scene2Item.setOnAction(e -> showScene2());
         scene8Item.setOnAction(e -> showSceneDev8());
         scene3Item.setOnAction(e -> authorizationScene());
-        scene3Item.setOnAction(e -> showScene5());
+        scene5Item.setOnAction(e -> showScene5());
         scene4Item.setOnAction(e -> gd.GalkinDaniil());
 
 
 
 
+
         scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item,scene4Item, scene5Item);
+
+        scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item,scene4Item);
+
 
         menuBar.getMenus().add(scenesMenu);
 
