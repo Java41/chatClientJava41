@@ -44,6 +44,7 @@ public class HelloApplication extends Application {
         scene2Item.setOnAction(e -> showScene2());
         scene8Item.setOnAction(e -> showSceneDev8());
         scene3Item.setOnAction(e -> authorizationScene());
+        
 
 
         scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item);
