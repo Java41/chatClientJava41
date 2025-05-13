@@ -40,18 +40,23 @@ public class HelloApplication extends Application {
         MenuItem scene8Item = new MenuItem("Scene Dev8");
         MenuItem scene2Item = new MenuItem("Scene 2 Виктор");
         MenuItem scene4Item = new MenuItem("Scene Даниил");
+        MenuItem scene5Item = new MenuItem("Scene Yurii");
+        MenuItem scene7Item = new MenuItem("Seven_S_R");
 
         scene1Item.setOnAction(e -> showScene1());
         scene2Item.setOnAction(e -> showSceneDev7Viktor());
         scene2Item.setOnAction(e -> showScene2());
         scene8Item.setOnAction(e -> showSceneDev8());
         scene3Item.setOnAction(e -> authorizationScene());
+        scene5Item.setOnAction(e -> showScene5());
         scene4Item.setOnAction(e -> gd.GalkinDaniil());
+        scene7Item.setOnAction(e -> doppelgёger7());
 
 
 
 
-        scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item,scene4Item);
+        scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item,scene4Item, scene5Item, scene7Item);
+
 
         menuBar.getMenus().add(scenesMenu);
 
@@ -61,6 +66,16 @@ public class HelloApplication extends Application {
     //Пример создания сцены
     private void showScene1() {
         VBox content = new VBox(10,
+                new Label("Это сцена 1"),
+                new Button("Изменение в кнопке еще одно")
+        );
+        content.setAlignment(Pos.CENTER);
+        rootLayout.setCenter(content);
+    }
+
+    private void doppelgёger7() {
+        VBox content = new VBox(10,
+                new CheckBox("gigsli"),
                 new Label("Это сцена 1"),
                 new Button("Изменение в кнопке еще одно")
         );
@@ -119,6 +134,16 @@ public class HelloApplication extends Application {
         VBox content = new VBox(10,
                 new Label("Это сцена Dev8"),
                 new Button(" Это кнопка Dev8"),
+                new Button("Изменение в кнопке")
+        );
+        content.setAlignment(Pos.CENTER);
+        rootLayout.setCenter(content);
+    }
+    private void showScene5() {
+        //Vyazmin Yurii
+        VBox content = new VBox(10,
+                new Label("Это сцена Yura"),
+                new Button(" Это кнопка Yura"),
                 new Button("Изменение в кнопке")
         );
         content.setAlignment(Pos.CENTER);
