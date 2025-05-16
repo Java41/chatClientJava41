@@ -16,17 +16,17 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-        this.primaryStage = stage;
-
-        rootLayout = new BorderPane();
-        createMenuBar();
-
-        showScene1();
-
-        Scene scene = new Scene(rootLayout, 400, 300);
-        stage.setScene(scene);
-        stage.setTitle("Scene Switcher");
-        stage.show();
+        SceneNavigator sceneNavigator=new SceneNavigator();
+        this.primaryStage = sceneNavigator;
+//        rootLayout = new BorderPane();
+//        createMenuBar();
+//
+//        showScene1();
+//
+//        Scene scene = new Scene(rootLayout, 400, 300);
+//        stage.setScene(scene);
+//        stage.setTitle("Scene Switcher");
+//        stage.show();
     }
 
     //Создание компонента меню
@@ -47,10 +47,6 @@ public class HelloApplication extends Application {
         scene8Item.setOnAction(e -> showSceneDev8());
         scene3Item.setOnAction(e -> authorizationScene());
         scene4Item.setOnAction(e -> gd.GalkinDaniil());
-
-
-
-
         scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item,scene4Item);
 
         menuBar.getMenus().add(scenesMenu);
