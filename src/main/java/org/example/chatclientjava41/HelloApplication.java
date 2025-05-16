@@ -42,6 +42,7 @@ public class HelloApplication extends Application {
         MenuItem scene4Item = new MenuItem("Scene Даниил");
         MenuItem scene5Item = new MenuItem("Scene Yurii");
         MenuItem scene7Item = new MenuItem("Seven_S_R");
+        MenuItem scene9Item = new MenuItem("Scene Simon");
 
         scene1Item.setOnAction(e -> showScene1());
         scene2Item.setOnAction(e -> showSceneDev7Viktor());
@@ -51,11 +52,12 @@ public class HelloApplication extends Application {
         scene5Item.setOnAction(e -> showScene5());
         scene4Item.setOnAction(e -> gd.GalkinDaniil());
         scene7Item.setOnAction(e -> doppelgёger7());
+        scene9Item.setOnAction(e -> showScene9());
 
 
 
 
-        scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item,scene4Item, scene5Item, scene7Item);
+        scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item,scene4Item, scene5Item, scene7Item, scene9Item);
 
 
         menuBar.getMenus().add(scenesMenu);
@@ -145,6 +147,15 @@ public class HelloApplication extends Application {
                 new Label("Это сцена Yura"),
                 new Button(" Это кнопка Yura"),
                 new Button("Изменение в кнопке")
+        );
+        content.setAlignment(Pos.CENTER);
+        rootLayout.setCenter(content);
+    }
+    private void showScene9(){
+        //Шевцова Вероника
+        VBox content = new VBox(10,
+                new Label("Это сцена 9 от Simon"),
+                new Button("Это кнопочка. Она ничего не делает, но на нее можно нажать")
         );
         content.setAlignment(Pos.CENTER);
         rootLayout.setCenter(content);
