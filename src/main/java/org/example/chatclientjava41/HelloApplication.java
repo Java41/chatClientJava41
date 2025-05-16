@@ -64,6 +64,16 @@ public class HelloApplication extends Application {
         rootLayout.setCenter(content);
     }
 
+    private void doppelgёger7() {
+        VBox content = new VBox(10,
+                new CheckBox("gigsli"),
+                new Label("Это сцена 1"),
+                new Button("Изменение в кнопке еще одно")
+        );
+        content.setAlignment(Pos.CENTER);
+        rootLayout.setCenter(content);
+    }
+
     private void showSceneDev7Viktor() {
         TextField nameField = new TextField();
         nameField.setPromptText("Введите имя");
@@ -116,6 +126,25 @@ public class HelloApplication extends Application {
                 new Label("Это сцена Dev8"),
                 new Button(" Это кнопка Dev8"),
                 new Button("Изменение в кнопке")
+        );
+        content.setAlignment(Pos.CENTER);
+        rootLayout.setCenter(content);
+    }
+    private void showScene5() {
+        //Vyazmin Yurii
+        VBox content = new VBox(10,
+                new Label("Это сцена Yura"),
+                new Button(" Это кнопка Yura"),
+                new Button("Изменение в кнопке")
+        );
+        content.setAlignment(Pos.CENTER);
+        rootLayout.setCenter(content);
+    }
+    private void showScene9(){
+        //Шевцова Вероника
+        VBox content = new VBox(10,
+                new Label("Это сцена 9 от Simon"),
+                new Button("Это кнопочка. Она ничего не делает, но на нее можно нажать")
         );
         content.setAlignment(Pos.CENTER);
         rootLayout.setCenter(content);
