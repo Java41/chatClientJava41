@@ -15,7 +15,7 @@ public class DaniilController {
     public void clickMenuRestorePass(){
         sceneNavigator.setRestore();
     }
-    public void clickEnter(){
+    public void clickEnter(String login,String password){
         //запрос в БД если Истина то
         sceneNavigator.setDefault();
         //иначе
