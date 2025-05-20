@@ -16,17 +16,17 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-        this.primaryStage = stage;
-
-        rootLayout = new BorderPane();
-        createMenuBar();
-
-        showScene1();
-
-        Scene scene = new Scene(rootLayout, 400, 300);
-        stage.setScene(scene);
-        stage.setTitle("Scene Switcher");
-        stage.show();
+        SceneNavigator sceneNavigator=new SceneNavigator();
+        this.primaryStage = sceneNavigator;
+//        rootLayout = new BorderPane();
+//        createMenuBar();
+//
+//        showScene1();
+//
+//        Scene scene = new Scene(rootLayout, 400, 300);
+//        stage.setScene(scene);
+//        stage.setTitle("Scene Switcher");
+//        stage.show();
     }
 
     //Создание компонента меню
@@ -40,25 +40,14 @@ public class HelloApplication extends Application {
         MenuItem scene8Item = new MenuItem("Scene Dev8");
         MenuItem scene2Item = new MenuItem("Scene 2 Виктор");
         MenuItem scene4Item = new MenuItem("Scene Даниил");
-        MenuItem scene5Item = new MenuItem("Scene Yurii");
-        MenuItem scene7Item = new MenuItem("Seven_S_R");
-        MenuItem scene9Item = new MenuItem("Scene Simon");
 
         scene1Item.setOnAction(e -> showScene1());
         scene2Item.setOnAction(e -> showSceneDev7Viktor());
         scene2Item.setOnAction(e -> showScene2());
         scene8Item.setOnAction(e -> showSceneDev8());
         scene3Item.setOnAction(e -> authorizationScene());
-        scene5Item.setOnAction(e -> showScene5());
         scene4Item.setOnAction(e -> gd.GalkinDaniil());
-        scene7Item.setOnAction(e -> doppelgёger7());
-        scene9Item.setOnAction(e -> showScene9());
-
-
-
-
-        scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item,scene4Item, scene5Item, scene7Item, scene9Item);
-
+        scenesMenu.getItems().addAll(scene1Item, scene2Item, scene3Item, scene8Item,scene4Item);
 
         menuBar.getMenus().add(scenesMenu);
 
