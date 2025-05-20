@@ -10,7 +10,9 @@ import javafx.scene.layout.VBox;
 public class SeverView {
     private VictorController victorController;
     public Label error = new Label(" ");
-
+    public SeverView(VictorController victorController) {
+        this.victorController = victorController;
+    }
     public Scene SeverScene() {
 
         TextField login = new TextField("Логин: ");
@@ -28,5 +30,6 @@ public class SeverView {
         Scene scene1 = new Scene(vBox, 200, 300);
         return scene1;
     }
+
 }
 
