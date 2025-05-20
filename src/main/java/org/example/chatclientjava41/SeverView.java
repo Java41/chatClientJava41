@@ -8,10 +8,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class SeverView {
-    private VictorController victorController;
+    private ViktorController viktorController;
     public Label error = new Label(" ");
-    public SeverView(VictorController victorController) {
-        this.victorController = victorController;
+    public SeverView(ViktorController viktorController) {
+        this.viktorController = viktorController;
     }
     public Scene SeverScene() {
 
