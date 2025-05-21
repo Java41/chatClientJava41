@@ -9,6 +9,9 @@ module org.example.chatclientjava41 {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.desktop;
+    requires jjwt.api;
+    requires okhttp3;
 
     opens org.example.chatclientjava41 to javafx.fxml;
     exports org.example.chatclientjava41;
