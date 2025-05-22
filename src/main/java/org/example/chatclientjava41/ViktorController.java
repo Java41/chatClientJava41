@@ -35,7 +35,7 @@ public class ViktorController {
 
         view.error.setText("");
 
-        sceneNavigator.setDefault;
+//        sceneNavigator.setDefault();
     }
 
 }

@@ -15,7 +15,7 @@ public class DaniilView {
         this.daniilController = daniilController;
     }
 
-    public Scene DaniilView () {
+    public Scene DaniilScene () {
         TextField login = new TextField("Логин: ");
         Label nickname = new Label(" ");
         TextField password = new TextField("Пароль: ");
@@ -24,7 +24,7 @@ public class DaniilView {
         Button Registration = new Button();
         Button Recovery_password = new Button();
         Button restorePassword = new Button();
-        Login.setOnAction(actionEvent -> daniilController.clickEnter(login.getText(), password.getText());
+        Login.setOnAction(actionEvent -> daniilController.clickEnter(login.getText(), password.getText()));
         Registration.setOnAction(actionEvent -> daniilController.clickMenuRestorePass());
         restorePassword.setOnAction(actionEvent -> daniilController.clickMenuRegistration());
         HBox hbox1 = new HBox(nickname, login);

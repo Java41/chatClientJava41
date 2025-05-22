@@ -13,19 +13,19 @@ public class SceneNavigator extends Stage {
         RestoreController restoreController=new RestoreController();
         DaniilController daniilController=new DaniilController();
         ViktorController viktorController=new ViktorController();
-        MainController mainController=new MainController();
+//        MainController mainController=new MainController();
         this.restoreView = new RestoreView(restoreController);
         this.daniilView = new DaniilView(daniilController);
         this.severView = new SeverView(viktorController);
-        this.mainView = new MainView(mainController);
+//        this.mainView = new MainView(mainController);
         restoreController.setView(restoreView);
         restoreController.setSceneNavigator(this);
         daniilController.setView(daniilView);
         daniilController.setSceneNavigator(this);
         viktorController.setView(severView);
         viktorController.setSceneNavigator(this);
-        mainController.setView(mainView);
-        mainController.setSceneNavigator(this);
+//        mainController.setView(mainView);
+//        mainController.setSceneNavigator(this);
         this.currentView=severView.SeverScene();
         this.setScene(currentView);
         this.setTitle("Авторизация");
@@ -39,10 +39,10 @@ public class SceneNavigator extends Stage {
         currentView=restoreView.RestoreScene();
         this.setTitle("Восстановление пароля");
     }
-    public void setDefault(){
-        currentView=mainView.MainScene();
-        this.setTitle("Чат41");
-    }
+//    public void setDefault(){
+//        currentView=mainView.MainScene();
+//        this.setTitle("Чат41");
+//    }
     public void setRegistration(){
         currentView=severView.SeverScene();
         this.setTitle("Регистрация");

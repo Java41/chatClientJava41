@@ -17,7 +17,7 @@ public class DaniilController {
     }
     public void clickEnter(String login,String password){
         //запрос в БД если Истина то
-        sceneNavigator.setDefault();
+//        sceneNavigator.setDefault();
         //иначе
         error("Неверный логин или пароль");
     }
