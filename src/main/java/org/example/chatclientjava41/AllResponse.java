@@ -4,6 +4,7 @@ import okhttp3.*;
 import java.io.IOException;
 
 public class AllResponse {
+
     OkHttpClient client = new OkHttpClient().newBuilder()
             .build();
     MediaType mediaType = MediaType.parse("application/json");
