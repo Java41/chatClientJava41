@@ -23,8 +23,8 @@ public class SeverView {
         Label el_Pochta = new Label(" ");
         Button menuAutorization = new Button();
         Button Registration = new Button();
-        Registration.setOnAction(actionEvent -> victorController.clickRegistration(login.getText(),password.getText(), email.getText());
-        menuAutorization.setOnAction(actionEvent -> victorController.clickMenuAuth());
+        Registration.setOnAction(actionEvent -> viktorController.clickRegistration(login.getText(),password.getText(), email.getText());
+        menuAutorization.setOnAction(actionEvent -> viktorController.clickMenuAuth());
         HBox hBox1 = new HBox(nickname, login);
         HBox hBox2 = new HBox(You_password, password);
         HBox hBox3 = new HBox(el_Pochta, email);
