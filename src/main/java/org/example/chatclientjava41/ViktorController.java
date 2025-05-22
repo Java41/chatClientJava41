@@ -13,19 +13,18 @@ public class ViktorController {
         this.view = view;
     }
 
-    private void clickMenuAuth(){
+    public void clickMenuAuth(){
         sceneNavigator.setAuth();
     }
 
-    private void clickRegistration(){
-        String login = view.loginField.getText().trim();
-        String password = view.passwordField.getText();
+    public void clickRegistration(String login, String password, String email){
 
-        if (login.isEmpty()){
+
+        if (login == null || login.trim().isEmpty()){
             view.error.setText("Логин не может быть пустым");
             return;
         }
-        if (password.length() < 4){
+        if (password == null || password.length() < 4){
             view.error.setText("Пароль должен быть не менее 4 символов");
             return;
         }
