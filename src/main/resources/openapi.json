@@ -1,0 +1,874 @@
+{
+  "openapi" : "3.1.0",
+  "components" : {
+    "schemas" : {
+      "ContactDTO" : {
+        "type" : "object",
+        "description" : "Информация о контакте",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64",
+            "examples" : [ 1, 2, 3 ],
+            "description" : "Идентификатор пользователя",
+            "default" : 1
+          },
+          "username" : {
+            "type" : "string",
+            "examples" : [ "@User123", "@AnotherUser" ],
+            "description" : "Имя пользователя, начинающееся с @",
+            "default" : "@User123"
+          }
+        }
+      },
+      "CreateMessage" : {
+        "type" : "object",
+        "required" : [ "recipientId", "content" ],
+        "description" : "Request for creating a new message",
+        "properties" : {
+          "recipientId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "examples" : [ 1, 5, 999 ],
+            "description" : "Recipient user ID",
+            "default" : 1,
+            "minimum" : 1
+          },
+          "content" : {
+            "type" : "string",
+            "minLength" : 1,
+            "examples" : [ "Hello there!", "Can we meet tomorrow?" ],
+            "maxLength" : 2000,
+            "description" : "Message content",
+            "default" : "Hi there!"
+          }
+        }
+      },
+      "Login" : {
+        "type" : "object",
+        "required" : [ "email", "password" ],
+        "description" : "Login credentials",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "format" : "email",
+            "examples" : [ "user@example.com", "admin@domain.com" ],
+            "description" : "User's email",
+            "default" : "user@example.com"
+          },
+          "password" : {
+            "type" : "string",
+            "examples" : [ "password123", "securePass!2023" ],
+            "description" : "User's password",
+            "default" : "password123"
+          }
+        }
+      },
+      "MessageResponse" : {
+        "type" : "object",
+        "description" : "Message response",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64",
+            "examples" : [ 1, 5, 999 ],
+            "description" : "Unique message identifier",
+            "default" : 1
+          },
+          "senderId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "examples" : [ 4, 99 ],
+            "description" : "Sender user ID",
+            "default" : 1
+          },
+          "senderUsername" : {
+            "type" : "string",
+            "examples" : [ "@User123", "@Sender" ],
+            "description" : "Sender username starting with @",
+            "default" : "@DefaultUser"
+          },
+          "recipientId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "examples" : [ 1, 3, 102 ],
+            "description" : "Recipient user ID",
+            "default" : 1
+          },
+          "recipientUsername" : {
+            "type" : "string",
+            "examples" : [ "@User456", "@Recipient" ],
+            "description" : "Recipient username starting with @",
+            "default" : "@DefaultRecipient"
+          },
+          "content" : {
+            "type" : "string",
+            "minLength" : 1,
+            "examples" : [ "Hi there!", "Don't forget our meeting" ],
+            "maxLength" : 2000,
+            "description" : "Message content (max 2000 characters)",
+            "default" : "Hi there!"
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "date-time",
+            "pattern" : "yyyy-MM-dd'T'HH:mm:ss",
+            "description" : "Timestamp when message was sent in ISO 8601 format",
+            "default" : "2024-01-01T00:00:00"
+          }
+        }
+      },
+      "Refresh" : {
+        "type" : "object",
+        "required" : [ "refreshToken" ],
+        "description" : "Refresh token",
+        "properties" : {
+          "refreshToken" : {
+            "type" : "string",
+            "examples" : [ "f47ac10b-58cc-4372-a567-0e02b2c3d479", "550e8400-e29b-41d4-a716-446655440000" ],
+            "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$",
+            "description" : "Refresh token",
+            "default" : "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          }
+        }
+      },
+      "Registration" : {
+        "type" : "object",
+        "required" : [ "email", "password", "birthdate" ],
+        "description" : "Registration details",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "format" : "email",
+            "examples" : [ "new.user@example.com", "registrant@mail.org" ],
+            "description" : "User's email",
+            "default" : "user@example.com"
+          },
+          "password" : {
+            "type" : "string",
+            "minLength" : 8,
+            "examples" : [ "Str0ngP@ss", "Qwerty!123" ],
+            "maxLength" : 64,
+            "description" : "User's password",
+            "default" : "password123"
+          },
+          "birthdate" : {
+            "type" : "string",
+            "examples" : [ "1990-01-01", "2000-12-31" ],
+            "pattern" : "^\\d{4}-\\d{2}-\\d{2}$",
+            "description" : "User's birthdate (YYYY-MM-DD)",
+            "default" : "1990-01-01"
+          }
+        }
+      },
+      "UpdateEmailDTO" : {
+        "type" : "object",
+        "required" : [ "email", "password" ],
+        "description" : "Update email request",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "format" : "email",
+            "examples" : [ "new.email@example.com", "updated@mail.org" ],
+            "description" : "New email address",
+            "default" : "new.email@example.com"
+          },
+          "password" : {
+            "type" : "string",
+            "minLength" : 8,
+            "examples" : [ "currentPassword123", "oldSecure!Pass" ],
+            "maxLength" : 64,
+            "description" : "Current password",
+            "default" : "currentPassword123"
+          }
+        }
+      },
+      "UpdateUsernameDTO" : {
+        "type" : "object",
+        "required" : [ "username" ],
+        "description" : "Update username request",
+        "properties" : {
+          "username" : {
+            "type" : "string",
+            "examples" : [ "@NewUser_123", "@UpdatedUsername" ],
+            "pattern" : "^@[a-zA-Z0-9_]{3,20}$",
+            "description" : "New username starting with @ (3-20 alphanumeric characters or underscores)",
+            "default" : "@NewUser_123"
+          }
+        }
+      },
+      "UserInfo" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "accessToken" : {
+            "type" : "string"
+          },
+          "refreshToken" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "BearerAuth" : {
+        "description" : "JWT Authentication. Use a JWT obtained from /auth/login. Expected claims: sub (email), roles, id, username.",
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
+      }
+    }
+  },
+  "tags" : [ {
+    "name" : "Authentication",
+    "description" : "Endpoints for user authentication and authorization"
+  }, {
+    "name" : "Messages",
+    "description" : "Operations related to messages"
+  }, {
+    "name" : "Контакты",
+    "description" : "Операции, связанные с контактами пользователя"
+  } ],
+  "paths" : {
+    "/auth/login" : {
+      "post" : {
+        "summary" : "Аутентификация пользователя",
+        "description" : "Позволяет пользователю войти в систему, предоставив email и пароль. Возвращает JWT и refresh-токены для дальнейшего доступа к защищенным ресурсам.",
+        "tags" : [ "Authentication" ],
+        "requestBody" : {
+          "description" : "Учетные данные для входа",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Login"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Успешная аутентификация",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "id" : 1,
+                  "username" : "@User123",
+                  "email" : "user@example.com",
+                  "accessToken" : "eyJhbG...",
+                  "refreshToken" : "f47ac10b-58cc-..."
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Отсутствует email или пароль",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Email и пароль обязательны"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Неверные учетные данные",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Неверные учетные данные"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout" : {
+      "post" : {
+        "summary" : "Выход пользователя",
+        "description" : "Аннулирует refresh токен",
+        "tags" : [ "Authentication" ],
+        "requestBody" : {
+          "description" : "Refresh токен",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Refresh"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Успешный выход",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "message" : "Logged out successfully"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Отсутствует или недействительный refresh токен",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Invalid refresh token"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh" : {
+      "post" : {
+        "summary" : "Обновление токена",
+        "description" : "Обновляет JWT с использованием действительного refresh токена",
+        "tags" : [ "Authentication" ],
+        "requestBody" : {
+          "description" : "Refresh токен",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Refresh"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Выданы новые токены",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "id" : 1,
+                  "username" : "@User123",
+                  "email" : "user@example.com",
+                  "accessToken" : "eyJhbG...",
+                  "refreshToken" : "f47ac10b-58cc-..."
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Отсутствует refresh токен",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Refresh token обязателен"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Недействительный или истекший refresh токен",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Недействительный или истекший refresh token"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register" : {
+      "post" : {
+        "summary" : "Регистрация пользователя",
+        "description" : "Регистрирует нового пользователя и возвращает JWT и refresh токены",
+        "tags" : [ "Authentication" ],
+        "requestBody" : {
+          "description" : "Данные для регистрации",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Registration"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Пользователь успешно зарегистрирован",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "id" : 2,
+                  "username" : "@NewUser",
+                  "email" : "newuser@example.com",
+                  "accessToken" : "eyJhbG...",
+                  "refreshToken" : "a1b2c3d4-e5f6-..."
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Отсутствуют обязательные поля",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Email, пароль и дата рождения обязательны"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Email уже существует",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Пользователь с таким email уже существует"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/update-email" : {
+      "post" : {
+        "summary" : "Обновление email пользователя",
+        "description" : "Обновляет адрес электронной почты пользователя",
+        "tags" : [ "Authentication" ],
+        "requestBody" : {
+          "description" : "Новый email и пароль",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateEmailDTO"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Email успешно обновлен",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "id" : 1,
+                  "username" : "@User123",
+                  "email" : "newemail@example.com",
+                  "accessToken" : "eyJhbG...",
+                  "refreshToken" : "f47ac10b-58cc-..."
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Отсутствует email или пароль",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Email и пароль обязательны"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Неверные учетные данные",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Неверные учетные данные"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Email уже существует",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Пользователь с таким email уже существует"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ "User" ]
+        } ]
+      }
+    },
+    "/auth/update-username" : {
+      "post" : {
+        "summary" : "Обновление имени пользователя",
+        "description" : "Обновляет имя пользователя",
+        "tags" : [ "Authentication" ],
+        "requestBody" : {
+          "description" : "Новое имя пользователя",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateUsernameDTO"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Имя пользователя успешно обновлено",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "id" : 1,
+                  "username" : "@NewUsername",
+                  "email" : "user@example.com",
+                  "accessToken" : "eyJhbG...",
+                  "refreshToken" : "f47ac10b-58cc-..."
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Отсутствует или недействительное имя пользователя",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Username обязателен и должен начинаться с @"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Не авторизован",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Пользователь не найден"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Имя пользователя уже занято",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Username уже занят"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ "User" ]
+        } ]
+      }
+    },
+    "/contacts" : {
+      "get" : {
+        "summary" : "Получить всех пользователей",
+        "description" : "Возвращает список всех зарегистрированных пользователей.",
+        "tags" : [ "Контакты" ],
+        "responses" : {
+          "200" : {
+            "description" : "Список всех пользователей",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ContactDTO"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ "User" ]
+        } ]
+      }
+    },
+    "/messages" : {
+      "post" : {
+        "summary" : "Отправка сообщения",
+        "description" : "Отправляет сообщение от текущего пользователя указанному получателю. Требуется JWT-токен в заголовке Authorization.",
+        "tags" : [ "Messages" ],
+        "requestBody" : {
+          "description" : "Данные сообщения",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateMessage"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Сообщение успешно отправлено",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "id" : 123,
+                  "senderId" : 456,
+                  "senderUsername" : "@Sender",
+                  "recipientId" : 789,
+                  "recipientUsername" : "@Recipient",
+                  "content" : "Привет!",
+                  "timestamp" : "2024-01-26T14:30:00"
+                },
+                "schema" : {
+                  "$ref" : "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Неверные данные запроса",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Не указан ID получателя или текст сообщения"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Получатель не найден",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Получатель не найден"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ "User" ]
+        } ]
+      },
+      "get" : {
+        "summary" : "Получение сообщений",
+        "description" : "Получает сообщения для текущего пользователя. Можно фильтровать по переписке с конкретным пользователем или с определенной временной метки.",
+        "tags" : [ "Messages" ],
+        "parameters" : [ {
+          "name" : "since",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "1970-01-01T00:00:00"
+          }
+        }, {
+          "name" : "with",
+          "in" : "query",
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Список сообщений",
+            "content" : {
+              "application/json" : {
+                "example" : [ {
+                  "id" : 123,
+                  "senderId" : 456,
+                  "senderUsername" : "@Sender",
+                  "recipientId" : 789,
+                  "recipientUsername" : "@Recipient",
+                  "content" : "Привет!",
+                  "timestamp" : "2024-01-26T14:30:00"
+                }, {
+                  "id" : 456,
+                  "senderId" : 789,
+                  "senderUsername" : "@Recipient",
+                  "recipientId" : 456,
+                  "recipientUsername" : "@Sender",
+                  "content" : "Привет в ответ!",
+                  "timestamp" : "2024-01-26T14:35:00"
+                } ],
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/MessageResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Неверный формат параметра 'since'",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Неверный формат параметра 'since', используйте ISO 8601 (например, 2025-05-19T10:00:00)"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Пользователь не найден",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Пользователь не найден"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ "User" ]
+        } ]
+      }
+    },
+    "/secured/deny-all" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Hello Should Deny",
+        "tags" : [ "Token Secured Resource" ]
+      }
+    },
+    "/secured/permit-all" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Hello",
+        "tags" : [ "Token Secured Resource" ]
+      }
+    },
+    "/secured/roles-allowed" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "summary" : "Hello Roles Allowed",
+        "tags" : [ "Token Secured Resource" ],
+        "security" : [ {
+          "BearerAuth" : [ "User", "Admin" ]
+        } ]
+      }
+    },
+    "/secured/roles-allowed-admin" : {
+      "get" : {
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "summary" : "Hello Roles Allowed Admin",
+        "tags" : [ "Token Secured Resource" ],
+        "security" : [ {
+          "BearerAuth" : [ "Admin" ]
+        } ]
+      }
+    }
+  },
+  "info" : {
+    "title" : "java41server API",
+    "version" : "1.0.0-SNAPSHOT"
+  }
+}
