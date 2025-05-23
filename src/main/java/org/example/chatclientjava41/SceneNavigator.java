@@ -6,7 +6,7 @@ public class SceneNavigator extends Stage {
     private RestoreMenuView restoreView;
     private AuthorizationMenuView authorizationView;
     private RegistrationMenuView registrationView;
-    private MainView mainView;
+    private MainMenuView mainView;
     public SceneNavigator() {
         RestoreMenuController restoreController=new RestoreMenuController();
         AuthorizationMenuController authorizationController=new AuthorizationMenuController();

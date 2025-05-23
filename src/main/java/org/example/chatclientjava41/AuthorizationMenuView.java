@@ -1,5 +1,7 @@
 package org.example.chatclientjava41;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,19 +16,29 @@ public class AuthorizationMenuView {
     public AuthorizationMenuView ( AuthorizationMenuController daniilController ) {
         this.daniilController = daniilController;
     }
-
     public Scene AuthorizationScene () {
+        VBox vbox = new VBox();
+        Scene scene = new Scene(vbox, 500, 250);
         TextField login = new TextField("Логин:");
         TextField password = new TextField("Пароль:");
-        Button logInButton = new Button();
-        Button registrationMenuButton = new Button();
-        Button restoreMenuButton = new Button();
+        scene.getStylesheets().add(getClass().getResource("/StyleRestoreMenu.css").toExternalForm());
+        Button logInButton = new Button("Войти");
+        Button registrationMenuButton = new Button("Регистрация");
+        Button restoreMenuButton = new Button("Восстановить пароль");
+        restoreMenuButton.getStyleClass().add("secondary");
         logInButton.setOnAction(actionEvent -> daniilController.clickEnter(login.getText(), password.getText()));
         registrationMenuButton.setOnAction(actionEvent -> daniilController.clickMenuRegistration());
         restoreMenuButton.setOnAction(actionEvent -> daniilController.clickMenuRestorePass());
-        HBox hbox1 = new HBox(logInButton,registrationMenuButton,restoreMenuButton);
-        VBox vbox = new VBox(login,password,hbox1,error);
-        Scene scene = new Scene(vbox, 200, 300);
+        HBox hbox1 = new HBox(logInButton,registrationMenuButton);
+        hbox1.setSpacing(10);//расстояние между объектами внутри
+        hbox1.setAlignment(Pos.CENTER);
+        vbox.getChildren().add(login);//упаковываем все элементы в vbox
+        vbox.getChildren().add(password);
+        vbox.getChildren().add(hbox1);
+        vbox.getChildren().add(restoreMenuButton);
+        vbox.getChildren().add(error);
+        vbox.setAlignment(Pos.CENTER);//позиционируем по центру
+        vbox.setSpacing(10);
         return scene;
     }
 }
