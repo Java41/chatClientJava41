@@ -1,0 +1,183 @@
+/* Файл был получен путем отрисовки в Figma, затем оттуда скопировал код элементов в виде .css затем deepseek мне конвертировал в формат javaFX */
+/* Основные стили */
+.root {
+    -fx-background-color: #F5F5F5;
+    -fx-pref-width: 1440px;
+    -fx-pref-height: 960px;
+}
+
+/* Боковая панель профиля */
+.profile-pane {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 0 1px 0 0;
+    -fx-pref-width: 256px;
+}
+
+/* Стили кнопок */
+.button {
+    -fx-background-color: #000000;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'Inter';/* ввиду того что это бинд шрифта у которого есть параметры гдето записаные, Idea будет ругаться если вы попробуете изменять в настроеном стиле параметры шрифт */
+    -fx-font-size: 16px;/* так что не трогаем надписи с словами -font- или удаляем маркировку шрифта 'Inter' и будут обычные буквы */
+    -fx-font-weight: 500;
+    -fx-pref-width: 208px;
+    -fx-pref-height: 40px;
+    -fx-padding: 0 16px;
+}
+
+/* Стили меню */
+.menu-item {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 240px;
+    -fx-pref-height: 40px;
+    -fx-padding: 0 16px;
+    -fx-spacing: 16px;
+}
+
+.menu-item .label {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #000000;
+}
+
+/* Аватар пользователя */
+.avatar {
+    -fx-background-color: #F7F7F7;
+    -fx-background-radius: 1000px;
+    -fx-pref-width: 128px;
+    -fx-pref-height: 128px;
+}
+
+.small-avatar {
+    -fx-background-color: #F7F7F7;
+    -fx-background-radius: 1000px;
+    -fx-pref-width: 48px;
+    -fx-pref-height: 48px;
+}
+
+/* Область чата */
+.chat-area {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 0 1px 0 0;
+}
+
+/* Поле ввода сообщения */
+.message-input {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 8px;
+    -fx-pref-height: 40px;
+    -fx-padding: 8px 16px;
+}
+
+.message-input .text-field {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 16px;
+    -fx-text-fill: #828282;
+    -fx-prompt-text-fill: #828282;
+}
+
+/* Пузыри сообщений */
+.user-bubble {
+    -fx-background-color: #000000;
+    -fx-background-radius: 16px 16px 4px 16px;
+    -fx-padding: 12px 16px;
+    -fx-max-width: 480px;
+}
+
+.user-bubble .label {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 16px;
+    -fx-text-fill: #FFFFFF;
+    -fx-wrap-text: true;
+}
+
+.alien-bubble {
+    -fx-background-color: #E0E0E0;
+    -fx-background-radius: 4px 16px 16px 4px;
+    -fx-padding: 12px 16px;
+    -fx-max-width: 480px;
+}
+
+.alien-bubble .label {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 16px;
+    -fx-text-fill: #000000;
+    -fx-wrap-text: true;
+}
+
+/* Заголовок чата */
+.chat-header {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 0 0 1px 0;
+    -fx-pref-height: 80px;
+}
+
+/* Список чатов */
+.chat-list {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 0 1px 0 0;
+}
+
+.chat-item {
+    -fx-background-color: #F7F7F7;
+    -fx-padding: 12px 16px;
+    -fx-spacing: 16px;
+}
+
+.chat-item .name {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 20px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #000000;
+}
+
+.chat-item .message {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 16px;
+    -fx-text-fill: #454545;
+}
+
+/* Поле поиска */
+.search-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 8px;
+    -fx-pref-height: 40px;
+    -fx-padding: 8px 16px;
+}
+
+.search-field .text-field {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 16px;
+    -fx-text-fill: #828282;
+    -fx-prompt-text-fill: #828282;
+}
+
+/* Текстовые стили */
+.title-text {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 20px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #000000;
+}
+
+.subtitle-text {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 16px;
+    -fx-text-fill: #454545;
+}
+
+.date-text {
+    -fx-font-family: 'Inter';
+    -fx-font-size: 16px;
+    -fx-text-fill: #828282;
+    -fx-alignment: center;
+}
