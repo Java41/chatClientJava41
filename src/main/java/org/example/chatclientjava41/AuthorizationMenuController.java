@@ -1,9 +1,9 @@
 package org.example.chatclientjava41;
 
-public class DaniilController {
-    private DaniilView view;
+public class AuthorizationMenuController {
+    private AuthorizationMenuView view;
     private SceneNavigator sceneNavigator;
-    public void setView(DaniilView view){
+    public void setView(AuthorizationMenuView view){
         this.view=view;
     }
     public void setSceneNavigator(SceneNavigator sceneNavigator){
