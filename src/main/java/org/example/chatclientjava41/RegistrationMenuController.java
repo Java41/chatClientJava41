@@ -18,7 +18,6 @@ public class RegistrationMenuController {
     public void clickRegistration(String login, String password, String email){
         if (login == null || login.trim().isEmpty()){
             view.error.setText("Логин не может быть пустым");
-            return;
         }
         if (password == null || password.length() < 4){
             view.error.setText("Пароль должен быть не менее 4 символов");
