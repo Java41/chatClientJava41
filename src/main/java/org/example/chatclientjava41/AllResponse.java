@@ -10,7 +10,7 @@ public class AllResponse {
     MediaType mediaType = MediaType.parse("application/json");
     RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}");
     Request request = new Request.Builder()
-            .url("//auth/login")
+            .url("https://faruegonar.beget.app/auth/login")
             .method("POST", body)
             .addHeader("Content-Type", "application/json")
             .addHeader("Accept", "application/json")

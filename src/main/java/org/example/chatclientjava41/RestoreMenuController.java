@@ -1,9 +1,9 @@
 package org.example.chatclientjava41;
 
-public class RestoreController {
-    private RestoreView view;
+public class RestoreMenuController {
+    private RestoreMenuView view;
     private SceneNavigator sceneNavigator;
-    public void setView(RestoreView view){
+    public void setView(RestoreMenuView view){
         this.view=view;
     }
     public void setSceneNavigator(SceneNavigator sceneNavigator){
@@ -13,7 +13,7 @@ public class RestoreController {
         sceneNavigator.setAuth();
     }
     public void clickRestore(){
-        //запрос в БД если Истина то
+//        запрос в БД если Истина то
         error("Письмо с восстановлением пароля отправлено вам на почту");
         //иначе
         error("Неверный логин или пароль");

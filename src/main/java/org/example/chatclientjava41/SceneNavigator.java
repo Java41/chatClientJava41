@@ -1,50 +1,47 @@
 package org.example.chatclientjava41;
 
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class SceneNavigator extends Stage {
-    private RestoreView restoreView;
-    private DaniilView daniilView;
-    private SeverView severView;
+    private RestoreMenuView restoreView;
+    private AuthorizationMenuView authorizationView;
+    private RegistrationMenuView registrationView;
     private MainView mainView;
-    private Scene currentView;
     public SceneNavigator() {
-        RestoreController restoreController=new RestoreController();
-        DaniilController daniilController=new DaniilController();
-        ViktorController viktorController=new ViktorController();
+        RestoreMenuController restoreController=new RestoreMenuController();
+        AuthorizationMenuController authorizationController=new AuthorizationMenuController();
+        RegistrationMenuController registrationController=new RegistrationMenuController();
 //        MainController mainController=new MainController();
-        this.restoreView = new RestoreView(restoreController);
-        this.daniilView = new DaniilView(daniilController);
-        this.severView = new SeverView(viktorController);
+        this.restoreView = new RestoreMenuView(restoreController); 
+        this.authorizationView = new AuthorizationMenuView(authorizationController);
+        this.registrationView = new RegistrationMenuView(registrationController);
 //        this.mainView = new MainView(mainController);
         restoreController.setView(restoreView);
         restoreController.setSceneNavigator(this);
-        daniilController.setView(daniilView);
-        daniilController.setSceneNavigator(this);
-        viktorController.setView(severView);
-        viktorController.setSceneNavigator(this);
+        authorizationController.setView(authorizationView);
+        authorizationController.setSceneNavigator(this);
+        registrationController.setView(registrationView);
+        registrationController.setSceneNavigator(this);
 //        mainController.setView(mainView);
 //        mainController.setSceneNavigator(this);
-        this.currentView=severView.SeverScene();
-        this.setScene(currentView);
+        this.setScene(authorizationView.AuthorizationScene());
         this.setTitle("Авторизация");
         this.show();
     }
     public void setAuth(){
-        currentView=daniilView.DaniilScene();
+        this.setScene(authorizationView.AuthorizationScene());
         this.setTitle("Авторизация");
     }
     public void setRestore(){
-        currentView=restoreView.RestoreScene();
+        this.setScene(restoreView.RestoreScene());
         this.setTitle("Восстановление пароля");
     }
 //    public void setDefault(){
-//        currentView=mainView.MainScene();
+//        this.setScene(mainView.MainScene());
 //        this.setTitle("Чат41");
 //    }
     public void setRegistration(){
-        currentView=severView.SeverScene();
+        this.setScene(registrationView.RegistrationScene());
         this.setTitle("Регистрация");
     }
 }
