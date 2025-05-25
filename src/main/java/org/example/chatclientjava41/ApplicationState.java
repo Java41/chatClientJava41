@@ -3,7 +3,8 @@ package org.example.chatclientjava41;
 import java.util.LinkedHashMap;
 
 public class ApplicationState {
-    private static ApplicationState applicationState;
+
+    private static final ApplicationState applicationState;
     private SceneNavigator sceneNavigator;
     private String accessToken;
     private String refreshToken;
@@ -11,6 +12,7 @@ public class ApplicationState {
     private long tokenExpirationTime;//время до обновления токена
     private boolean isTokenRefreshInProgress = false;//защита от множественных запросов на обновление токена
     private boolean isInitialAuthCheckDone = false;//Индикатор того, что приложение проверило наличие сохранённых токенов при старте
+
 
     public static ApplicationState getApplicationState(){
         if(applicationState==null){applicationState=new ApplicationState();}

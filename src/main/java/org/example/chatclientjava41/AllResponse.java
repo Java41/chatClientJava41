@@ -5,7 +5,7 @@ import okhttp3.*;
 import java.io.IOException;
 
 public class AllResponse {
-    private static final String SEVER_URL = "https://faruegonar.beget.app/";
+    private static final String SERVER_URL = "https://java41.ru/";
     private static final String PUB_KEY_PATH = "public-key";
     private static final String LOGIN_PATH = "auth/login";
     private static final String LOGOUT_PATH= "auth/logout";
@@ -17,14 +17,15 @@ public class AllResponse {
     private static final String JSON_MEDIA = "application/json";
     private static final OkHttpClient client = new OkHttpClient().newBuilder().build();
 
+
     public static String Authorisation(String login, String password){//сделать войд и при положительном ответе данные в состояние приложения
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \""+login+"\",\n  \"password\": \""+password+"\"\n}");
         Request request = new Request.Builder()
-                .url(SEVER_URL + LOGIN_PATH)
-                .method("POST", body)
-                .addHeader("Content-Type", JSON_MEDIA)
-                .addHeader("Accept", JSON_MEDIA)
+                .url(SERVER_URL + LOGIN_PATH)
+                .post(body)
+                .header("Content-Type", JSON_MEDIA)
+                .header("Accept", JSON_MEDIA)
                 .build();
         try (Response response = client.newCall(request).execute()){
             String responseBody = response.body().string();
@@ -32,6 +33,9 @@ public class AllResponse {
         }catch (IOException e){
             return "Error auth";
         }
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
 
     }
 //_____________________________Выход пользователя_______________________________
@@ -40,7 +44,7 @@ public class AllResponse {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n}");
         Request request = new Request.Builder()
-                .url(SEVER_URL + LOGOUT_PATH)
+                .url(SERVER_URL + LOGOUT_PATH)
                 .method("POST", body)
                 .addHeader("Content-Type", JSON_MEDIA)
                 .addHeader("Accept", JSON_MEDIA)
