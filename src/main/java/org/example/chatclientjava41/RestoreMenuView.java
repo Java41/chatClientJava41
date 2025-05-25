@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 
 public class RestoreMenuView{
     private RestoreMenuController restoreController;
-    public Label error=new Label("");
+    private Label error=new Label("");
     public RestoreMenuView(RestoreMenuController restoreController) {
         this.restoreController = restoreController;
     }
@@ -32,5 +32,8 @@ public class RestoreMenuView{
         vBox.setSpacing(10);//расстояние между объектами внутри
         vBox.setAlignment(Pos.CENTER);//позиционируем по центру
         return scene;
+    }
+    public void setError(String error) {
+        this.error.setText(error);
     }
 }

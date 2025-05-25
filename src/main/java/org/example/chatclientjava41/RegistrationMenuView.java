@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 
 public class RegistrationMenuView {
     private RegistrationMenuController registrationController;
-    public Label error = new Label(" ");
+    private Label error = new Label(" ");
     public RegistrationMenuView(RegistrationMenuController registrationController) {
         this.registrationController = registrationController;
     }
@@ -27,6 +27,8 @@ public class RegistrationMenuView {
         Scene scene = new Scene(vBox, 200, 300);
         return scene;
     }
-
+    public void setError(String error) {
+        this.error.setText(error);
+    }
 }
 

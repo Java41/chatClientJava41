@@ -2,24 +2,20 @@
   "openapi" : "3.1.0",
   "components" : {
     "schemas" : {
-      "ContactDTO" : {
+      "AddContactDTO" : {
         "type" : "object",
-        "description" : "Информация о контакте",
+        "required" : [ "id" ],
         "properties" : {
           "id" : {
             "type" : "integer",
             "format" : "int64",
-            "examples" : [ 1, 2, 3 ],
-            "description" : "Идентификатор пользователя",
-            "default" : 1
-          },
-          "username" : {
-            "type" : "string",
-            "examples" : [ "@User123", "@AnotherUser" ],
-            "description" : "Имя пользователя, начинающееся с @",
-            "default" : "@User123"
+            "description" : "ID пользователя для добавления в контакты"
           }
         }
+      },
+      "ContactDTO" : {
+        "type" : "object",
+        "description" : "Информация о контакте"
       },
       "CreateMessage" : {
         "type" : "object",
@@ -51,14 +47,15 @@
         "properties" : {
           "email" : {
             "type" : "string",
-            "format" : "email",
-            "examples" : [ "user@example.com", "admin@domain.com" ],
+            "examples" : [ "user@example.com" ],
             "description" : "User's email",
             "default" : "user@example.com"
           },
           "password" : {
             "type" : "string",
-            "examples" : [ "password123", "securePass!2023" ],
+            "minLength" : 8,
+            "examples" : [ "password123" ],
+            "maxLength" : 64,
             "description" : "User's password",
             "default" : "password123"
           }
@@ -118,6 +115,44 @@
           }
         }
       },
+      "PatchProfileDTO" : {
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : [ "string", "null" ],
+            "examples" : [ "new.email@example.com" ],
+            "description" : "Новый email"
+          },
+          "password" : {
+            "type" : [ "string", "null" ],
+            "examples" : [ "password123" ],
+            "description" : "Пароль (обязателен для обновления email)"
+          },
+          "username" : {
+            "type" : [ "string", "null" ],
+            "examples" : [ "@NewUser123" ],
+            "description" : "Новое имя пользователя, начинающееся с @"
+          },
+          "firstName" : {
+            "type" : [ "string", "null" ],
+            "examples" : [ "John" ],
+            "maxLength" : 50,
+            "description" : "Имя пользователя"
+          },
+          "lastName" : {
+            "type" : [ "string", "null" ],
+            "examples" : [ "Doe" ],
+            "maxLength" : 50,
+            "description" : "Фамилия пользователя"
+          },
+          "photoUrl" : {
+            "type" : [ "string", "null" ],
+            "examples" : [ "https://example.com/photo.jpg" ],
+            "maxLength" : 255,
+            "description" : "URL фотографии пользователя"
+          }
+        }
+      },
       "Refresh" : {
         "type" : "object",
         "required" : [ "refreshToken" ],
@@ -125,7 +160,7 @@
         "properties" : {
           "refreshToken" : {
             "type" : "string",
-            "examples" : [ "f47ac10b-58cc-4372-a567-0e02b2c3d479", "550e8400-e29b-41d4-a716-446655440000" ],
+            "examples" : [ "f47ac10b-58cc-4372-a567-0e02b2c3d479" ],
             "pattern" : "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$",
             "description" : "Refresh token",
             "default" : "f47ac10b-58cc-4372-a567-0e02b2c3d479"
@@ -134,87 +169,101 @@
       },
       "Registration" : {
         "type" : "object",
-        "required" : [ "email", "password", "birthdate" ],
+        "required" : [ "email", "password", "birthdate", "firstName", "lastName" ],
         "description" : "Registration details",
         "properties" : {
           "email" : {
             "type" : "string",
-            "format" : "email",
-            "examples" : [ "new.user@example.com", "registrant@mail.org" ],
+            "examples" : [ "user@example.com" ],
             "description" : "User's email",
             "default" : "user@example.com"
           },
           "password" : {
             "type" : "string",
             "minLength" : 8,
-            "examples" : [ "Str0ngP@ss", "Qwerty!123" ],
+            "examples" : [ "password123" ],
             "maxLength" : 64,
             "description" : "User's password",
             "default" : "password123"
           },
           "birthdate" : {
             "type" : "string",
-            "examples" : [ "1990-01-01", "2000-12-31" ],
+            "examples" : [ "1990-01-01" ],
             "pattern" : "^\\d{4}-\\d{2}-\\d{2}$",
             "description" : "User's birthdate (YYYY-MM-DD)",
-            "default" : "1990-01-01"
-          }
-        }
-      },
-      "UpdateEmailDTO" : {
-        "type" : "object",
-        "required" : [ "email", "password" ],
-        "description" : "Update email request",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "format" : "email",
-            "examples" : [ "new.email@example.com", "updated@mail.org" ],
-            "description" : "New email address",
-            "default" : "new.email@example.com"
+            "default" : "password123"
           },
-          "password" : {
+          "firstName" : {
             "type" : "string",
-            "minLength" : 8,
-            "examples" : [ "currentPassword123", "oldSecure!Pass" ],
-            "maxLength" : 64,
-            "description" : "Current password",
-            "default" : "currentPassword123"
+            "examples" : [ "Aleksandr" ],
+            "maxLength" : 50,
+            "description" : "User's first name",
+            "default" : "Aleksandr"
+          },
+          "lastName" : {
+            "type" : "string",
+            "examples" : [ "Borodavkin" ],
+            "maxLength" : 50,
+            "description" : "User's last name",
+            "default" : "Borodavkin"
           }
         }
       },
-      "UpdateUsernameDTO" : {
+      "TokenResponseDTO" : {
         "type" : "object",
-        "required" : [ "username" ],
-        "description" : "Update username request",
+        "description" : "Ответ с токенами",
         "properties" : {
-          "username" : {
+          "accessToken" : {
             "type" : "string",
-            "examples" : [ "@NewUser_123", "@UpdatedUsername" ],
-            "pattern" : "^@[a-zA-Z0-9_]{3,20}$",
-            "description" : "New username starting with @ (3-20 alphanumeric characters or underscores)",
-            "default" : "@NewUser_123"
+            "examples" : [ "eyJhbG..." ],
+            "description" : "JWT access token"
+          },
+          "refreshToken" : {
+            "type" : "string",
+            "examples" : [ "f47ac10b-58cc-..." ],
+            "description" : "Refresh token"
           }
         }
       },
-      "UserInfo" : {
+      "UserProfileDTO" : {
         "type" : "object",
+        "description" : "Информация о профиле пользователя",
         "properties" : {
           "id" : {
             "type" : "integer",
-            "format" : "int64"
+            "format" : "int64",
+            "examples" : [ 1 ],
+            "description" : "Идентификатор пользователя"
           },
           "username" : {
-            "type" : "string"
+            "type" : "string",
+            "examples" : [ "@User123" ],
+            "description" : "Имя пользователя, начинающееся с @"
           },
           "email" : {
-            "type" : "string"
+            "type" : "string",
+            "examples" : [ "user@example.com" ],
+            "description" : "Электронная почта пользователя"
           },
-          "accessToken" : {
-            "type" : "string"
+          "birthdate" : {
+            "type" : "string",
+            "examples" : [ "1990-01-01" ],
+            "description" : "Дата рождения пользователя (YYYY-MM-DD)"
           },
-          "refreshToken" : {
-            "type" : "string"
+          "firstName" : {
+            "type" : [ "string", "null" ],
+            "examples" : [ "John" ],
+            "description" : "Имя пользователя"
+          },
+          "lastName" : {
+            "type" : [ "string", "null" ],
+            "examples" : [ "Doe" ],
+            "description" : "Фамилия пользователя"
+          },
+          "photoUrl" : {
+            "type" : [ "string", "null" ],
+            "examples" : [ "https://example.com/photo.jpg" ],
+            "description" : "URL фотографии пользователя"
           }
         }
       }
@@ -236,13 +285,22 @@
     "description" : "Operations related to messages"
   }, {
     "name" : "Контакты",
-    "description" : "Операции, связанные с контактами пользователя"
+    "description" : "Операции для управления списком контактов пользователя"
+  }, {
+    "name" : "Пользователи",
+    "description" : "Операции для получения списка всех пользователей"
+  }, {
+    "name" : "Профиль пользователя",
+    "description" : "Операции для управления профилем пользователя"
+  }, {
+    "name" : "Публичный ключ",
+    "description" : "Эндпоинт для получения публичного ключа для проверки JWT"
   } ],
   "paths" : {
     "/auth/login" : {
       "post" : {
         "summary" : "Аутентификация пользователя",
-        "description" : "Позволяет пользователю войти в систему, предоставив email и пароль. Возвращает JWT и refresh-токены для дальнейшего доступа к защищенным ресурсам.",
+        "description" : "Позволяет пользователю войти в систему, предоставив email и пароль. Возвращает JWT и refresh-токены.",
         "tags" : [ "Authentication" ],
         "requestBody" : {
           "description" : "Учетные данные для входа",
@@ -261,14 +319,11 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "id" : 1,
-                  "username" : "@User123",
-                  "email" : "user@example.com",
                   "accessToken" : "eyJhbG...",
                   "refreshToken" : "f47ac10b-58cc-..."
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/UserInfo"
+                  "$ref" : "#/components/schemas/TokenResponseDTO"
                 }
               }
             }
@@ -358,14 +413,11 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "id" : 1,
-                  "username" : "@User123",
-                  "email" : "user@example.com",
                   "accessToken" : "eyJhbG...",
                   "refreshToken" : "f47ac10b-58cc-..."
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/UserInfo"
+                  "$ref" : "#/components/schemas/TokenResponseDTO"
                 }
               }
             }
@@ -396,7 +448,7 @@
     "/auth/register" : {
       "post" : {
         "summary" : "Регистрация пользователя",
-        "description" : "Регистрирует нового пользователя и возвращает JWT и refresh токены",
+        "description" : "Регистрирует нового пользователя и возвращает JWT и refresh-токены",
         "tags" : [ "Authentication" ],
         "requestBody" : {
           "description" : "Данные для регистрации",
@@ -415,14 +467,11 @@
             "content" : {
               "application/json" : {
                 "example" : {
-                  "id" : 2,
-                  "username" : "@NewUser",
-                  "email" : "newuser@example.com",
                   "accessToken" : "eyJhbG...",
                   "refreshToken" : "a1b2c3d4-e5f6-..."
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/UserInfo"
+                  "$ref" : "#/components/schemas/TokenResponseDTO"
                 }
               }
             }
@@ -450,69 +499,34 @@
         }
       }
     },
-    "/auth/update-email" : {
-      "post" : {
-        "summary" : "Обновление email пользователя",
-        "description" : "Обновляет адрес электронной почты пользователя",
-        "tags" : [ "Authentication" ],
-        "requestBody" : {
-          "description" : "Новый email и пароль",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/UpdateEmailDTO"
-              }
-            }
-          },
-          "required" : true
-        },
+    "/contacts" : {
+      "get" : {
+        "summary" : "Получить список контактов",
+        "description" : "Возвращает список контактов текущего пользователя.",
+        "tags" : [ "Контакты" ],
         "responses" : {
           "200" : {
-            "description" : "Email успешно обновлен",
+            "description" : "Список контактов",
             "content" : {
               "application/json" : {
-                "example" : {
-                  "id" : 1,
-                  "username" : "@User123",
-                  "email" : "newemail@example.com",
-                  "accessToken" : "eyJhbG...",
-                  "refreshToken" : "f47ac10b-58cc-..."
-                },
+                "example" : [ {
+                  "id" : 2,
+                  "username" : "@User456",
+                  "firstName" : "Jane",
+                  "lastName" : "Smith",
+                  "photoUrl" : "https://example.com/photo2.jpg"
+                } ],
                 "schema" : {
-                  "$ref" : "#/components/schemas/UserInfo"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "Отсутствует email или пароль",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "error" : "Email и пароль обязательны"
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ContactDTO"
+                  }
                 }
               }
             }
           },
           "401" : {
-            "description" : "Неверные учетные данные",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "error" : "Неверные учетные данные"
-                }
-              }
-            }
-          },
-          "409" : {
-            "description" : "Email уже существует",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "error" : "Пользователь с таким email уже существует"
-                }
-              }
-            }
+            "description" : "Not Authorized"
           },
           "403" : {
             "description" : "Not Allowed"
@@ -521,54 +535,52 @@
         "security" : [ {
           "BearerAuth" : [ "User" ]
         } ]
-      }
-    },
-    "/auth/update-username" : {
+      },
       "post" : {
-        "summary" : "Обновление имени пользователя",
-        "description" : "Обновляет имя пользователя",
-        "tags" : [ "Authentication" ],
+        "summary" : "Добавить пользователя в контакты",
+        "description" : "Добавляет указанного пользователя в список контактов текущего пользователя.",
+        "tags" : [ "Контакты" ],
         "requestBody" : {
-          "description" : "Новое имя пользователя",
-          "required" : true,
+          "description" : "ID пользователя для добавления в контакты",
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/UpdateUsernameDTO"
+                "$ref" : "#/components/schemas/AddContactDTO"
               }
             }
-          }
+          },
+          "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "Имя пользователя успешно обновлено",
+          "201" : {
+            "description" : "Контакт успешно добавлен",
             "content" : {
               "application/json" : {
                 "example" : {
-                  "id" : 1,
-                  "username" : "@NewUsername",
-                  "email" : "user@example.com",
-                  "accessToken" : "eyJhbG...",
-                  "refreshToken" : "f47ac10b-58cc-..."
+                  "id" : 2,
+                  "username" : "@User456",
+                  "firstName" : "Jane",
+                  "lastName" : "Smith",
+                  "photoUrl" : "https://example.com/photo2.jpg"
                 },
                 "schema" : {
-                  "$ref" : "#/components/schemas/UserInfo"
+                  "$ref" : "#/components/schemas/ContactDTO"
                 }
               }
             }
           },
           "400" : {
-            "description" : "Отсутствует или недействительное имя пользователя",
+            "description" : "Неверный ID пользователя или попытка добавить себя",
             "content" : {
               "application/json" : {
                 "example" : {
-                  "error" : "Username обязателен и должен начинаться с @"
+                  "error" : "ID пользователя обязателен и не должен быть равен ID текущего пользователя"
                 }
               }
             }
           },
-          "401" : {
-            "description" : "Не авторизован",
+          "404" : {
+            "description" : "Пользователь не найден",
             "content" : {
               "application/json" : {
                 "example" : {
@@ -578,39 +590,11 @@
             }
           },
           "409" : {
-            "description" : "Имя пользователя уже занято",
+            "description" : "Пользователь уже в контактах",
             "content" : {
               "application/json" : {
                 "example" : {
-                  "error" : "Username уже занят"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Not Allowed"
-          }
-        },
-        "security" : [ {
-          "BearerAuth" : [ "User" ]
-        } ]
-      }
-    },
-    "/contacts" : {
-      "get" : {
-        "summary" : "Получить всех пользователей",
-        "description" : "Возвращает список всех зарегистрированных пользователей.",
-        "tags" : [ "Контакты" ],
-        "responses" : {
-          "200" : {
-            "description" : "Список всех пользователей",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/ContactDTO"
-                  }
+                  "error" : "Пользователь уже в списке контактов"
                 }
               }
             }
@@ -633,7 +617,6 @@
         "description" : "Отправляет сообщение от текущего пользователя указанному получателю. Требуется JWT-токен в заголовке Authorization.",
         "tags" : [ "Messages" ],
         "requestBody" : {
-          "description" : "Данные сообщения",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -674,11 +657,11 @@
             }
           },
           "404" : {
-            "description" : "Получатель не найден",
+            "description" : "Пользователь не найден",
             "content" : {
               "application/json" : {
                 "example" : {
-                  "error" : "Получатель не найден"
+                  "error" : "Пользователь не найден"
                 }
               }
             }
@@ -776,78 +759,116 @@
         } ]
       }
     },
-    "/secured/deny-all" : {
-      "get" : {
+    "/profile" : {
+      "patch" : {
+        "summary" : "Частичное обновление профиля",
+        "description" : "Обновляет указанные поля профиля пользователя. Для email требуется пароль. Возвращает новые токены при обновлении email, username, firstName или lastName, иначе возвращает обновлённый профиль.",
+        "tags" : [ "Профиль пользователя" ],
+        "requestBody" : {
+          "description" : "Поля профиля для обновления",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PatchProfileDTO"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
-            "description" : "OK",
+            "description" : "Профиль или токены успешно обновлены",
             "content" : {
-              "text/plain" : {
+              "application/json" : {
+                "example" : {
+                  "accessToken" : "eyJhbG...",
+                  "refreshToken" : "f47ac10b-58cc-..."
+                },
                 "schema" : {
-                  "type" : "string"
+                  "$ref" : "#/components/schemas/TokenResponseDTO"
                 }
               }
             }
-          }
-        },
-        "summary" : "Hello Should Deny",
-        "tags" : [ "Token Secured Resource" ]
-      }
-    },
-    "/secured/permit-all" : {
-      "get" : {
-        "responses" : {
-          "200" : {
-            "description" : "OK",
+          },
+          "400" : {
+            "description" : "Неверные данные",
             "content" : {
-              "text/plain" : {
-                "schema" : {
-                  "type" : "string"
-                }
-              }
-            }
-          }
-        },
-        "summary" : "Hello",
-        "tags" : [ "Token Secured Resource" ]
-      }
-    },
-    "/secured/roles-allowed" : {
-      "get" : {
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "text/plain" : {
-                "schema" : {
-                  "type" : "string"
+              "application/json" : {
+                "example" : {
+                  "error" : "Неверные данные профиля"
                 }
               }
             }
           },
           "401" : {
-            "description" : "Not Authorized"
+            "description" : "Не авторизован или неверный пароль",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Неверные учетные данные"
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Email или username уже занят",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Пользователь с таким email уже существует"
+                }
+              }
+            }
           },
           "403" : {
             "description" : "Not Allowed"
           }
         },
-        "summary" : "Hello Roles Allowed",
-        "tags" : [ "Token Secured Resource" ],
         "security" : [ {
-          "BearerAuth" : [ "User", "Admin" ]
+          "BearerAuth" : [ "User" ]
         } ]
       }
     },
-    "/secured/roles-allowed-admin" : {
+    "/profile/{userId}" : {
       "get" : {
+        "summary" : "Получить профиль пользователя по ID",
+        "description" : "Возвращает информацию о профиле пользователя с указанным ID.",
+        "tags" : [ "Профиль пользователя" ],
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
         "responses" : {
           "200" : {
-            "description" : "OK",
+            "description" : "Профиль пользователя",
             "content" : {
-              "text/plain" : {
+              "application/json" : {
+                "example" : {
+                  "id" : 1,
+                  "username" : "@User123",
+                  "email" : "user@example.com",
+                  "birthdate" : "1990-01-01",
+                  "firstName" : "John",
+                  "lastName" : "Doe",
+                  "photoUrl" : "https://example.com/photo.jpg"
+                },
                 "schema" : {
-                  "type" : "string"
+                  "$ref" : "#/components/schemas/UserProfileDTO"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Пользователь не найден",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "error" : "Пользователь не найден"
                 }
               }
             }
@@ -859,10 +880,61 @@
             "description" : "Not Allowed"
           }
         },
-        "summary" : "Hello Roles Allowed Admin",
-        "tags" : [ "Token Secured Resource" ],
         "security" : [ {
-          "BearerAuth" : [ "Admin" ]
+          "BearerAuth" : [ "User" ]
+        } ]
+      }
+    },
+    "/public-key" : {
+      "get" : {
+        "summary" : "Получить публичный ключ",
+        "description" : "Возвращает публичный ключ в формате PEM для проверки подписи JWT-токенов",
+        "tags" : [ "Публичный ключ" ],
+        "responses" : {
+          "200" : {
+            "description" : "Публичный ключ в формате PEM"
+          },
+          "500" : {
+            "description" : "Ошибка чтения ключа"
+          }
+        }
+      }
+    },
+    "/users" : {
+      "get" : {
+        "summary" : "Получить список всех пользователей",
+        "description" : "Возвращает список всех зарегистрированных пользователей для выбора контакта.",
+        "tags" : [ "Пользователи" ],
+        "responses" : {
+          "200" : {
+            "description" : "Список всех пользователей",
+            "content" : {
+              "application/json" : {
+                "example" : [ {
+                  "id" : 1,
+                  "username" : "@User123",
+                  "firstName" : "John",
+                  "lastName" : "Doe",
+                  "photoUrl" : "https://example.com/photo.jpg"
+                } ],
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ContactDTO"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not Authorized"
+          },
+          "403" : {
+            "description" : "Not Allowed"
+          }
+        },
+        "security" : [ {
+          "BearerAuth" : [ "User" ]
         } ]
       }
     }

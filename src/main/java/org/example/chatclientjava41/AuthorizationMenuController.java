@@ -1,5 +1,7 @@
 package org.example.chatclientjava41;
 
+import java.io.IOException;
+
 public class AuthorizationMenuController {
     private AuthorizationMenuView view;
     private SceneNavigator sceneNavigator;
@@ -15,13 +17,17 @@ public class AuthorizationMenuController {
     public void clickMenuRestorePass(){
         sceneNavigator.setRestore();
     }
-    public void clickEnter(String login,String password){
-        //запрос в БД если Истина то
-//        sceneNavigator.setDefault();
-        //иначе
-        error("Неверный логин или пароль");
-    }
-    public void error(String messageError){
-        view.error.setText(messageError);
+    public void clickEnter(String login,String password) {
+        login.trim();
+        password.trim();
+        if (!(login.isEmpty()||password.isEmpty())){
+            if(InputValidator.UserInputValidator.isEmailValid(login)||InputValidator.UserInputValidator.isLoginValid(login)){
+                if (InputValidator.UserInputValidator.isLoginValid(password)){
+                    view.setError(AllResponse.Authorisation(login,password));
+                }else {view.setError("Недопустимые символы в поле Пароль");}
+            }
+            else {view.setError("Недопустимые символы в поле Логин");}
+        }
+        else {view.setError("Вы не ввели логин или пароль");}
     }
 }

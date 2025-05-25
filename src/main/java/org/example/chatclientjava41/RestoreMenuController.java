@@ -14,11 +14,8 @@ public class RestoreMenuController {
     }
     public void clickRestore(){
 //        запрос в БД если Истина то
-        error("Письмо с восстановлением пароля отправлено вам на почту");
+        view.setError("Письмо с восстановлением пароля отправлено вам на почту");
         //иначе
-        error("Неверный логин или пароль");
-    }
-    public void error(String messageError){
-        view.error.setText(messageError);
+        view.setError("Неверный логин или пароль");
     }
 }

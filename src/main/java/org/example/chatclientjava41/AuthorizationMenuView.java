@@ -10,7 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class AuthorizationMenuView {
-    public Label error = new Label("");
+    private Label error = new Label("");
     private final AuthorizationMenuController daniilController;
 
     public AuthorizationMenuView ( AuthorizationMenuController daniilController ) {
@@ -40,5 +40,9 @@ public class AuthorizationMenuView {
         vbox.setAlignment(Pos.CENTER);//позиционируем по центру
         vbox.setSpacing(10);
         return scene;
+    }
+
+    public void setError(String error) {
+        this.error.setText(error);
     }
 }
