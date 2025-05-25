@@ -9,7 +9,7 @@ public class AuthorizationMenuController {
     private AuthorizationMenuView view;
     private SceneNavigator sceneNavigator;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final ApplicationState appState = ApplicationState.getInstance();
+//    private final ApplicationState appState = ApplicationState.getInstance(); //коммент master
 
     public void setView(AuthorizationMenuView view) {
         this.view = view;

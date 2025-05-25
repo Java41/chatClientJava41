@@ -15,9 +15,12 @@ public class RegistrationMenuView {
     }
     public Scene RegistrationScene() {
 
-        TextField login = new TextField("Логин:");
-        TextField password = new TextField("Пароль:");
-        TextField email = new TextField("Email:");
+        TextField login = new TextField();
+        login.setPromptText("Логин:");
+        TextField password = new TextField();
+        password.setPromptText("Пароль:");
+        TextField email = new TextField();
+        email.setPromptText("Email:");
         Button authMenuButton = new Button();
         Button registrationButton = new Button();
         registrationButton.setOnAction(actionEvent -> registrationController.clickRegistration(login.getText(),password.getText(), email.getText()));

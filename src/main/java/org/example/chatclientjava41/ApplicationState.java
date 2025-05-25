@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 
 public class ApplicationState {
 
-    private static final ApplicationState applicationState;
+    private static ApplicationState applicationState;
     private SceneNavigator sceneNavigator;
     private String accessToken;
     private String refreshToken;

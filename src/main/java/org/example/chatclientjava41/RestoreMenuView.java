@@ -19,7 +19,8 @@ public class RestoreMenuView{
         VBox vBox=new VBox();//сначала объявляем vbox и scene применяем к сцене стиль, потом запаковываем кнопки и прочее
         Scene scene = new Scene(vBox, 500, 250);
         scene.getStylesheets().add(getClass().getResource("/StyleRestoreMenu.css").toExternalForm());
-        TextField email=new TextField("Email");
+        TextField email=new TextField();
+        email.setPromptText("Email");
         Button restoreButton=new Button("Восстановить пароль");
         Button authMenuButton=new Button("Назад к авторизации");
         authMenuButton.getStyleClass().add("secondary");//так можно присвоить другой стиль который есть в файле .css, еслиб не присвоил былаб кнопка(по умолчанию для стиля)-черная
