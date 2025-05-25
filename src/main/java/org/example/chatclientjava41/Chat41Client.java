@@ -10,12 +10,14 @@ import javafx.stage.Stage;
 
 public class Chat41Client extends Application {
     private Stage primaryStage;
+    private static ApplicationState applicationState;
 //    private BorderPane rootLayout;
     @Override
     public void start(Stage stage) {
-        SceneNavigator sceneNavigator=new SceneNavigator();
-        this.primaryStage = sceneNavigator;
-
+        applicationState=ApplicationState.getApplicationState();
+        applicationState.updateAuthState("asasfasfasfsa","asfasfasg");//хз мы же гдето должны хранить данные о наличии токенов, если да, то тут должна быть загрузка стартовых данных приложения
+        this.primaryStage = applicationState.getSceneNavigator();//состояние приложения должно управлять диспечером окон или мб не давать весь диспечер окон а только текущее окно??
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
