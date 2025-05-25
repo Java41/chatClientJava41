@@ -33,11 +33,9 @@ public class AllResponse {
         }catch (IOException e){
             return "Error auth";
         }
-        Response response = client.newCall(request).execute();
-        return response.body().string();
     }
 
-    }
+
 //_____________________________Выход пользователя_______________________________
     public static String Logout() throws IOException {
         //запрос токена из состояния приложения
@@ -58,7 +56,7 @@ public class AllResponse {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n}");
         Request request = new Request.Builder()
-                .url(SEVER_URL + REFRESH_PATH)
+                .url(SERVER_URL + REFRESH_PATH)
                 .method("POST", body)
                 .addHeader("Content-Type", JSON_MEDIA)
                 .addHeader("Accept", JSON_MEDIA)
@@ -72,7 +70,7 @@ public class AllResponse {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \""+email+"\",\n  \"login\": \""+login+"\",\n  \"password\": \""+password+"\",\n  \"birthdate\": \""+date+"\"\n}");
         Request request = new Request.Builder()
-                .url(SEVER_URL + REGISTRATION_PATH)
+                .url(SERVER_URL + REGISTRATION_PATH)
                 .method("POST", body)
                 .addHeader("Content-Type", JSON_MEDIA)
                 .addHeader("Accept", JSON_MEDIA)
@@ -87,7 +85,7 @@ public static String ChangeMail(String email,String password) throws IOException
     MediaType mediaType = MediaType.parse(JSON_MEDIA);
     RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \""+email+"\",\n  \"password\": \""+password+"\"\n}");
     Request request = new Request.Builder()
-            .url(SEVER_URL + UPDATE_EMAIL)
+            .url(SERVER_URL + UPDATE_EMAIL)
             .method("POST", body)
             .addHeader("Content-Type", JSON_MEDIA)
             .addHeader("Accept", JSON_MEDIA)
@@ -102,7 +100,7 @@ public static String ChangeMail(String email,String password) throws IOException
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"username\": \""+username+"\"\n}");
         Request request = new Request.Builder()
-                .url(SEVER_URL + UPDATE_NAME)
+                .url(SERVER_URL + UPDATE_NAME)
                 .method("POST", body)
                 .addHeader("Content-Type", JSON_MEDIA)
                 .addHeader("Accept", JSON_MEDIA)
