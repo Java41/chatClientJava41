@@ -12,8 +12,6 @@ public class ApplicationState {
     private long tokenExpirationTime;//время до обновления токена
     private boolean isTokenRefreshInProgress = false;//защита от множественных запросов на обновление токена
     private boolean isInitialAuthCheckDone = false;//Индикатор того, что приложение проверило наличие сохранённых токенов при старте
-
-
     public static ApplicationState getApplicationState(){
         if(applicationState==null){applicationState=new ApplicationState();}
         return applicationState;

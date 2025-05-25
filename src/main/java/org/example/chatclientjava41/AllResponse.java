@@ -18,7 +18,7 @@ public class AllResponse {
     private static final OkHttpClient client = new OkHttpClient().newBuilder().build();
 
 
-    public static String Authorisation(String login, String password){//сделать войд и при положительном ответе данные в состояние приложения
+    public static String Authorisation(String login, String password){//при положительном ответе данные в состояние приложения на updateAuthState(String accessToken, String refreshToken)
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \""+login+"\",\n  \"password\": \""+password+"\"\n}");
         Request request = new Request.Builder()

@@ -1,15 +1,11 @@
 package org.example.chatclientjava41;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
 
 public class AuthorizationMenuController {
     private AuthorizationMenuView view;
     private SceneNavigator sceneNavigator;
     private final ObjectMapper objectMapper = new ObjectMapper();
-//    private final ApplicationState appState = ApplicationState.getInstance(); //коммент master
 
     public void setView(AuthorizationMenuView view) {
         this.view = view;
@@ -40,7 +36,10 @@ public class AuthorizationMenuController {
         }
         else {view.setError("Вы не ввели логин или пароль");}
 
-//мастер писал
+//Александр я пока закомментил твой труд) лучше пусть состояние ApplicationState при приеме токенов решает о том будет ли открыто основное окно или авторизация,
+// т.к. с холодного запуска может быть ситуация что токены уже есть и окно авторизации даже не откроется как и его контроллер
+// да и просто не хотелось бы чтоб все вокруг в кучу мешалось
+        //а вот с кучей запросов былоб топ помочь
 //     public void clickEnter(String login, String password) {
 //         try {
 //             System.out.println("Попытка входа: " + login);
