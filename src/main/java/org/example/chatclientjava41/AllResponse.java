@@ -4,34 +4,31 @@ import okhttp3.*;
 import java.io.IOException;
 
 public class AllResponse {
+    private static final String SEVER_URL = "https://faruegonar.beget.app/";
+    private static final String PUB_KEY_PATH = "public-key";
+    private static final String LOGIN_PATH = "auth/login";
+    private static final String LOGOUT_PATH= "auth/logout";
+    private static final String REFRESH_PATH = "auth/refresh";
+    private static final String CONTACTS_PATH = "contacts";
+    private static final String JSON_MEDIA = "application/json";
+    private static OkHttpClient client = new OkHttpClient().newBuilder().build();
 
-    OkHttpClient client = new OkHttpClient().newBuilder()
-            .build();
-    MediaType mediaType = MediaType.parse("application/json");
-    RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}");
-    Request request = new Request.Builder()
-            .url("https://faruegonar.beget.app/auth/login")
-            .method("POST", body)
-            .addHeader("Content-Type", "application/json")
-            .addHeader("Accept", "application/json")
-            .build();
-    Response response = client.newCall(request).execute();
-
-    public AllResponse() throws IOException {
+    public static String Authorisation(String login, String password) throws IOException {
+        MediaType mediaType = MediaType.parse(JSON_MEDIA);
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \""+login+"\",\n  \"password\": \""+password+"\"\n}");
+        Request request = new Request.Builder()
+                .url(SEVER_URL + LOGIN_PATH)
+                .method("POST", body)
+                .addHeader("Content-Type", JSON_MEDIA)
+                .addHeader("Accept", JSON_MEDIA)
+                .build();
+        Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();
+        return responseBody;
     }
-}
-//_____________________________Аутентификация пользователя_______________________________
-//
-//MediaType mediaType = MediaType.parse("application/json");
-//RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}");
-//Request request = new Request.Builder()
-//        .url("//auth/login")
-//        .method("POST", body)
-//        .addHeader("Content-Type", "application/json")
-//        .addHeader("Accept", "application/json")
-//        .build();
-//Response response = client.newCall(request).execute();
-            //Успешный ответ_______________________________
+
+
+    //Успешный ответ_______________________________
 //        {
 //        "id": "<long>",
 //        "username": "<string>",
@@ -39,16 +36,30 @@ public class AllResponse {
 //        "accessToken": "<string>",
 //        "refreshToken": "<string>"
 //        }
-            //Отсутствует пароль или почта_______________________________
+    //Отсутствует пароль или почта_______________________________
 //        {
 //        "error": "Email и пароль обязательны"
 //        }
-            //Неверные учетные данные_______________________________
+    //Неверные учетные данные_______________________________
 //        {
 //        "error": "Неверные учетные данные"
 //        }
 //_____________________________Выход пользователя_______________________________
-//
+    public static String Logout() throws IOException {
+        //запрос токена из состояния приложения
+        MediaType mediaType = MediaType.parse(JSON_MEDIA);
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n}");
+        Request request = new Request.Builder()
+                .url(SEVER_URL + LOGOUT_PATH)
+                .method("POST", body)
+                .addHeader("Content-Type", JSON_MEDIA)
+                .addHeader("Accept", JSON_MEDIA)
+                .build();
+        Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();
+        return responseBody;
+    }
+}
 //MediaType mediaType = MediaType.parse("application/json");
 //RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n}");
 //Request request = new Request.Builder()
