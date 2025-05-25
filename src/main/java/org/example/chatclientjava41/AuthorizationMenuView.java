@@ -19,14 +19,21 @@ public class AuthorizationMenuView {
     public Scene AuthorizationScene () {
         VBox vbox = new VBox();
         Scene scene = new Scene(vbox, 500, 250);
-        TextField login = new TextField("Логин:");
-        TextField password = new TextField("Пароль:");
+        // логин и пароль захардкожены для удобства)
+        TextField login = new TextField("user@example.com");
+        login.setPromptText("Логин");
+        TextField password = new TextField("password123");
+        password.setPromptText("Пароль");
         scene.getStylesheets().add(getClass().getResource("/StyleRestoreMenu.css").toExternalForm());
         Button logInButton = new Button("Войти");
         Button registrationMenuButton = new Button("Регистрация");
         Button restoreMenuButton = new Button("Восстановить пароль");
         restoreMenuButton.getStyleClass().add("secondary");
-        logInButton.setOnAction(actionEvent -> daniilController.clickEnter(login.getText(), password.getText()));
+        logInButton.setOnAction(
+                actionEvent -> daniilController.clickEnter(
+                        login.getText(),
+                        password.getText())
+        );
         registrationMenuButton.setOnAction(actionEvent -> daniilController.clickMenuRegistration());
         restoreMenuButton.setOnAction(actionEvent -> daniilController.clickMenuRestorePass());
         HBox hbox1 = new HBox(logInButton,registrationMenuButton);
