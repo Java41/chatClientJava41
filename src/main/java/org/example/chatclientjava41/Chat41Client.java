@@ -1,22 +1,16 @@
 package org.example.chatclientjava41;
 
 import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Chat41Client extends Application {
-    private Stage primaryStage;
-    private static ApplicationState applicationState;
-//    private BorderPane rootLayout;
+
+    //    private BorderPane rootLayout;
     @Override
     public void start(Stage stage) {
-        applicationState=ApplicationState.getApplicationState();
-        applicationState.updateAuthState("asasfasfasfsa","asfasfasg");//хз мы же гдето должны хранить данные о наличии токенов, если да, то тут должна быть загрузка стартовых данных приложения
-        this.primaryStage = applicationState.getSceneNavigator();//состояние приложения должно управлять диспечером окон или мб не давать весь диспечер окон а только текущее окно??
+        ApplicationState applicationState = ApplicationState.getApplicationState();
+        applicationState.updateAuthState("accessToken","refreshToken");//хз мы же гдето должны хранить данные о наличии токенов, если да, то тут должна быть загрузка стартовых данных приложения
+        Stage primaryStage = applicationState.getSceneNavigator();//состояние приложения должно управлять диспечером окон или мб не давать весь диспечер окон а только текущее окно??
         primaryStage.show();
     }
 

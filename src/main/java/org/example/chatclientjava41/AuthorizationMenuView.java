@@ -1,6 +1,5 @@
 package org.example.chatclientjava41;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,6 +7,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import java.util.Objects;
 
 public class AuthorizationMenuView {
     private Label error = new Label("");
@@ -24,7 +25,7 @@ public class AuthorizationMenuView {
         login.setPromptText("Логин:");
         TextField password = new TextField("password123");
         password.setPromptText("Пароль:");
-        scene.getStylesheets().add(getClass().getResource("/StyleRestoreMenu.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/StyleRestoreMenu.css")).toExternalForm());
         Button logInButton = new Button("Войти");
         Button registrationMenuButton = new Button("Регистрация");
         Button restoreMenuButton = new Button("Восстановить пароль");
@@ -36,12 +37,12 @@ public class AuthorizationMenuView {
         );
         registrationMenuButton.setOnAction(actionEvent -> daniilController.clickMenuRegistration());
         restoreMenuButton.setOnAction(actionEvent -> daniilController.clickMenuRestorePass());
-        HBox hbox1 = new HBox(logInButton,registrationMenuButton);
-        hbox1.setSpacing(10);//расстояние между объектами внутри
-        hbox1.setAlignment(Pos.CENTER);
+        HBox hbox = new HBox(logInButton,registrationMenuButton);
+        hbox.setSpacing(10);//расстояние между объектами внутри
+        hbox.setAlignment(Pos.CENTER);
         vbox.getChildren().add(login);//упаковываем все элементы в vbox
         vbox.getChildren().add(password);
-        vbox.getChildren().add(hbox1);
+        vbox.getChildren().add(hbox);
         vbox.getChildren().add(restoreMenuButton);
         vbox.getChildren().add(error);
         vbox.setAlignment(Pos.CENTER);//позиционируем по центру

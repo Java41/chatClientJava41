@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AuthorizationMenuController {
     private AuthorizationMenuView view;
     private SceneNavigator sceneNavigator;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void setView(AuthorizationMenuView view) {
         this.view = view;
@@ -24,8 +23,8 @@ public class AuthorizationMenuController {
     }
 
     public void clickEnter(String login,String password) {
-        login.trim();
-        password.trim();
+        login= login.trim();
+        password= password.trim();
         if (!(login.isEmpty()||password.isEmpty())){
             if(InputValidator.UserInputValidator.isEmailValid(login)||InputValidator.UserInputValidator.isLoginValid(login)){
                 if (InputValidator.UserInputValidator.isLoginValid(password)){
