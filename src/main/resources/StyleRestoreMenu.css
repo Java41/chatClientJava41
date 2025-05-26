@@ -1,0 +1,53 @@
+/* Файл был получен путем отрисовки в Figma, затем оттуда скопировал код элементов в виде .css затем deepseek мне конвертировал в формат javaFX */
+/* Основная панель (аналог вашего контейнера) */
+.root {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #FF0000;
+    -fx-border-width: 5px;
+    -fx-pref-width: 500px;
+    -fx-pref-height: 250px;
+    -fx-min-width: 500px;
+    -fx-max-width: 500px;
+    -fx-min-height: 350px;
+    -fx-max-height: 350px;
+}
+
+/* Стиль для текстового поля (аналог Field) */
+.text-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 8px;
+    -fx-pref-width: 400px;
+    -fx-pref-height: 40px;
+    -fx-padding: 8px 16px;
+    -fx-font-family: 'Inter';/* ввиду того что это бинд шрифта у которого есть параметры гдето записаные, Idea будет ругаться если вы попробуете изменять в настроеном стиле параметры шрифт */
+    -fx-font-size: 20px;/* так что не трогаем надписи с словами -font- или удаляем маркировку шрифта 'Inter' и будут обычные буквы */
+    -fx-font-weight: 500;
+    -fx-text-fill: #828282;
+}
+
+/* Стиль для основной кнопки (Восстановить пароль) */
+.button {
+    -fx-background-color: #000000;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'Inter';
+    -fx-font-size: 16px;
+    -fx-font-weight: 500;
+    -fx-pref-width: 200px;
+    -fx-pref-height: 40px;
+}
+.button:hover {/* изменение цвета при наведении на кнопку*/
+    -fx-background-color: #333333;
+}
+
+/* Стиль для вторичной кнопки */
+.button.secondary {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #040436;
+    -fx-pref-width: 200px;
+    -fx-pref-height: 30px;
+}
+.button.secondary:hover {
+    -fx-background-color: #F0F0F0;
+}

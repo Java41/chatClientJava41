@@ -10,7 +10,7 @@ import java.awt.event.*;
 import java.io.File;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-    public class MainView extends JFrame {
+    public class MainMenuView extends JFrame {
 
         // Данные пользователя (профиль)
         private String userName = "Simon";
@@ -34,7 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
         private JButton imageButton;
         private JButton voiceButton;
 
-        public MainView() {
+        public MainMenuView() {
             setTitle("Chat Application");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setSize(900, 600);
@@ -362,7 +362,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
         public static void main(String[] args) {
             SwingUtilities.invokeLater(() -> {
-                MainView view = new MainView();
+                MainMenuView view = new MainMenuView();
                 view.setVisible(true);
             });
         }

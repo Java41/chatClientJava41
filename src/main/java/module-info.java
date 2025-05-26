@@ -12,6 +12,7 @@ module org.example.chatclientjava41 {
     requires java.desktop;
     requires jjwt.api;
     requires okhttp3;
+    requires com.fasterxml.jackson.databind;
 
     opens org.example.chatclientjava41 to javafx.fxml;
     exports org.example.chatclientjava41;
