@@ -16,7 +16,7 @@ public class ViktorController {
     public void clickMenuAuth(){
         sceneNavigator.setAuth();
     }
-
+    //ы
     public void clickRegistration(String login, String password, String email){
 
 
