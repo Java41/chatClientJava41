@@ -5,6 +5,7 @@ import okhttp3.*;
 import java.io.IOException;
 
 public class AllResponse {
+    private static final ApplicationState applicationState= ApplicationState.getApplicationState();//управление состоянием будут осуществлять только ответы с сервера
     private static final String SERVER_URL = "https://java41.ru/";
     private static final String PUB_KEY_PATH = "public-key";
     private static final String LOGIN_PATH = "auth/login";
@@ -17,6 +18,22 @@ public class AllResponse {
     private static final String JSON_MEDIA = "application/json";
     private static final OkHttpClient client = new OkHttpClient().newBuilder().build();
 
+    public static String getPublicKey(){
+        Request request = new Request.Builder()
+                .url(SERVER_URL +PUB_KEY_PATH)
+                .get()
+                .build();
+        try (Response response = client.newCall(request).execute()){
+            String responseBody = response.body().string();
+            if(responseBody.contains("-----BEGIN PUBLIC KEY-----") && responseBody.contains("-----END PUBLIC KEY-----")){
+                responseBody=responseBody.replace("-----BEGIN PUBLIC KEY-----", "")
+                        .replace("-----END PUBLIC KEY-----", "").replaceAll("\\s", "");
+                return responseBody;
+            }else return "Публичный ключ не был получен";
+        }catch (IOException e){
+            return "Ошибка";
+        }
+    }
 
     public static String Authorisation(String login, String password){//при положительном ответе данные в состояние приложения на updateAuthState(String accessToken, String refreshToken)
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
@@ -29,7 +46,14 @@ public class AllResponse {
                 .build();
         try (Response response = client.newCall(request).execute()){
             String responseBody = response.body().string();
-            return responseBody;
+            if(responseBody.contains("\"accessToken\":\"") && responseBody.contains("\",\"refreshToken\":\"")){
+                responseBody=responseBody.replaceAll("[{}\"]","");
+                responseBody=responseBody.replace("accessToken:","");
+                String[]tokens=responseBody.split(",refreshToken:");
+                applicationState.updateAuthState(tokens);
+                return "Вход успешно состоялся";
+            }else return "Неверный логин или пароль";
+
         }catch (IOException e){
             return "Error auth";
         }
