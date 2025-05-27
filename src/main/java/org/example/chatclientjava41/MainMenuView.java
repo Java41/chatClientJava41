@@ -33,9 +33,7 @@ public class MainMenuView{
         root.setLeft(contactsBox);
         root.setRight(profileBox);
         root.setCenter(chatBox);
-
-        VBox vBox = new VBox();
-        Scene scene = new Scene(vBox, 500, 250);
+        Scene scene = new Scene(root, 1500, 500);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/StyleRestoreMenu.css")).toExternalForm());
         return scene;
     }
