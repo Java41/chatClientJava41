@@ -45,6 +45,7 @@ public class ApplicationState {
         for (int i=0;i<2;i++){
            try {
                claimsJws = jwtParser.parseClaimsJws(tokens[i]);
+
            } catch (ExpiredJwtException eje) {
                System.out.println("   ПРОВЕРКА НЕ ПРОШЛА: Просроченный токен (ExpiredJwtException) - " + eje.getMessage());
            } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
@@ -52,7 +53,7 @@ public class ApplicationState {
            } catch (Exception e) { // Более общий перехватчик для неожиданных ошибок парсинга
                System.out.println("   Неожиданная ошибка при проверке токена: " + e.getClass().getSimpleName() + " - " + e.getMessage());
            }
-            if(i==0){
+            if(i==0&&jwtParser.isSigned(tokens[i])){
                 this.accessToken = tokens[i];
                 try {this.currentUser=new CurrentUser(claimsJws.getBody().get("groups").toString(),
                         claimsJws.getBody().get("birthdate").toString(),
@@ -77,8 +78,9 @@ public class ApplicationState {
        }
         if(accessToken!=null&&refreshToken!=null&&jwtParser!=null){
             this.isAuthenticated=true;
-            sceneNavigator.setRegistration();
-        }else sceneNavigator.setMain();
+            sceneNavigator.setMain();
+
+        }else sceneNavigator.setRegistration();
     }
     //_____________________________Обновление токена_______________________________
     //Успешный ответ_______________________________
