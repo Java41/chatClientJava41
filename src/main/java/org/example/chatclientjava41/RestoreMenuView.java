@@ -1,16 +1,15 @@
 package org.example.chatclientjava41;
-
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.Objects;
+
 public class RestoreMenuView{
-    private RestoreMenuController restoreController;
+    private final RestoreMenuController restoreController;
     private Label error=new Label("");
     public RestoreMenuView(RestoreMenuController restoreController) {
         this.restoreController = restoreController;
@@ -18,7 +17,7 @@ public class RestoreMenuView{
     public Scene RestoreScene(){
         VBox vBox=new VBox();//сначала объявляем vbox и scene применяем к сцене стиль, потом запаковываем кнопки и прочее
         Scene scene = new Scene(vBox, 500, 250);
-        scene.getStylesheets().add(getClass().getResource("/StyleRestoreMenu.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/StyleRestoreMenu.css")).toExternalForm());
         TextField email=new TextField();
         email.setPromptText("Email");
         Button restoreButton=new Button("Восстановить пароль");

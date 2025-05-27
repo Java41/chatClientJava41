@@ -3,9 +3,9 @@ package org.example.chatclientjava41;
 import javafx.stage.Stage;
 
 public class SceneNavigator extends Stage {
-    private RestoreMenuView restoreView;
-    private AuthorizationMenuView authorizationView;
-    private RegistrationMenuView registrationView;
+    private final RestoreMenuView restoreView;
+    private final AuthorizationMenuView authorizationView;
+    private final RegistrationMenuView registrationView;
     private MainMenuView mainView;
     public SceneNavigator() {
         RestoreMenuController restoreController=new RestoreMenuController();
@@ -55,6 +55,5 @@ public class SceneNavigator extends Stage {
     public void setRegistration(){
         this.setScene(registrationView.RegistrationScene());
         this.setTitle("Регистрация");
-
     }
 }
