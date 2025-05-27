@@ -78,7 +78,7 @@ public class ApplicationState {
         if(accessToken!=null&&refreshToken!=null&&jwtParser!=null){
             this.isAuthenticated=true;
             sceneNavigator.setRegistration();
-        }else sceneNavigator.setAuth();
+        }else sceneNavigator.setMain();
     }
     //_____________________________Обновление токена_______________________________
     //Успешный ответ_______________________________
