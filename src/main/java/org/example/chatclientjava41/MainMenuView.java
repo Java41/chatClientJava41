@@ -58,7 +58,7 @@ public class MainMenuView{
             contactItem.setPadding(new Insets(5));
             contactItem.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc;");
 
-            // Аватарка или буква
+            // Аватарка
             Circle avatarCircle = new Circle(20, Color.LIGHTGRAY);
             Label initialsLabel = new Label("A");
             initialsLabel.setFont(Font.font(14));
