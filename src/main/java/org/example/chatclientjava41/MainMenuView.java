@@ -9,6 +9,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
+import java.util.Objects;
+
 public class MainMenuView{
     private MainMenuController mainMenuController;
 
@@ -32,7 +34,9 @@ public class MainMenuView{
         root.setRight(profileBox);
         root.setCenter(chatBox);
 
-        Scene scene = new Scene(root, 1200, 700);
+        VBox vBox = new VBox();
+        Scene scene = new Scene(vBox, 500, 250);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/StyleRestoreMenu.css")).toExternalForm());
         return scene;
     }
 
