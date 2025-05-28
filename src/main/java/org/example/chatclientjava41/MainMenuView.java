@@ -46,7 +46,7 @@ public class MainMenuView{
         contactsVBox.setStyle("-fx-background-color: #f0f0f0;");
 
         // Кнопка "найти чаты"
-        Button findChatsBtn = new Button("Найти чаты");
+        Button findChatsBtn = new Button("Создать чат");
         findChatsBtn.setMaxWidth(Double.MAX_VALUE);
 
         // Список контактов (пример)
@@ -54,6 +54,7 @@ public class MainMenuView{
         contactsList.setSpacing(5);
 
         for (int i = 1; i <= 5; i++) {
+
             HBox contactItem = new HBox();
             contactItem.setAlignment(Pos.CENTER_LEFT);
             contactItem.setSpacing(10);
@@ -79,10 +80,10 @@ public class MainMenuView{
             lastMsgLabel.setTextFill(Color.GRAY);
 
             contactInfo.getChildren().addAll(nameLabel, lastMsgLabel);
-
             contactItem.getChildren().addAll(avatarStack, contactInfo);
-
-            contactsList.getChildren().add(contactItem);
+            ButtonChat contact=new ButtonChat("",contactItem);//кнопка будет содержать в себе чат
+            contact.prefWidthProperty().bind(contactsList.widthProperty());
+            contactsList.getChildren().add(contact);
         }
 
         ScrollPane scrollPane = new ScrollPane(contactsList);
@@ -189,6 +190,7 @@ public class MainMenuView{
         // Окно сообщений (список сообщений)
         VBox messagesContainer= new VBox();
         messagesContainer.setSpacing(10);
+        messagesContainer.prefHeightProperty().bind(chatVBox.heightProperty());
 
         // Пример сообщения от контакта (слева)
         messagesContainer.getChildren().add(createMessageBubble("Привет!", false));
@@ -202,23 +204,29 @@ public class MainMenuView{
 // Сделать центр - это весь чат с фиксированной шириной или растягивающийся по ширине.
         chatContent.prefWidthProperty().bind(chatContent.widthProperty());
 
+
         chatVBox.getChildren().add(chatContent);
 
 // Вернуть готовый контейнер для сцены.
         return chatVBox;
     }
 
-    private static VBox getVBox(VBox messagesContainer, HBox headerTopRow) {
+    private VBox getVBox(VBox messagesContainer, HBox headerTopRow) {
         ScrollPane messagesScroll= new ScrollPane(messagesContainer);
+
         messagesScroll.setFitToWidth(true);
 
 // Ввод сообщения и кнопки справа от него
         TextField messageInput= new TextField();
+        messageInput.setOnAction(event ->mainMenuController.sendMessageField(messageInput.getText()));
         messageInput.setPromptText("Введите сообщение");
 
         Button voiceMsgBtn= new Button("\uD83D\uDD0A"); // Микрофон или голосовое сообщение
+        voiceMsgBtn.setPrefWidth(50);
         Button emojiBtn= new Button("\uD83D\uDE03");     // Эмодзи
+        emojiBtn.setPrefWidth(50);
         Button imageBtn= new Button("\uD83D\uDCF7");     // Изображение
+        imageBtn.setPrefWidth(50);
 
         HBox messageInputArea= new HBox(
                 messageInput,
@@ -226,6 +234,7 @@ public class MainMenuView{
                 emojiBtn,
                 imageBtn
         );
+        messageInput.prefWidthProperty().bind(messageInputArea.widthProperty());
         messageInputArea.setSpacing(5);
 
 // Общий блок с сообщениями и вводом

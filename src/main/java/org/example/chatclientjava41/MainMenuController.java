@@ -10,6 +10,9 @@ public class MainMenuController {
     public void setSceneNavigator(SceneNavigator sceneNavigator){
         this.sceneNavigator=sceneNavigator;
     }
+    public static void sendMessageField(String textMessage){
+        System.out.println(AllResponse.SendMessage(1,textMessage));
+    }
 //_____________________________Выход пользователя_______________________________
     //Успешный ответ_______________________________
 //        {

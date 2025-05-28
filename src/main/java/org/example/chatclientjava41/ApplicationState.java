@@ -7,19 +7,30 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ApplicationState {
 
     private static ApplicationState applicationState;
     private final SceneNavigator sceneNavigator=new SceneNavigator();
     private JwtParser jwtParser;
-    private CurrentUser currentUser;
     private String accessToken;
     private String refreshToken;
-    private boolean isAuthenticated = false;
+    private static volatile boolean isAuthenticated = false;
     private long tokenExpirationTime;//время до обновления токена
-    private boolean isTokenRefreshInProgress = false;//защита от множественных запросов на обновление токена
+    private static volatile boolean isTokenRefreshInProgress = false;//защита от множественных запросов на обновление токена
     private boolean isInitialAuthCheckDone = false;//Индикатор того, что приложение проверило наличие сохранённых токенов при старте
+    private Thread refreshTokenResponse;
+    //_____________________________________пользователь________________
+    private String role;
+    private String birthdate;
+    private String email;
+    private String username;
+    private String firstname;
+    private String lastname;
+    private Map<Integer, Map<Date,String>> chats=new HashMap<>();
 
     public static ApplicationState getApplicationState(){
         if(applicationState==null){applicationState=new ApplicationState();}
@@ -55,20 +66,20 @@ public class ApplicationState {
            }
             if(i==0&&jwtParser.isSigned(tokens[i])){
                 this.accessToken = tokens[i];
-                try {this.currentUser=new CurrentUser(claimsJws.getBody().get("groups").toString(),
-                        claimsJws.getBody().get("birthdate").toString(),
-                        claimsJws.getBody().get("email").toString(),
-                        claimsJws.getBody().get("username").toString(),
-                        claimsJws.getBody().get("firstName").toString(),
-                        claimsJws.getBody().get("lastName").toString());
+                try {this.role= claimsJws.getBody().get("groups").toString();
+                    this.birthdate= claimsJws.getBody().get("birthdate").toString();
+                    this.email= claimsJws.getBody().get("email").toString();
+                    this.username= claimsJws.getBody().get("username").toString();
+                    this.firstname= claimsJws.getBody().get("firstName").toString();
+                    this.lastname= claimsJws.getBody().get("lastName").toString();
                     this.tokenExpirationTime = (long)claimsJws.getBody().get("exp");
                     //String[] parts = tokens[i].split("[.]");//другой способ дешифровки-без claims
                     //String header = new String(Base64.getUrlDecoder().decode(parts[0]));
                     //String payload = new String(Base64.getUrlDecoder().decode(parts[1]));
                     //___________полная выписка из дешифровки токена______________________
-                    //StringBuilder claimsStr = new StringBuilder("   ПРОВЕРЕННЫЕ УТВЕРЖДЕНИЯ (CLAIMS) из полезной нагрузки:\n");
-                    //claimsJws.getBody().forEach((k, v) -> claimsStr.append(String.format("       %s: %s\n", k, v)));
-                    //System.out.println(claimsStr.toString());
+//                    StringBuilder claimsStr = new StringBuilder("   ПРОВЕРЕННЫЕ УТВЕРЖДЕНИЯ (CLAIMS) из полезной нагрузки:\n");
+//                    claimsJws.getBody().forEach((k, v) -> claimsStr.append(String.format("       %s: %s\n", k, v)));
+//                    System.out.println(claimsStr.toString());
                 } catch (Exception e) { // Ошибка декодирования Base64 или другая
                     System.out.println("   Ошибка при декодировании или отображении частей токена: " + e.getMessage());
                 }
@@ -77,26 +88,45 @@ public class ApplicationState {
             }
        }
         if(accessToken!=null&&refreshToken!=null&&jwtParser!=null){
-            this.isAuthenticated=true;
+            isAuthenticated=true;
             sceneNavigator.setMain();
+            refreshTokenResponse=new Thread(()->{
+                while(isAuthenticated){
+                    if(!isTokenRefreshInProgress){
+                        if((System.currentTimeMillis() / 1000)+7000>tokenExpirationTime){
+                            isTokenRefreshInProgress=true;
+                        }else {
+                            AllResponse.RefreshToken();
+                        }
+                    }
 
-        }else sceneNavigator.setRegistration();
+                    try{Thread.sleep(500);}
+                    catch (InterruptedException e){
+                        System.out.println(e.getMessage());
+                    }
+                }
+            });
+            refreshTokenResponse.start();
+        }else sceneNavigator.setAuth();
     }
-    //_____________________________Обновление токена_______________________________
-    //Успешный ответ_______________________________
-//        {
-//        "id": "<long>",
-//        "username": "<string>",
-//        "email": "<string>",
-//        "accessToken": "<string>",
-//        "refreshToken": "<string>"
-//        }
-    //Неверный refresh token_______________________________
-//        {
-//        "error": "Refresh token обязателен"
-//        }
-    //Неверный refresh token_______________________________
-//        {
-//        "error": "Недействительный или истекший refresh token"
-//        }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+        if (refreshToken==null){
+            refreshTokenResponse.interrupt();
+            isAuthenticated=false;
+            sceneNavigator.setAuth();
+        }else{
+            this.refreshToken = refreshToken;
+            isTokenRefreshInProgress=false;//дописать извлечение срока годности из токена
+        }
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 }
