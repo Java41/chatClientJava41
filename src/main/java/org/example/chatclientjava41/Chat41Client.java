@@ -13,6 +13,7 @@ public class Chat41Client extends Application {
         applicationState.updateAuthState(new String[]{"accessToken","refreshToken"});//хз мы же гдето должны хранить данные о наличии токенов, если да, то тут должна быть загрузка стартовых данных приложения
         Stage primaryStage = applicationState.getSceneNavigator();//состояние приложения должно управлять диспечером окон или мб не давать весь диспечер окон а только текущее окно??
         primaryStage.show();
+        //изза запуска потока на запросы обновления токена, приложение теперь закрывается не доконца
     }
 
     public static void main(String[] args) {
