@@ -1,7 +1,4 @@
 package org.example.chatclientjava41;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.scene.control.Label;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -16,6 +13,7 @@ public class AllResponse {
     private static final String REGISTRATION_PATH="auth/register";
     private static final String UPDATE_EMAIL="auth/update-email";
     private static final String UPDATE_NAME="auth/update-username";
+    private static final String SEND_MESSAGE="messages";
     private static final String CONTACTS_PATH = "contacts";
     private static final String JSON_MEDIA = "application/json";
     private static final OkHttpClient client = new OkHttpClient().newBuilder().build();
@@ -26,7 +24,7 @@ public class AllResponse {
                 .get()
                 .build();
         try (Response response = client.newCall(request).execute()){
-            String responseBody = response.body().string();
+            String responseBody = response.body() != null ? response.body().string() : null;
             if(responseBody.contains("-----BEGIN PUBLIC KEY-----") && responseBody.contains("-----END PUBLIC KEY-----")){
                 responseBody=responseBody.replace("-----BEGIN PUBLIC KEY-----", "")
                         .replace("-----END PUBLIC KEY-----", "").replaceAll("\\s", "");
@@ -52,7 +50,6 @@ public class AllResponse {
                 responseBody=responseBody.replaceAll("[{}\"]","");
                 responseBody=responseBody.replace("accessToken:","");
                 String[]tokens=responseBody.split(",refreshToken:");
-                System.out.println(responseBody);
                 applicationState.updateAuthState(tokens);
                 return "Вход успешно состоялся";
             }else return "Неверный логин или пароль";
@@ -79,11 +76,34 @@ public class AllResponse {
         return responseBody;
     }
 //_____________________________Обновление токена_______________________________
-    public static String RefreshToken() throws IOException {
+    public static void RefreshToken(){
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n}");
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \""+applicationState.getRefreshToken()+"\"\n}");
         Request request = new Request.Builder()
                 .url(SERVER_URL + REFRESH_PATH)
+                .method("POST", body)
+                .addHeader("Content-Type", JSON_MEDIA)
+                .addHeader("Accept", JSON_MEDIA)
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            String responseBody = response.body().string();
+            if(response.code()==400){
+                System.out.println(response.code()+" "+response.message());
+            }else if(response.code()==401){
+                applicationState.setRefreshToken(null);
+            }else applicationState.setRefreshToken(responseBody);
+        }catch (IOException e){
+            System.out.println("Ошибка получения токена");
+        }
+
+    }
+//_____________________________Регистрация пользователя_______________________________Александру- добавлен логин в регистрацию
+    public static String RegistrationUser(String email,String login,String password,String date) throws IOException {
+        MediaType mediaType = MediaType.parse(JSON_MEDIA);
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \""+email+"\",\n  \"login\": \""+login+"\",\n  \"password\": \""+password+"\",\n  \"birthdate\": \""+date+"\"\n}");
+        Request request = new Request.Builder()
+                .url(SERVER_URL + REGISTRATION_PATH)
                 .method("POST", body)
                 .addHeader("Content-Type", JSON_MEDIA)
                 .addHeader("Accept", JSON_MEDIA)
@@ -91,52 +111,6 @@ public class AllResponse {
         Response response = client.newCall(request).execute();
         String responseBody = response.body().string();
         return responseBody;
-    }
-//_____________________________Регистрация пользователя_______________________________Александру- добавлен логин в регистрацию
-    public static String RegistrationUser(String email,String login,String password,String date) {
-        MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + email + "\",\n  \"login\": \"" + login + "\",\n  \"password\": \"" + password + "\",\n  \"birthdate\": \"" + date + "\"\n}");
-        Request request = new Request.Builder()
-                .url(SERVER_URL + REGISTRATION_PATH)
-                .method("POST", body)
-                .addHeader("Content-Type", JSON_MEDIA)
-                .addHeader("Accept", JSON_MEDIA)
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            String responseBody = response.body().string();
-            if (response.code() == 201){
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
-                String accessToken = jsonNode.get("accessToken").asText();
-                String refreshToken = jsonNode.get("refreshToken").asText();
-                applicationState.updateAuthState(new String[] {accessToken, refreshToken});
-                return "Регистрация прошла успешна";
-            }
-            return "Ошибка регистрации: " + response.code();
-        } catch (IOException e) {
-            return "error registration";
-        }
-        //Способ выше подглядел у гпт, насколько я понял всю рутину ковыряния json передаем Jackson-у
-        // ObjectMapper это основной класс Jackson для преобразования между Json и Java
-        // JsonNode — это узел (node) в дереве JSON, полученном через ObjectMapper.readTree(). С его помощью можно «гулять» по структуре ответа без создания дополнительных DTO-классов.
-
-        //Ниже второй вариант, пока закомментил
-        /*
-        try (Response resp = client.newCall(request).execute()) {
-        String body = resp.body().string();
-        if (resp.code() == 201 && body.contains("accessToken")) {
-            // повторяем логику replaceAll/split из Authorisation
-            String cleaned = body.replaceAll("[{}\"]","")
-                               .replace("accessToken:","");
-            String[] tokens = cleaned.split(",refreshToken:");
-            applicationState.updateAuthState(tokens);
-            return "Регистрация прошла успешно";
-        }
-        return "Ошибка регистрации: " + resp.code();
-    } catch (IOException e) {
-        return "error registration";
-    }
-         */
     }
 //_____________________________Обновление емейла_______________________________
 public static String ChangeMail(String email,String password) throws IOException {
@@ -168,6 +142,32 @@ public static String ChangeMail(String email,String password) throws IOException
         String responseBody = response.body().string();
         return responseBody;
     }
+    //_____________________________Отправка сообщения_______________________________
+    public static String SendMessage(Integer recipientId,String message){
+        MediaType mediaType = MediaType.parse(JSON_MEDIA);
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"recipientId\":"+recipientId+",\n  \"content\": \""+message+"\"\n}");
+        Request request = new Request.Builder()
+                .url(SERVER_URL + SEND_MESSAGE)
+                .method("POST", body)
+                .addHeader("Content-Type", JSON_MEDIA)
+                .addHeader("Accept", JSON_MEDIA)
+                .addHeader("Authorization", applicationState.getAccessToken())
+                .build();
+        try (Response response = client.newCall(request).execute()){
+            String responseBody = response.body().string();
+            System.out.println(response.code());
+            if(response.code()==201){
+                return "Сообщение отправлено";
+            }else if(response.code()==401){
+                return "Вы не авторизованы";
+            }else if(response.code()==403){
+                return "Доступ запрещен";
+            }else return "Получатель не найден";
+
+        }catch (IOException e){
+            return "Error auth";
+        }
+    }
 //_____________________________Получение сообщения_______________________________text/plain???
 //
 //MediaType mediaType = MediaType.parse("text/plain");
@@ -180,16 +180,6 @@ public static String ChangeMail(String email,String password) throws IOException
 //        .build();
 //Response response = client.newCall(request).execute();
 
-//_____________________________Отправка сообщения_______________________________
-//MediaType mediaType = MediaType.parse("text/plain");
-//RequestBody body = RequestBody.create(mediaType, "");
-//Request request = new Request.Builder()
-//        .url("//messages?since=1970-01-01T00:00:00&with=<long>")
-//        .method("GET", body)
-//        .addHeader("Accept", "application/json")
-//        .addHeader("Authorization", "••••••")
-//        .build();
-//Response response = client.newCall(request).execute();
 
 //_____________________________Получить всех пользователей_______________________________
 //

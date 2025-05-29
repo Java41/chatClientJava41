@@ -15,7 +15,7 @@ public class SceneNavigator extends Stage {
         this.restoreView = new RestoreMenuView(restoreController);
         this.authorizationView = new AuthorizationMenuView(authorizationController);
         this.registrationView = new RegistrationMenuView(registrationController);
-      //  this.mainView = new MainMenuView(mainMenuController);
+        this.mainView = new MainMenuView(mainMenuController);
         restoreController.setView(restoreView);
         restoreController.setSceneNavigator(this);
         authorizationController.setView(authorizationView);
@@ -33,25 +33,10 @@ public class SceneNavigator extends Stage {
         this.setScene(restoreView.RestoreScene());
         this.setTitle("Восстановление пароля");
     }
-//    public void setMain(String login,String password){
-    // запрос на сервер
-    // Успешный ответ_______________________________
-//        {
-//        "id": "<long>",
-//        "username": "<string>",
-//        "email": "<string>",
-//        "accessToken": "<string>",
-//        "refreshToken": "<string>"
-//        }
-//        this.setScene(mainView.MainScene());
-//        this.setTitle("Чат41");
-    //иначе
-    //authorizationView.error.setText("неверные учетные данные");
-        //Неверные учетные данные_______________________________
-//        {
-//        "error": "Неверные учетные данные"
-//        }
-//    }
+    public void setMain(){
+        this.setScene(mainView.MainScene());
+        this.setTitle("Чат41");
+    }
     public void setRegistration(){
         this.setScene(registrationView.RegistrationScene());
         this.setTitle("Регистрация");
