@@ -1,5 +1,8 @@
 package org.example.chatclientjava41;
 
+import java.io.IOException;
+import java.time.LocalDate;
+
 public class RegistrationMenuController {
 
     private RegistrationMenuView view;
@@ -15,16 +18,34 @@ public class RegistrationMenuController {
     public void clickMenuAuth(){
         sceneNavigator.setAuth();
     }
-    public void clickRegistration(String login, String password, String email){
-        if (login == null || login.trim().isEmpty()){
-            view.setError("Логин не может быть пустым");
+    public void clickRegistration(String login, String password, String email) {
+        if (login.isEmpty() || password.isEmpty() || email.isEmpty()) {
+            view.setError("Все поля обязательны");
+            return;
         }
-        if (password == null || password.length() < 4){
-            view.setError("Пароль должен быть не менее 4 символов");
+
+        if(!(InputValidator.UserInputValidator.isLoginValid(login))){
+            view.setError("Длина логина: 3-20 символов");
+            return;
         }
-        /*
-        Здесь будет логика регистрации (Запрос к БД)
-         */
+
+        if (!(InputValidator.UserInputValidator.isPasswordValid(password))){
+            view.setError("Пароль не меньше 8 символов, с заглавной, строчной, цифрой и спецсимволом");
+            return;
+        }
+
+        if (!(InputValidator.UserInputValidator.isEmailValid(email))){
+            view.setError("Неверный формат Email");
+            return;
+        }
+
+        String resp = AllResponse.RegistrationUser(email, login, password, LocalDate.now().toString());
+        view.setError(resp);
+
+        if ("Регистрация прошла успешно".equals(resp)){
+            sceneNavigator.setAuth();
+        }
+
         //Успешный ответ_______________________________
 //         {
 //        "id": "<long>",
@@ -41,6 +62,6 @@ public class RegistrationMenuController {
 //        {
 //        "error": "Пользователь с таким email уже существует"
 //        }
-        view.setError("");
+
     }
 }
