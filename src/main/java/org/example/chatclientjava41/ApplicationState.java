@@ -65,9 +65,9 @@ public class ApplicationState {
                     //String header = new String(Base64.getUrlDecoder().decode(parts[0]));
                     //String payload = new String(Base64.getUrlDecoder().decode(parts[1]));
                     //___________полная выписка из дешифровки токена______________________
-                    //StringBuilder claimsStr = new StringBuilder("   ПРОВЕРЕННЫЕ УТВЕРЖДЕНИЯ (CLAIMS) из полезной нагрузки:\n");
-                    //claimsJws.getBody().forEach((k, v) -> claimsStr.append(String.format("       %s: %s\n", k, v)));
-                    //System.out.println(claimsStr.toString());
+                    StringBuilder claimsStr = new StringBuilder("   ПРОВЕРЕННЫЕ УТВЕРЖДЕНИЯ (CLAIMS) из полезной нагрузки:\n");
+                    claimsJws.getBody().forEach((k, v) -> claimsStr.append(String.format("       %s: %s\n", k, v)));
+                    System.out.println(claimsStr.toString());
                 } catch (Exception e) { // Ошибка декодирования Base64 или другая
                     System.out.println("   Ошибка при декодировании или отображении частей токена: " + e.getMessage());
                 }

@@ -3,16 +3,19 @@ package org.example.chatclientjava41;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class Chat41Client extends Application {
 
     //    private BorderPane rootLayout;
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException {
         ApplicationState applicationState = ApplicationState.getApplicationState();
         applicationState.responsePublicKey();//получение публичного ключа для проверки достоверности токенов
         applicationState.updateAuthState(new String[]{"accessToken","refreshToken"});//хз мы же гдето должны хранить данные о наличии токенов, если да, то тут должна быть загрузка стартовых данных приложения
         Stage primaryStage = applicationState.getSceneNavigator();//состояние приложения должно управлять диспечером окон или мб не давать весь диспечер окон а только текущее окно??
         primaryStage.show();
+
     }
 
     public static void main(String[] args) {

@@ -1,4 +1,6 @@
 package org.example.chatclientjava41;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.control.Label;
 import okhttp3.*;
 
@@ -50,6 +52,7 @@ public class AllResponse {
                 responseBody=responseBody.replaceAll("[{}\"]","");
                 responseBody=responseBody.replace("accessToken:","");
                 String[]tokens=responseBody.split(",refreshToken:");
+                System.out.println(responseBody);
                 applicationState.updateAuthState(tokens);
                 return "Вход успешно состоялся";
             }else return "Неверный логин или пароль";
@@ -75,7 +78,7 @@ public class AllResponse {
         String responseBody = response.body().string();
         return responseBody;
     }
-//_____________________________Обновление пользователя_______________________________
+//_____________________________Обновление токена_______________________________
     public static String RefreshToken() throws IOException {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n}");
@@ -90,20 +93,51 @@ public class AllResponse {
         return responseBody;
     }
 //_____________________________Регистрация пользователя_______________________________Александру- добавлен логин в регистрацию
-    public static String RegistrationUser(String email,String login,String password,String date) throws IOException {
+    public static String RegistrationUser(String email,String login,String password,String date) {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \""+email+"\",\n  \"login\": \""+login+"\",\n  \"password\": \""+password+"\",\n  \"birthdate\": \""+date+"\"\n}");
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + email + "\",\n  \"login\": \"" + login + "\",\n  \"password\": \"" + password + "\",\n  \"birthdate\": \"" + date + "\"\n}");
         Request request = new Request.Builder()
                 .url(SERVER_URL + REGISTRATION_PATH)
                 .method("POST", body)
                 .addHeader("Content-Type", JSON_MEDIA)
                 .addHeader("Accept", JSON_MEDIA)
                 .build();
-        Response response = client.newCall(request).execute();
-        String responseBody = response.body().string();
-        return responseBody;
-    }
+        try (Response response = client.newCall(request).execute()) {
+            String responseBody = response.body().string();
+            if (response.code() == 201){
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+                String accessToken = jsonNode.get("accessToken").asText();
+                String refreshToken = jsonNode.get("refreshToken").asText();
+                applicationState.updateAuthState(new String[] {accessToken, refreshToken});
+                return "Регистрация прошла успешна";
+            }
+            return "Ошибка регистрации: " + response.code();
+        } catch (IOException e) {
+            return "error registration";
+        }
+        //Способ выше подглядел у гпт, насколько я понял всю рутину ковыряния json передаем Jackson-у
+        // ObjectMapper это основной класс Jackson для преобразования между Json и Java
+        // JsonNode — это узел (node) в дереве JSON, полученном через ObjectMapper.readTree(). С его помощью можно «гулять» по структуре ответа без создания дополнительных DTO-классов.
 
+        //Ниже второй вариант, пока закомментил
+        /*
+        try (Response resp = client.newCall(request).execute()) {
+        String body = resp.body().string();
+        if (resp.code() == 201 && body.contains("accessToken")) {
+            // повторяем логику replaceAll/split из Authorisation
+            String cleaned = body.replaceAll("[{}\"]","")
+                               .replace("accessToken:","");
+            String[] tokens = cleaned.split(",refreshToken:");
+            applicationState.updateAuthState(tokens);
+            return "Регистрация прошла успешно";
+        }
+        return "Ошибка регистрации: " + resp.code();
+    } catch (IOException e) {
+        return "error registration";
+    }
+         */
+    }
 //_____________________________Обновление емейла_______________________________
 public static String ChangeMail(String email,String password) throws IOException {
     MediaType mediaType = MediaType.parse(JSON_MEDIA);
