@@ -92,7 +92,7 @@ public class AllResponse {
                 System.out.println(response.code()+" "+response.message());
             }else if(response.code()==401){
                 applicationState.setRefreshToken(null);
-            }else applicationState.setRefreshToken(responseBody);
+            }//else applicationState.setRefreshToken(responseBody);//еще недодумал
         }catch (IOException e){
             System.out.println("Ошибка получения токена");
         }
@@ -151,7 +151,7 @@ public static String ChangeMail(String email,String password) throws IOException
                 .method("POST", body)
                 .addHeader("Content-Type", JSON_MEDIA)
                 .addHeader("Accept", JSON_MEDIA)
-                .addHeader("Authorization", applicationState.getAccessToken())
+                .addHeader("Authorization","Bearer "+applicationState.getAccessToken())
                 .build();
         try (Response response = client.newCall(request).execute()){
             String responseBody = response.body().string();
