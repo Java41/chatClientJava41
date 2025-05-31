@@ -3,6 +3,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.SignatureException;
+
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
@@ -19,7 +20,7 @@ public class ApplicationState {
     private long tokenExpirationTime;//время до обновления токена
     private static volatile boolean isTokenRefreshInProgress = false;//защита от множественных запросов на обновление токена
     private boolean isInitialAuthCheckDone = false;//Индикатор того, что приложение проверило наличие сохранённых токенов при старте
-    private Timer refreshTokenRequest;
+    private final Timer refreshTokenRequest= new Timer();
     //_____________________________________пользователь________________
     private long id;
     private String role;
@@ -30,10 +31,16 @@ public class ApplicationState {
     private String lastname;
     private Map<Integer, Map<Date,String>> chats=new HashMap<>();
 
+
+    public SceneNavigator getSceneNavigator() {
+        return sceneNavigator;
+    }
+
     public static ApplicationState getApplicationState(){
         if(applicationState==null){applicationState=new ApplicationState();}
         return applicationState;
     }
+
     public void responsePublicKey() {//получение публичного ключа который нужен для декодирования токенов
         try {
             byte[] decodedKey = Base64.getDecoder().decode(AllResponse.getPublicKey());
@@ -43,9 +50,6 @@ public class ApplicationState {
         System.err.println("ОШИБКА при обработке публичного ключа: " + e.getClass().getSimpleName() + " - " + e.getMessage());
         e.printStackTrace();
         }
-    }
-    public SceneNavigator getSceneNavigator() {
-        return sceneNavigator;
     }
 
     public void updateAuthState(String []tokens) {
@@ -72,13 +76,12 @@ public class ApplicationState {
         } catch (Exception e) {
             System.out.println("   Неожиданная ошибка при проверке токена: " + e.getClass().getSimpleName() + " - " + e.getMessage());
         }
-
         if(accessToken!=null&&refreshToken!=null&&jwtParser!=null){
             if (!isAuthenticated){
                 isAuthenticated=true;
                 sceneNavigator.setMain();
             }
-            _TimerStart();
+            refreshTokenRequest.scheduleAtFixedRate(_TimerTask(),1000,tokenExpirationTime-System.currentTimeMillis() / 1000);
         }else sceneNavigator.setAuth();
     }
 
@@ -86,18 +89,31 @@ public class ApplicationState {
         return accessToken;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
     public void setRefreshToken(String [] refreshToken) {//в процессе
+        refreshTokenRequest.cancel();
         if (refreshToken==null){
-            isAuthenticated=false;
-            sceneNavigator.setAuth();
+            LogOut();
         }else{
             isTokenRefreshInProgress=false;
         }
+    }
+
+    public void LogOut(){
+        sceneNavigator.setAuth();
+        accessToken=null;
+        refreshToken=null;
+        isAuthenticated=false;
+        isTokenRefreshInProgress=false;
+        tokenExpirationTime=0;
         refreshTokenRequest.cancel();
     }
-    private void _TimerStart(){
-        refreshTokenRequest = new Timer();
-        refreshTokenRequest.scheduleAtFixedRate(new TimerTask() {
+
+    private TimerTask _TimerTask(){
+        return new TimerTask() {
             @Override
             public void run() {
                 while(isAuthenticated){
@@ -110,10 +126,6 @@ public class ApplicationState {
                     }
                 }
             }
-        },1000,tokenExpirationTime-System.currentTimeMillis() / 1000);
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
+        };
     }
 }
