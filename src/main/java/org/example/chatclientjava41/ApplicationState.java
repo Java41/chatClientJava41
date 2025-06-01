@@ -14,6 +14,7 @@ public class ApplicationState {
     private static ApplicationState applicationState;
     private final SceneNavigator sceneNavigator=new SceneNavigator();
     private JwtParser jwtParser;
+    private CurrentUser currentUser;
     private String accessToken;
     private String refreshToken;
     private static volatile boolean isAuthenticated = false;
