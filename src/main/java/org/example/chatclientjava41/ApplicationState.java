@@ -32,8 +32,6 @@ public class ApplicationState {
     private String lastname;
     private Map<Integer, Map<Date,String>> chats=new HashMap<>();
 
-
-
     public SceneNavigator getSceneNavigator() {
         return sceneNavigator;
     }
@@ -55,7 +53,13 @@ public class ApplicationState {
     }
 
     public void updateAuthState(String []tokens) {
-        //вылазящие при старте приложения ошибки невалидноси токенов изза стартовых токенов запуска-я от себя хрень туда вписал, пока не определимся как и где их храним пока приложение off
+
+        if(isAuthenticated){
+            refreshTokenRequest.cancel();
+            if (tokens==null) {
+                LogOut();
+            }
+        }
         Jws<Claims> claimsJws=null;
         try {
             claimsJws = jwtParser.parseClaimsJws(tokens[0]);
@@ -87,24 +91,6 @@ public class ApplicationState {
             refreshTokenRequest.scheduleAtFixedRate(_TimerTask(),1000,tokenExpirationTime-System.currentTimeMillis() / 1000);
         }else sceneNavigator.setAuth();
     }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String [] refreshToken) {//в процессе
-        refreshTokenRequest.cancel();
-        if (refreshToken==null){
-            LogOut();
-        }else{
-            isTokenRefreshInProgress=false;
-        }
-    }
-
     public void LogOut(){
         sceneNavigator.setAuth();
         accessToken=null;
@@ -130,6 +116,14 @@ public class ApplicationState {
                 }
             }
         };
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
     public String getRole() {
