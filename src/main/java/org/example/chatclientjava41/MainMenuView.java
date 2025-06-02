@@ -45,6 +45,8 @@ public class MainMenuView{
         contactsVBox.setPrefWidth(300);
         contactsVBox.setStyle("-fx-background-color: #f0f0f0;");
 
+        VBox myProfileElement = ProfileElementCreator.createMyProfileInteractiveElement();
+
         // Кнопка "найти чаты"
         Button findChatsBtn = new Button("Создать чат");
         findChatsBtn.setMaxWidth(Double.MAX_VALUE);
@@ -90,7 +92,7 @@ public class MainMenuView{
         scrollPane.setFitToWidth(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        contactsVBox.getChildren().addAll(findChatsBtn, scrollPane);
+        contactsVBox.getChildren().addAll(myProfileElement, findChatsBtn, scrollPane);
 
         return contactsVBox;
     }
