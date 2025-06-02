@@ -95,15 +95,20 @@ public class AllResponse {
             if (response.code() == 400) {
                 System.out.println(response.code() + " " + response.message());
             } else if (response.code() == 401) {
-                applicationState.setRefreshToken(null);
-            }//else applicationState.setRefreshToken(responseBody);//еще недодумал
+                applicationState.updateAuthState(null);
+            }else {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode jsonNode = objectMapper.readTree(responseBody);
+                String accessToken = jsonNode.get("accessToken").asText();
+                String refreshToken = jsonNode.get("refreshToken").asText();
+                applicationState.updateAuthState(new String[]{accessToken, refreshToken});
+            }
         } catch (IOException e) {
             System.out.println("Ошибка получения токена");
         }
-
     }
 
-    //_____________________________Регистрация пользователя_______________________________Александру- добавлен логин в регистрацию
+    //_____________________________Регистрация пользователя_______________________________
     public static String RegistrationUser(String email, String login, String password, String date) {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + email + "\",\n  \"login\": \"" + login + "\",\n  \"password\": \"" + password + "\",\n  \"birthdate\": \"" + date + "\"\n}");
