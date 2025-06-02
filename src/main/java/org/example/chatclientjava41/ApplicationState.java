@@ -14,7 +14,7 @@ public class ApplicationState {
     private static ApplicationState applicationState;
     private final SceneNavigator sceneNavigator=new SceneNavigator();
     private JwtParser jwtParser;
-    private CurrentUser currentUser;
+//    private CurrentUser currentUser;
     private String accessToken;
     private String refreshToken;
     private static volatile boolean isAuthenticated = false;
@@ -23,7 +23,7 @@ public class ApplicationState {
     private boolean isInitialAuthCheckDone = false;//Индикатор того, что приложение проверило наличие сохранённых токенов при старте
     private final Timer refreshTokenRequest= new Timer();
     //_____________________________________пользователь________________
-    private long id;
+    private String id;
     private String role;
     private String birthdate;
     private String email;
@@ -31,6 +31,7 @@ public class ApplicationState {
     private String firstname;
     private String lastname;
     private Map<Integer, Map<Date,String>> chats=new HashMap<>();
+
 
 
     public SceneNavigator getSceneNavigator() {
@@ -61,6 +62,7 @@ public class ApplicationState {
             this.accessToken = tokens[0];
             this.refreshToken = tokens[1];
             if(!isAuthenticated){
+                this.id= claimsJws.getBody().get("sub").toString();
                 this.role= claimsJws.getBody().get("groups").toString();
                 this.birthdate= claimsJws.getBody().get("birthdate").toString();
                 this.email= claimsJws.getBody().get("email").toString();
@@ -128,5 +130,33 @@ public class ApplicationState {
                 }
             }
         };
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getBirthdate() {
+        return birthdate;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public String getId() {
+        return id;
     }
 }
