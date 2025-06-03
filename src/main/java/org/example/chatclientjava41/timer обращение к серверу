@@ -1,0 +1,132 @@
+имя пользователя
+
+OkHttpClient client = new OkHttpClient();
+
+EditText usernameEditText = findViewById(R.id.usernameEditText);
+
+// Обработка события изменения текста
+usernameEditText.addTextChangedListener(new TextWatcher() {
+    private Timer timer = new Timer();
+    private final long DELAY = 500; // задержка
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        // ничего не делаем
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // отменяем предыдущий таймер и запускаем новый
+        timer.cancel();
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                checkUsername(s.toString());
+            }
+        }, DELAY);
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        // ничего не делаем
+    }
+});
+
+// обращения к серверу
+private void checkUsername(String username) {
+    String url = "https://     НЕ ЗАБЫТЬ ВПИСАТЬ НАЗВАНИЕ СЕРВЕРА     /api/check_username?name=" + Uri.encode(username);
+
+    Request request = new Request.Builder()
+            .url(url)
+            .build();
+
+    // Выполняем запрос асинхронно
+    client.newCall(request).enqueue(new Callback() {
+        @Override
+        public void onFailure(Call call, IOException e) {
+            // обработка ошибок
+            e.printStackTrace();
+        }
+
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            if (response.isSuccessful()) {
+                String responseData = response.body().string();
+                // Обработка ответа
+                runOnUiThread(() -> {
+                    // например, показать сообщение о статусе имени пользователя
+                    Toast.makeText(MainActivity.this, "Ответ сервера: " + responseData, Toast.LENGTH_SHORT).show();
+                });
+            }
+        }
+    });
+}
+
+
+
+изменение email
+
+OkHttpClient client = new OkHttpClient();
+
+EditText emailEditText = findViewById(R.id.emailEditText);
+
+// Обработка события изменения текста
+emailEditText.addTextChangedListener(new TextWatcher() {
+    private Timer timer = new Timer();
+    private final long DELAY = 500; // задержка перед отправкой запроса
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        // ничего не делаем
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        // отменяем предыдущий таймер и запускаем новый
+        timer.cancel();
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // вызываем метод проверки email в фоновом потоке
+                checkEmail(s.toString());
+            }
+        }, DELAY);
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        // ничего не делаем
+    }
+});
+
+// Метод для обращения к серверу
+private void checkEmail(String email) {
+    String url = "https://     НАЗВАНИЕ СЕРВЕРА!!!     /api/check_email?email=" + Uri.encode(email);
+
+    Request request = new Request.Builder()
+            .url(url)
+            .build();
+
+    // Выполняем запрос асинхронно
+    client.newCall(request).enqueue(new Callback() {
+        @Override
+        public void onFailure(Call call, IOException e) {
+            // Обработка ошибок
+            e.printStackTrace();
+        }
+
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            if (response.isSuccessful()) {
+                String responseData = response.body().string();
+                // Обработка ответа (например, обновление UI)
+                runOnUiThread(() -> {
+                    // показать сообщение пользователю
+                    Toast.makeText(MainActivity.this, "Ответ сервера: " + responseData, Toast.LENGTH_SHORT).show();
+                });
+            }
+        }
+    });
+}
