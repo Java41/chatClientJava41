@@ -227,11 +227,9 @@ public class AllResponse {
 
 //_____________________________Получить всех пользователей_______________________________
 public static void getAllContacts(){
-    MediaType mediaType = MediaType.parse("text/plain");
-    RequestBody body = RequestBody.create(mediaType, "");
     Request request = new Request.Builder()
             .url(SERVER_URL+CONTACTS_PATH)
-            .method("GET", body)
+            .method("GET", null)
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
             .build();
@@ -239,6 +237,7 @@ public static void getAllContacts(){
         String responseBody = response.body().string();
         if (response.code()==200){
             Contact.creatContact(responseBody);
+            System.out.println("got it");
         } else System.out.println("Error get contacts");
 
     } catch (IOException e) {
