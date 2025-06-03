@@ -1,5 +1,15 @@
 package org.example.chatclientjava41;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+
 public class MainMenuController {
     private MainMenuView view;
     private SceneNavigator sceneNavigator;
@@ -13,102 +23,44 @@ public class MainMenuController {
     public static void sendMessageField(String textMessage){
         System.out.println(AllResponse.SendMessage(1,textMessage));
     }
-//_____________________________Выход пользователя_______________________________
-    //Успешный ответ_______________________________
-//        {
-//        "message": "Logged out successfully"
-//        }
-    //Неверный refresh token_______________________________
-//        {
-//        "error": "Invalid refresh token"
-//        }
-    //_____________________________Обновление емейла_______________________________
-    //Успешный ответ_______________________________
-//        {
-//        "id": "<long>",
-//        "username": "<string>",
-//        "email": "<string>",
-//        "accessToken": "<string>",
-//        "refreshToken": "<string>"
-//        }
-    //Неполные данные_______________________________
-//        {
-//        "error": "Email и пароль обязательны"
-//        }
-    //Неверные данные_______________________________
-//        {
-//        "error": "Неверные учетные данные"
-//        }
-    //такой пользователь уже существует_______________________________
-//        {
-//        "error": "Пользователь с таким email уже существует"
-//        }
-    //_____________________________Обновление имени пользователя_______________________________
-    //Успешный ответ_______________________________
-//        {
-//        "id": "<long>",
-//        "username": "<string>",
-//        "email": "<string>",
-//        "accessToken": "<string>",
-//        "refreshToken": "<string>"
-//        }
-    //Неверные данные_______________________________
-//        {
-//        "error": "Username обязателен и должен начинаться с @"
-//        }
-    //Неверные данные_______________________________
-//        {
-//        "error": "Пользователь не найден"
-//        }
-    //такой пользователь уже существует_______________________________
-//        {
-//        "error": "Username уже занят"
-//        }
-    //_____________________________Получение сообщения_______________________________
-    //Успешный ответ_______________________________
-//        {
-//        "id": 1,
-//        "senderId": 1,
-//        "senderUsername": "@DefaultUser",
-//        "recipientId": 1,
-//        "recipientUsername": "@DefaultRecipient",
-//        "content": "Hi there!",
-//        "timestamp": "2024-01-01T00:00:00"
-//        }
-    //Несуществует получателя_______________________________
-//        {
-//        "error": "Не указан ID получателя или текст сообщения"
-//        }
-    //Несуществует получателя_______________________________
-//        {
-//        "error": "Получатель не найден"
-//        }
-    //_____________________________Отправка сообщения_______________________________
-    //Успешный ответ_______________________________
-//         {
-//        "id": 1,
-//        "senderId": 1,
-//        "senderUsername": "@DefaultUser",
-//        "recipientId": 1,
-//        "recipientUsername": "@DefaultRecipient",
-//        "content": "Hi there!",
-//        "timestamp": "2024-01-01T00:00:00"
-//        },
-//        {
-//        "id": 1,
-//        "senderId": 1,
-//        "senderUsername": "@DefaultUser",
-//        "recipientId": 1,
-//        "recipientUsername": "@DefaultRecipient",
-//        "content": "Hi there!",
-//        "timestamp": "2024-01-01T00:00:00"
-//        }
-    //Неверный формат параметров since_______________________________
-//        {
-//        "error": "Неверный формат параметра 'since', используйте ISO 8601 (например, 2025-05-19T10:00:00)"
-//        }
-    //Пользователь не найден_______________________________
-//        {
-//        "error": "Пользователь не найден"
-//        }
+    public VBox getListChats(){
+        VBox contactList=new VBox();
+        for (int i = 1; i <= 5; i++) {
+
+            HBox contactItem = new HBox();
+            contactItem.setAlignment(Pos.CENTER_LEFT);
+            contactItem.setSpacing(10);
+            contactItem.setPadding(new Insets(5));
+            contactItem.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc;");
+
+            // Аватарка
+            Circle avatarCircle = new Circle(20, Color.LIGHTGRAY);
+            Label initialsLabel = new Label("A");
+            initialsLabel.setFont(Font.font(14));
+            StackPane avatarStack = new StackPane();
+            avatarStack.getChildren().addAll(avatarCircle, initialsLabel);
+
+            // Имя и последнее сообщение
+            VBox contactInfo = new VBox();
+            contactInfo.setSpacing(2);
+
+            Label nameLabel = new Label("Контакт " + i);
+            nameLabel.setFont(Font.font(14));
+
+            Label lastMsgLabel = new Label("Последнее сообщение...");
+            lastMsgLabel.setFont(Font.font(12));
+            lastMsgLabel.setTextFill(Color.GRAY);
+
+            contactInfo.getChildren().addAll(nameLabel, lastMsgLabel);
+            contactItem.getChildren().addAll(avatarStack, contactInfo);
+            ButtonChat contact=new ButtonChat("",contactItem);//кнопка будет содержать в себе чат
+//            contact.prefWidthProperty().bind(contactsList.widthProperty());
+//            contactsList.getChildren().add(contact);
+
+        }
+        return contactList;
+    }
+    public void getProfileMainUser(){//добавить окно
+        ProfileElementCreator.showProfileWindow(ApplicationState.getApplicationState());
+    }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class AllResponse {
     private static final ApplicationState applicationState = ApplicationState.getApplicationState();//управление состоянием будут осуществлять только ответы с сервера
@@ -259,14 +260,29 @@ public class AllResponse {
 
 
 //_____________________________Получить всех пользователей_______________________________
-//
-//MediaType mediaType = MediaType.parse("text/plain");
-//RequestBody body = RequestBody.create(mediaType, "");
-//Request request = new Request.Builder()
-//        .url("//contacts")
-//        .method("GET", body)
-//        .addHeader("Accept", "application/json")
-//        .addHeader("Authorization", "••••••")
-//        .build();
-//Response response = client.newCall(request).execute();
+public ArrayList getAllUsers(){
+    MediaType mediaType = MediaType.parse("text/plain");
+    RequestBody body = RequestBody.create(mediaType, "");
+    Request request = new Request.Builder()
+            .url(SERVER_URL+CONTACTS_PATH)
+            .method("GET", body)
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
+            .build();
+    try (Response response = client.newCall(request).execute()) {
+        String responseBody = response.body().string();
+        if (responseBody.contains("\"accessToken\":\"") && responseBody.contains("\",\"refreshToken\":\"")) {
+            responseBody = responseBody.replaceAll("[{}\"]", "");
+            responseBody = responseBody.replace("accessToken:", "");
+            String[] tokens = responseBody.split(",refreshToken:");
+            applicationState.updateAuthState(tokens);
+            return new ArrayList<String>();
+        } else new ArrayList<String>();
+
+    } catch (IOException e) {
+        System.out.println("Error auth");
+    }
+    return new  ArrayList<String>();
+    }
+
 }
