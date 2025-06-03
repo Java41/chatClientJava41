@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class AllResponse {
     private static final ApplicationState applicationState = ApplicationState.getApplicationState();//управление состоянием будут осуществлять только ответы с сервера
@@ -65,7 +64,7 @@ public class AllResponse {
 
 
     //_____________________________Выход пользователя_______________________________
-    public static String Logout() throws IOException {
+    public static void Logout() throws IOException {
         //запрос токена из состояния приложения
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n}");
@@ -77,7 +76,7 @@ public class AllResponse {
                 .build();
         Response response = client.newCall(request).execute();
         String responseBody = response.body().string();
-        return responseBody;
+        System.out.println(response.code());
     }
 
     //_____________________________Обновление токена_______________________________
@@ -188,38 +187,6 @@ public class AllResponse {
         }
     }
 
-    //_____________________________Обновление емейла_______________________________
-    public static String ChangeMail(String email, String password) throws IOException {
-        MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + email + "\",\n  \"password\": \"" + password + "\"\n}");
-        Request request = new Request.Builder()
-                .url(SERVER_URL + UPDATE_EMAIL)
-                .method("POST", body)
-                .addHeader("Content-Type", JSON_MEDIA)
-                .addHeader("Accept", JSON_MEDIA)
-                .addHeader("Authorization", "••••••")
-                .build();
-        Response response = client.newCall(request).execute();
-        String responseBody = response.body().string();
-        return responseBody;
-    }
-
-    //_____________________________Обновление имени пользователя_______________________________
-    public static String ChangeName(String username) throws IOException {
-        MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"username\": \"" + username + "\"\n}");
-        Request request = new Request.Builder()
-                .url(SERVER_URL + UPDATE_NAME)
-                .method("POST", body)
-                .addHeader("Content-Type", JSON_MEDIA)
-                .addHeader("Accept", JSON_MEDIA)
-                .addHeader("Authorization", "••••••")
-                .build();
-        Response response = client.newCall(request).execute();
-        String responseBody = response.body().string();
-        return responseBody;
-    }
-
     //_____________________________Отправка сообщения_______________________________
     public static String SendMessage(Integer recipientId, String message) {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
@@ -258,9 +225,8 @@ public class AllResponse {
 //        .build();
 //Response response = client.newCall(request).execute();
 
-
 //_____________________________Получить всех пользователей_______________________________
-public ArrayList getAllUsers(){
+public static void getAllContacts(){
     MediaType mediaType = MediaType.parse("text/plain");
     RequestBody body = RequestBody.create(mediaType, "");
     Request request = new Request.Builder()
@@ -271,18 +237,13 @@ public ArrayList getAllUsers(){
             .build();
     try (Response response = client.newCall(request).execute()) {
         String responseBody = response.body().string();
-        if (responseBody.contains("\"accessToken\":\"") && responseBody.contains("\",\"refreshToken\":\"")) {
-            responseBody = responseBody.replaceAll("[{}\"]", "");
-            responseBody = responseBody.replace("accessToken:", "");
-            String[] tokens = responseBody.split(",refreshToken:");
-            applicationState.updateAuthState(tokens);
-            return new ArrayList<String>();
-        } else new ArrayList<String>();
+        if (response.code()==200){
+            Contact.creatContact(responseBody);
+        } else System.out.println("Error get contacts");
 
     } catch (IOException e) {
         System.out.println("Error auth");
     }
-    return new  ArrayList<String>();
     }
 
 }

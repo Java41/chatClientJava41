@@ -30,7 +30,7 @@ public class ApplicationState {
     private String username;
     private String firstname;
     private String lastname;
-    private Map<Integer, Map<Date,String>> chats=new HashMap<>();
+    private ArrayList<Contact> contacts;
 
     public SceneNavigator getSceneNavigator() {
         return sceneNavigator;
@@ -83,14 +83,25 @@ public class ApplicationState {
         } catch (Exception e) {
             System.out.println("   Неожиданная ошибка при проверке токена: " + e.getClass().getSimpleName() + " - " + e.getMessage());
         }
+
         if(accessToken!=null&&refreshToken!=null&&jwtParser!=null){
             if (!isAuthenticated){
+                AllResponse.getAllContacts();
                 isAuthenticated=true;
                 sceneNavigator.setMain();
             }
             refreshTokenRequest.scheduleAtFixedRate(_TimerTask(),1000,tokenExpirationTime-System.currentTimeMillis() / 1000);
         }else sceneNavigator.setAuth();
     }
+
+    public void setContacts(ArrayList<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public ArrayList<Contact> getContacts() {
+        return contacts;
+    }
+
     public void LogOut(){
         sceneNavigator.setAuth();
         accessToken=null;
@@ -99,6 +110,7 @@ public class ApplicationState {
         isTokenRefreshInProgress=false;
         tokenExpirationTime=0;
         refreshTokenRequest.cancel();
+        contacts=null;
     }
 
     private TimerTask _TimerTask(){

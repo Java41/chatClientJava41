@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class MainMenuView{
@@ -49,8 +50,43 @@ public class MainMenuView{
         findChatsBtn.setMaxWidth(Double.MAX_VALUE);
 
         // Список контактов (пример)
-        VBox contactsList = mainMenuController.getListChats();
+        VBox contactsList = new VBox();
         contactsList.setSpacing(5);
+        ArrayList<Contact>contacts=ApplicationState.getApplicationState().getContacts();
+        if(contacts!=null){
+            for (int i = 0; i<contacts.size(); i++) {
+                Contact a1=contacts.get(i);
+                HBox contactItem = new HBox();
+                contactItem.setAlignment(Pos.CENTER_LEFT);
+                contactItem.setSpacing(10);
+                contactItem.setPadding(new Insets(5));
+                contactItem.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc;");
+
+                // Аватарка
+                Circle avatarCircle = new Circle(20, Color.LIGHTGRAY);
+                Label initialsLabel = new Label(a1.getFirstname().indexOf(0)+"");
+                initialsLabel.setFont(Font.font(14));
+                StackPane avatarStack = new StackPane();
+                avatarStack.getChildren().addAll(avatarCircle, initialsLabel);
+
+                // Имя и последнее сообщение
+                VBox contactInfo = new VBox();
+                contactInfo.setSpacing(2);
+
+                Label nameLabel = new Label(a1.getFirstname()+" " + a1.getLastname());
+                nameLabel.setFont(Font.font(14));
+
+                Label lastMsgLabel = new Label("Последнее сообщение...");
+                lastMsgLabel.setFont(Font.font(12));
+                lastMsgLabel.setTextFill(Color.GRAY);
+
+                contactInfo.getChildren().addAll(nameLabel, lastMsgLabel);
+                contactItem.getChildren().addAll(avatarStack, contactInfo);
+                ButtonChat contact=new ButtonChat("",contactItem);//кнопка будет содержать в себе чат
+                contact.prefWidthProperty().bind(contactsList.widthProperty());
+                contactsList.getChildren().add(contact);
+            }
+        }
 
         ScrollPane scrollPane = new ScrollPane(contactsList);
         scrollPane.setFitToWidth(true);
@@ -104,6 +140,7 @@ public class MainMenuView{
         Button findInChatBtn = new Button("Найти в чате");
         Button sendImageBtn = new Button("Отправленные изображение");
         Button moreInfoBtn = new Button("Больше информации");
+
 
         viewProfileBtn.setMaxWidth(Double.MAX_VALUE);
 
@@ -236,7 +273,6 @@ public class MainMenuView{
                 new Border(new BorderStroke(Color.GRAY,
                         BorderStrokeStyle.SOLID,new CornerRadii(5),new BorderWidths(1)))
         );
-
         if(isMine){
             bubbleHBox.getChildren().addAll(spacer(),messageLbl);
             bubbleHBox.alignmentProperty().set(Pos.CENTER_RIGHT);
