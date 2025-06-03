@@ -66,7 +66,7 @@ public class ProfileElementCreator {
         profileBox.setOnMouseExited(e -> profileBox.setStyle(normalStyle));
     }
 
-    private static void showProfileWindow(ApplicationState appState) {
+    public static void showProfileWindow(ApplicationState appState) {
         System.out.println("Открываем окно профиля...");
 
         Stage profileStage = createProfileStage();
