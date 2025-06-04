@@ -7,6 +7,9 @@ import io.jsonwebtoken.security.SignatureException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ApplicationState {
@@ -14,14 +17,15 @@ public class ApplicationState {
     private static ApplicationState applicationState;
     private final SceneNavigator sceneNavigator=new SceneNavigator();
     private JwtParser jwtParser;
-//    private CurrentUser currentUser;
     private String accessToken;
     private String refreshToken;
     private static volatile boolean isAuthenticated = false;
     private long tokenExpirationTime;//время до обновления токена
+    private String lastTimeResponseMassage="1970-01-01T00:00:00";
     private static volatile boolean isTokenRefreshInProgress = false;//защита от множественных запросов на обновление токена
     private boolean isInitialAuthCheckDone = false;//Индикатор того, что приложение проверило наличие сохранённых токенов при старте
     private final Timer refreshTokenRequest= new Timer();
+
     //_____________________________________пользователь________________
     private String id;
     private String role;
@@ -30,7 +34,7 @@ public class ApplicationState {
     private String username;
     private String firstname;
     private String lastname;
-    private ArrayList<Contact> contacts;
+    private ArrayList<Contact> contacts=new ArrayList<>();
 
     public SceneNavigator getSceneNavigator() {
         return sceneNavigator;
@@ -53,9 +57,8 @@ public class ApplicationState {
     }
 
     public void updateAuthState(String []tokens) {
-
         if(isAuthenticated){
-            refreshTokenRequest.cancel();
+            refreshTokenRequest.purge();
             if (tokens==null) {
                 LogOut();
             }
@@ -83,7 +86,6 @@ public class ApplicationState {
         } catch (Exception e) {
             System.out.println("   Неожиданная ошибка при проверке токена: " + e.getClass().getSimpleName() + " - " + e.getMessage());
         }
-
         if(accessToken!=null&&refreshToken!=null&&jwtParser!=null){
             if (!isAuthenticated){
                 AllResponse.getAllContacts();
@@ -95,7 +97,7 @@ public class ApplicationState {
     }
 
     public void setContacts(ArrayList<Contact> contacts) {
-        this.contacts = contacts;
+        this.contacts.addAll(contacts);
     }
 
     public ArrayList<Contact> getContacts() {
@@ -103,14 +105,21 @@ public class ApplicationState {
     }
 
     public void LogOut(){
-        sceneNavigator.setAuth();
         accessToken=null;
         refreshToken=null;
         isAuthenticated=false;
         isTokenRefreshInProgress=false;
         tokenExpirationTime=0;
-        refreshTokenRequest.cancel();
-        contacts=null;
+        refreshTokenRequest.purge();
+        contacts.clear();
+        id=null;
+        role=null;
+        birthdate=null;
+        email=null;
+        username=null;
+        firstname=null;
+        lastname=null;
+        sceneNavigator.setAuth();
     }
 
     private TimerTask _TimerTask(){
@@ -121,6 +130,9 @@ public class ApplicationState {
                     if(!isTokenRefreshInProgress){
                         if((System.currentTimeMillis() / 1000)+7000>tokenExpirationTime){
                             isTokenRefreshInProgress=true;
+//                            LocalDateTime epoch = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+//                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+//                            lastTimeTakeMassage=epoch.format(formatter);
                         }else {
                             AllResponse.RefreshToken();
                         }
@@ -128,6 +140,13 @@ public class ApplicationState {
                 }
             }
         };
+    }
+    public void setRefreshTokenRequest() {//неработает остановка таймера при закрытии приложения
+        refreshTokenRequest.cancel();
+    }
+
+    public String getLastTimeResponseMassage() {
+        return lastTimeResponseMassage;
     }
 
     public String getAccessToken() {
