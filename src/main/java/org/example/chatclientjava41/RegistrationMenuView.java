@@ -26,16 +26,18 @@ public class RegistrationMenuView {
         password.setPromptText("Пароль:");
         TextField email = new TextField();
         email.setPromptText("Email:");
+        TextField date = new TextField();
+        date.setPromptText("Дата рождения");
 
         Button authMenuButton = new Button("Назад к авторизации");
         Button registrationButton = new Button("Зарегистрироваться");
-        registrationButton.setOnAction(actionEvent -> registrationController.clickRegistration(login.getText(),password.getText(), email.getText()));
+        registrationButton.setOnAction(actionEvent -> registrationController.clickRegistration(login.getText(),password.getText(), email.getText(), date.getText()));
         //authMenuButton.getStyleClass().add("secondary");
         authMenuButton.setOnAction(actionEvent -> registrationController.clickMenuAuth());
 
         HBox hBox1 = new HBox(registrationButton,authMenuButton);
 
-        vBox.getChildren().addAll(login, email, password, hBox1, error);
+        vBox.getChildren().addAll(login, email, password, date, hBox1, error);
         vBox.setSpacing(10);//расстояние между объектами внутри
         vBox.setAlignment(Pos.CENTER);//позиционируем по центру
         hBox1.setSpacing(10);//расстояние между объектами внутри

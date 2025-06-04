@@ -45,12 +45,17 @@ public class MainMenuView{
         contactsVBox.setPadding(new Insets(10));
         contactsVBox.setSpacing(10);
         contactsVBox.setPrefWidth(300);
+
         contactsVBox.setStyle("-fx-background-color: #f0f0f0;");
         // Кнопка "найти чаты"
         TextField fieldCreateContact=new TextField();
         fieldCreateContact.setPromptText("Введите id пользователя");
         Button createChatsBtn = new Button("Новый чат");
         createChatsBtn.setOnAction(actionEvent -> mainMenuController.CreateContact(fieldCreateContact.getText()));
+
+//         UserSearchComponent userSearch = new UserSearchComponent(); // Теперь загрузка внутри компонента
+//         userSearch.setOnUserClicked(System.out::println);
+
 
         createChatsBtn.setMaxWidth(Double.MAX_VALUE);
         contactsList=mainMenuController.ContactList();
@@ -59,7 +64,11 @@ public class MainMenuView{
         scrollPane.setFitToWidth(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
+
         contactsVBox.getChildren().addAll( fieldCreateContact,createChatsBtn, scrollPane);
+
+        //contactsVBox.getChildren().addAll( userSearch.getView(), scrollPane);
+
 
         return contactsVBox;
     }

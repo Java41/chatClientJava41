@@ -1,10 +1,13 @@
 package org.example.chatclientjava41;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
+import org.example.chatclientjava41.dto.UserDTO;
 
 import java.io.IOException;
+import java.util.List;
 
 public class AllResponse {
     private static final ApplicationState applicationState = ApplicationState.getApplicationState();//управление состоянием будут осуществлять только ответы с сервера
@@ -19,6 +22,7 @@ public class AllResponse {
     private static final String SEND_MESSAGE = "messages";
     private static final String CONTACTS_PATH = "contacts";
     private static final String JSON_MEDIA = "application/json";
+    private static final String USER_PATH = "/users";
     private static final OkHttpClient client = new OkHttpClient().newBuilder().build();
 
     public static String getPublicKey() {
@@ -252,6 +256,7 @@ public static void getAllContacts(){
         System.out.println("Error auth");
         }
     }
+
     //_________________________Добавить контакт__________________________________
     public static void AddContact(String id){
         MediaType mediaType = MediaType.parse("text/plain");
@@ -278,5 +283,29 @@ public static void getAllContacts(){
         } catch (IOException e) {
             System.out.println("Error auth");
         }
+
+    }
+    public static List<UserDTO> getUsers(){
+        System.out.println("Get all users from server method called");
+        Request request = new Request.Builder()
+                .url(SERVER_URL+USER_PATH)
+                .method("GET", null)
+                .addHeader("Accept", "application/json")
+                .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            String responseBody = response.body().string();
+            if (response.isSuccessful()) {
+                return new ObjectMapper()
+                        .readValue(responseBody,
+                                new TypeReference<>() {
+                                });
+            }
+                System.out.println("Users got it");
+            } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return List.of();
+
     }
 }
