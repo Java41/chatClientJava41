@@ -21,7 +21,7 @@ public class Contact {
         this.photoUrl = photoUrl;
     }
 
-    public static void creatContact(String responseBody) {
+    public static void createContact(String responseBody) {
         ArrayList<Contact>contacts=new ArrayList<>();
         try{
             ObjectMapper objectMapper = new ObjectMapper();

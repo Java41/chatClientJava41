@@ -61,22 +61,23 @@ public class AllResponse {
             return "Error auth";
         }
     }
-
-
     //_____________________________Выход пользователя_______________________________
-    public static void Logout() throws IOException {
-        //запрос токена из состояния приложения
+    public static void Logout() {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"f47ac10b-58cc-4372-a567-0e02b2c3d479\"\n}");
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"" + applicationState.getRefreshToken() + "\"\n}");
         Request request = new Request.Builder()
                 .url(SERVER_URL + LOGOUT_PATH)
                 .method("POST", body)
                 .addHeader("Content-Type", JSON_MEDIA)
                 .addHeader("Accept", JSON_MEDIA)
                 .build();
-        Response response = client.newCall(request).execute();
-        String responseBody = response.body().string();
-        System.out.println(response.code());
+        try (Response response = client.newCall(request).execute();){
+            if(response.code()==200){
+                applicationState.LogOut();
+            }else System.out.println("чет запрос не сработал");
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     //_____________________________Обновление токена_______________________________
@@ -213,22 +214,10 @@ public class AllResponse {
             return "Error auth";
         }
     }
-//_____________________________Получение сообщения_______________________________text/plain???
-//
-//MediaType mediaType = MediaType.parse("text/plain");
-//RequestBody body = RequestBody.create(mediaType, "");
-//Request request = new Request.Builder()
-//        .url("//messages?since=1970-01-01T00:00:00&with=<long>")
-//        .method("GET", body)
-//        .addHeader("Accept", "application/json")
-//        .addHeader("Authorization", "••••••")
-//        .build();
-//Response response = client.newCall(request).execute();
-
-//_____________________________Получить всех пользователей_______________________________
-public static void getAllContacts(){
+//_____________________________Получение сообщения_______________________________
+public static String GetMessage() {
     Request request = new Request.Builder()
-            .url(SERVER_URL+CONTACTS_PATH)
+            .url(SERVER_URL + SEND_MESSAGE+"?since="+applicationState.getLastTimeResponseMassage()+"&with=<long>")//data="1970-01-01T00:00:00" хз че за лонг число в постмане
             .method("GET", null)
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
@@ -236,13 +225,58 @@ public static void getAllContacts(){
     try (Response response = client.newCall(request).execute()) {
         String responseBody = response.body().string();
         if (response.code()==200){
-            Contact.creatContact(responseBody);
-            System.out.println("got it");
-        } else System.out.println("Error get contacts");
+            return responseBody;
+        } else System.out.println("Error get messages");
 
     } catch (IOException e) {
         System.out.println("Error auth");
     }
-    }
+    return null;
+}
+//_____________________________Получить все контакты_______________________________
+public static void getAllContacts(){
+    Request request = new Request.Builder()
+            .url(SERVER_URL+CONTACTS_PATH)
+            .method("GET", null)
+            .addHeader("Accept", "application/json")
+            .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
+            .build();
+        try (Response response = client.newCall(request).execute()) {
+        String responseBody = response.body().string();
+        if (response.code()==200){
+            Contact.createContact(responseBody);
+            System.out.println("got it");
+        } else System.out.println("Error get contacts");
 
+        } catch (IOException e) {
+        System.out.println("Error auth");
+        }
+    }
+    //_________________________Добавить контакт__________________________________
+    public static void AddContact(String id){
+        MediaType mediaType = MediaType.parse("text/plain");
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"id\":" + id + "\n}");
+        Request request = new Request.Builder()
+                .url(SERVER_URL+CONTACTS_PATH)
+                .method("POST", body)
+                .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
+                .addHeader("Accept", JSON_MEDIA)
+                .build();
+        try(Response response = client.newCall(request).execute()) {
+            String responseBody = response.body().string();
+            System.out.println(responseBody);
+            if (response.code()==201){
+                System.out.println("contact add");
+                Contact.createContact(responseBody);
+
+            } else if(response.code()==404||response.code()==400){
+                System.out.println("Такого пользователя не существует");
+            }else if(response.code()==409){
+                System.out.println("Переключение на уже существующий контакт");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error auth");
+        }
+    }
 }

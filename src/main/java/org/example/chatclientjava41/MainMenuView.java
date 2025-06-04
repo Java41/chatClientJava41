@@ -14,6 +14,8 @@ import java.util.Objects;
 
 public class MainMenuView{
     private static MainMenuController mainMenuController;
+    private VBox contactsList=new VBox();
+    private VBox messagesContainer=new VBox();
 
     public MainMenuView(MainMenuController mainMenuController) {
         this.mainMenuController = mainMenuController;
@@ -30,7 +32,6 @@ public class MainMenuView{
 
         // 3. Центр - окно чата
         VBox chatBox = createChatPane();
-
         root.setLeft(contactsBox);
         root.setRight(profileBox);
         root.setCenter(chatBox);
@@ -46,53 +47,19 @@ public class MainMenuView{
         contactsVBox.setPrefWidth(300);
         contactsVBox.setStyle("-fx-background-color: #f0f0f0;");
         // Кнопка "найти чаты"
-        Button findChatsBtn = new Button("Создать чат");
-        findChatsBtn.setMaxWidth(Double.MAX_VALUE);
+        TextField fieldCreateContact=new TextField();
+        fieldCreateContact.setPromptText("Введите id пользователя");
+        Button createChatsBtn = new Button("Новый чат");
+        createChatsBtn.setOnAction(actionEvent -> mainMenuController.CreateContact(fieldCreateContact.getText()));
 
-        // Список контактов (пример)
-        VBox contactsList = new VBox();
+        createChatsBtn.setMaxWidth(Double.MAX_VALUE);
+        contactsList=mainMenuController.ContactList();
         contactsList.setSpacing(5);
-        ArrayList<Contact>contacts=ApplicationState.getApplicationState().getContacts();
-        if(contacts!=null){
-            for (int i = 0; i<contacts.size(); i++) {
-                Contact a1=contacts.get(i);
-                HBox contactItem = new HBox();
-                contactItem.setAlignment(Pos.CENTER_LEFT);
-                contactItem.setSpacing(10);
-                contactItem.setPadding(new Insets(5));
-                contactItem.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc;");
-
-                // Аватарка
-                Circle avatarCircle = new Circle(20, Color.LIGHTGRAY);
-                Label initialsLabel = new Label(a1.getFirstname().indexOf(0)+"");
-                initialsLabel.setFont(Font.font(14));
-                StackPane avatarStack = new StackPane();
-                avatarStack.getChildren().addAll(avatarCircle, initialsLabel);
-
-                // Имя и последнее сообщение
-                VBox contactInfo = new VBox();
-                contactInfo.setSpacing(2);
-
-                Label nameLabel = new Label(a1.getFirstname()+" " + a1.getLastname());
-                nameLabel.setFont(Font.font(14));
-
-                Label lastMsgLabel = new Label("Последнее сообщение...");
-                lastMsgLabel.setFont(Font.font(12));
-                lastMsgLabel.setTextFill(Color.GRAY);
-
-                contactInfo.getChildren().addAll(nameLabel, lastMsgLabel);
-                contactItem.getChildren().addAll(avatarStack, contactInfo);
-                ButtonChat contact=new ButtonChat("",contactItem);//кнопка будет содержать в себе чат
-                contact.prefWidthProperty().bind(contactsList.widthProperty());
-                contactsList.getChildren().add(contact);
-            }
-        }
-
         ScrollPane scrollPane = new ScrollPane(contactsList);
         scrollPane.setFitToWidth(true);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        contactsVBox.getChildren().addAll( findChatsBtn, scrollPane);
+        contactsVBox.getChildren().addAll( fieldCreateContact,createChatsBtn, scrollPane);
 
         return contactsVBox;
     }
@@ -113,7 +80,7 @@ public class MainMenuView{
         avatarStack.getChildren().addAll(avatarCircle, initialsLabel);
 
         // Имя пользователя
-        Label nameLabel = new Label("Имя Пользователя");
+        Label nameLabel = new Label(ApplicationState.getApplicationState().getFirstname()+" "+ApplicationState.getApplicationState().getLastname());
         nameLabel.setFont(Font.font(16));
 
         // Последний раз в сети
@@ -140,15 +107,15 @@ public class MainMenuView{
         Button findInChatBtn = new Button("Найти в чате");
         Button sendImageBtn = new Button("Отправленные изображение");
         Button moreInfoBtn = new Button("Больше информации");
-
-
+        Button logout=new Button("Выйти из аккаунта");
+        logout.setOnAction(actionEvent -> mainMenuController.Logout());
         viewProfileBtn.setMaxWidth(Double.MAX_VALUE);
-
         findInChatBtn.setMaxWidth(Double.MAX_VALUE);
         sendImageBtn.setMaxWidth(Double.MAX_VALUE);
         moreInfoBtn.setMaxWidth(Double.MAX_VALUE);
+        logout.setMaxWidth(Double.MAX_VALUE);
 
-        return new VBox(5, viewProfileBtn, findInChatBtn, sendImageBtn, moreInfoBtn);
+        return new VBox(5, viewProfileBtn, findInChatBtn, sendImageBtn, moreInfoBtn,logout);
     }
 
     private VBox createChatPane() {
@@ -192,32 +159,20 @@ public class MainMenuView{
 
 
         // Окно сообщений (список сообщений)
-        VBox messagesContainer= new VBox();
         messagesContainer.setSpacing(10);
         messagesContainer.prefHeightProperty().bind(chatVBox.heightProperty());
-
-        // Пример сообщения от контакта (слева)
-        messagesContainer.getChildren().add(createMessageBubble("Привет!", false));
-
-        // Пример вашего сообщения (справа)
-        messagesContainer.getChildren().add(createMessageBubble("Здравствуйте!", true));
 
 // Scroll pane для сообщений
         VBox chatContent = getVBox(messagesContainer, headerTopRow);
 
 // Сделать центр - это весь чат с фиксированной шириной или растягивающийся по ширине.
         chatContent.prefWidthProperty().bind(chatContent.widthProperty());
-
-
         chatVBox.getChildren().add(chatContent);
-
-// Вернуть готовый контейнер для сцены.
         return chatVBox;
     }
 
     private VBox getVBox(VBox messagesContainer, HBox headerTopRow) {
         ScrollPane messagesScroll= new ScrollPane(messagesContainer);
-
         messagesScroll.setFitToWidth(true);
 
 // Ввод сообщения и кнопки справа от него
@@ -242,47 +197,9 @@ public class MainMenuView{
         messageInputArea.setSpacing(5);
 
 // Общий блок с сообщениями и вводом
-        return new VBox(
-                headerTopRow,
-                messagesScroll,
-                messageInputArea
-        );
+        return new VBox(headerTopRow, messagesScroll, messageInputArea );
     }
 
-    private HBox createMessageBubble(String text, boolean isMine) {
-        HBox bubbleHBox= new HBox();
-
-        if(isMine){
-            bubbleHBox.setAlignment(Pos.CENTER_RIGHT);
-        } else{
-            bubbleHBox.setAlignment(Pos.CENTER_LEFT);
-        }
-
-        Label messageLbl= new Label(text);
-        messageLbl.wrapTextProperty().set(true);
-        messageLbl.maxWidthProperty().setValue(300);
-        messageLbl.paddingProperty().setValue(new Insets(5));
-
-        BackgroundFill fillColor= isMine ?
-                new BackgroundFill(Color.LIGHTGREEN,new CornerRadii(5),Insets.EMPTY):
-                new BackgroundFill(Color.WHITE,new CornerRadii(5),Insets.EMPTY);
-
-        messageLbl.backgroundProperty().set(new Background(fillColor));
-
-        messageLbl.borderProperty().set(
-                new Border(new BorderStroke(Color.GRAY,
-                        BorderStrokeStyle.SOLID,new CornerRadii(5),new BorderWidths(1)))
-        );
-        if(isMine){
-            bubbleHBox.getChildren().addAll(spacer(),messageLbl);
-            bubbleHBox.alignmentProperty().set(Pos.CENTER_RIGHT);
-        }
-        else{
-            bubbleHBox.getChildren().addAll(messageLbl , spacer());
-            bubbleHBox.alignmentProperty().set(Pos.CENTER_LEFT);
-        }
-        return bubbleHBox;
-    }
     private Region spacer() {
         Region spacer=new Region();
         HBox.setHgrow(spacer , Priority.ALWAYS );
