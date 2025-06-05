@@ -1,16 +1,16 @@
 package org.example.chatclientjava41.dto;
 
 public record MessageDTO (
-        String id,
-        String senderId,
+        long id,
+        long senderId,
         String senderUsername,
-        String recipientId,
+        long recipientId,
         String recipientUsername,
         String content,
         String timestamp
 ){
     @Override
-    public String senderId() {
+    public long senderId() {
         return senderId;
     }
 

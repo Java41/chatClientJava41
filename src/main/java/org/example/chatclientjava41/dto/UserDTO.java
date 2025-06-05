@@ -1,7 +1,7 @@
 package org.example.chatclientjava41.dto;
 
 public record UserDTO(
-        int id,
+        long id,
         String username,
         String firstName,
         String lastName,

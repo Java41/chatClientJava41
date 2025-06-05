@@ -194,7 +194,7 @@ public class AllResponse {
     }
 
     //_____________________________Отправка сообщения_______________________________
-    public static String SendMessage(Integer recipientId, String message) {
+    public static String SendMessage(Long recipientId, String message) {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"recipientId\":" + recipientId + ",\n  \"content\": \"" + message + "\"\n}");
         Request request = new Request.Builder()
@@ -220,7 +220,7 @@ public class AllResponse {
         }
     }
 //_____________________________Получение сообщения_______________________________
-public static List<MessageDTO> GetMessage(String id) {
+public static List<MessageDTO> GetMessage(Long id) {
     Request request = new Request.Builder()
             .url(SERVER_URL + SEND_MESSAGE+"?since="+applicationState.getLastTimeResponseMassage()+"&with=<"+id+">")
             .method("GET", null)
@@ -242,27 +242,30 @@ public static List<MessageDTO> GetMessage(String id) {
     return List.of();
 }
 //_____________________________Получить все контакты_______________________________
-public static void getAllContacts(){
+public static List<UserDTO> getAllContacts(){
     Request request = new Request.Builder()
             .url(SERVER_URL+CONTACTS_PATH)
             .method("GET", null)
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
             .build();
-        try (Response response = client.newCall(request).execute()) {
+    try (Response response = client.newCall(request).execute()) {
         String responseBody = response.body().string();
-        if (response.code()==200){
-            Contact.createContact(responseBody);
-            System.out.println("got it");
-        } else System.out.println("Error get contacts");
-
-        } catch (IOException e) {
-        System.out.println("Error auth");
+        if (response.isSuccessful()) {
+            return new ObjectMapper()
+                    .readValue(responseBody,
+                            new TypeReference<>() {
+                            });
         }
+        System.out.println("Users got it");
+    } catch (IOException ex) {
+        throw new RuntimeException(ex);
+    }
+    return List.of();
     }
 
     //_________________________Добавить контакт__________________________________
-    public static void AddContact(String id){
+    public static void AddContact(Long id){
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"id\":" + id + "\n}");
         Request request = new Request.Builder()
@@ -275,8 +278,12 @@ public static void getAllContacts(){
             String responseBody = response.body().string();
             System.out.println(responseBody);
             if (response.code()==201){
-                System.out.println("contact add");
-                Contact.createContact(responseBody);
+                if (response.isSuccessful()) {
+                    applicationState.addContact(new ObjectMapper()
+                            .readValue(responseBody,
+                                    new TypeReference<>() {
+                                    }));
+                };
 
             } else if(response.code()==404||response.code()==400){
                 System.out.println("Такого пользователя не существует");
@@ -287,7 +294,6 @@ public static void getAllContacts(){
         } catch (IOException e) {
             System.out.println("Error auth");
         }
-
     }
     public static List<UserDTO> getUsers(){
         System.out.println("Get all users from server method called");

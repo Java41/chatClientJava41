@@ -27,7 +27,7 @@ public class ApplicationState {
     private final Timer refreshTokenRequest= new Timer();
 
     //_____________________________________пользователь________________
-    private String id;
+    private long id;
     private String role;
     private String birthdate;
     private String email;
@@ -69,7 +69,7 @@ public class ApplicationState {
             this.accessToken = tokens[0];
             this.refreshToken = tokens[1];
             if(!isAuthenticated){
-                this.id= claimsJws.getBody().get("sub").toString();
+                this.id=Long.parseLong(claimsJws.getBody().get("sub").toString()) ;
                 this.role= claimsJws.getBody().get("groups").toString();
                 this.birthdate= claimsJws.getBody().get("birthdate").toString();
                 this.email= claimsJws.getBody().get("email").toString();
@@ -99,6 +99,7 @@ public class ApplicationState {
     public void setContacts(ArrayList<Contact> contacts) {
         this.contacts.addAll(contacts);
     }
+    public void addContact(Contact contact) {contacts.add(contact);}
 
     public ArrayList<Contact> getContacts() {
         return contacts;
@@ -112,7 +113,7 @@ public class ApplicationState {
         tokenExpirationTime=0;
         refreshTokenRequest.purge();
         contacts.clear();
-        id=null;
+        id=0;
         role=null;
         birthdate=null;
         email=null;
@@ -181,7 +182,7 @@ public class ApplicationState {
         return lastname;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 }
