@@ -28,7 +28,7 @@ public class MainMenuController {
 
     public VBox CurrentChat(List<MessageDTO> messages){
         VBox chat=new VBox();
-        String id=ApplicationState.getApplicationState().getId();
+        long id=ApplicationState.getApplicationState().getId();
         for (MessageDTO messageDTO : messages) {
             HBox bubbleHBox= new HBox();
             if(messageDTO.senderId()==id){
@@ -110,7 +110,7 @@ public class MainMenuController {
     public void Logout(){
         AllResponse.Logout();
     }
-    public void CreateContact(String id){
+    public void CreateContact(long id){
         AllResponse.AddContact(id);
     }
     public void getProfileMainUser(){//добавить окно
