@@ -209,9 +209,5 @@ public class MainMenuView{
         return new VBox(headerTopRow, messagesScroll, messageInputArea );
     }
 
-    private Region spacer() {
-        Region spacer=new Region();
-        HBox.setHgrow(spacer , Priority.ALWAYS );
-        return spacer;
-    }
+
 }
