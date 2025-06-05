@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
+import org.example.chatclientjava41.dto.MessageDTO;
 import org.example.chatclientjava41.dto.UserDTO;
 
 import java.io.IOException;
@@ -219,23 +220,26 @@ public class AllResponse {
         }
     }
 //_____________________________Получение сообщения_______________________________
-public static String GetMessage() {
+public static List<MessageDTO> GetMessage(String id) {
     Request request = new Request.Builder()
-            .url(SERVER_URL + SEND_MESSAGE+"?since="+applicationState.getLastTimeResponseMassage()+"&with=<long>")//data="1970-01-01T00:00:00" хз че за лонг число в постмане
+            .url(SERVER_URL + SEND_MESSAGE+"?since="+applicationState.getLastTimeResponseMassage()+"&with=<"+id+">")
             .method("GET", null)
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
             .build();
     try (Response response = client.newCall(request).execute()) {
         String responseBody = response.body().string();
-        if (response.code()==200){
-            return responseBody;
-        } else System.out.println("Error get messages");
-
-    } catch (IOException e) {
-        System.out.println("Error auth");
+        if (response.isSuccessful()) {
+            return new ObjectMapper()
+                    .readValue(responseBody,
+                            new TypeReference<>() {
+                            });
+        }
+        System.out.println("Users got it");
+    } catch (IOException ex) {
+        throw new RuntimeException(ex);
     }
-    return null;
+    return List.of();
 }
 //_____________________________Получить все контакты_______________________________
 public static void getAllContacts(){
@@ -259,7 +263,7 @@ public static void getAllContacts(){
 
     //_________________________Добавить контакт__________________________________
     public static void AddContact(String id){
-        MediaType mediaType = MediaType.parse("text/plain");
+        MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"id\":" + id + "\n}");
         Request request = new Request.Builder()
                 .url(SERVER_URL+CONTACTS_PATH)

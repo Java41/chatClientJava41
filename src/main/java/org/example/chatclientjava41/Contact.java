@@ -2,9 +2,11 @@ package org.example.chatclientjava41;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.chatclientjava41.dto.MessageDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Contact {
     private String id;
@@ -12,6 +14,7 @@ public class Contact {
     private String firstname;
     private String lastname;
     private String photoUrl;
+    private List<MessageDTO> messages=new ArrayList<>();
 
     private Contact(String id, String username, String firstname, String lastname, String photoUrl) {
         this.id = id;
@@ -19,6 +22,7 @@ public class Contact {
         this.firstname = firstname;
         this.lastname = lastname;
         this.photoUrl = photoUrl;
+        this.messages.addAll(AllResponse.GetMessage(id));
     }
 
     public static void createContact(String responseBody) {
@@ -37,6 +41,10 @@ public class Contact {
     }
     public String getId() {
         return id;
+    }
+
+    public List<MessageDTO> getMessages() {
+        return messages;
     }
 
     public String getUsername() {

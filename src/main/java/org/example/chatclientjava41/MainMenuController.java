@@ -1,13 +1,16 @@
 package org.example.chatclientjava41;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import org.example.chatclientjava41.dto.MessageDTO;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainMenuController {
     private MainMenuView view;
@@ -23,40 +26,49 @@ public class MainMenuController {
         System.out.println(AllResponse.SendMessage(1,textMessage));
     }
 
-//    public VBox CurrentChat(ArrayList<Record> messages){
-//        VBox chat=new VBox();
-//        HBox bubbleHBox= new HBox();
-//        if(i){
-//            bubbleHBox.setAlignment(Pos.CENTER_RIGHT);
-//        } else{
-//            bubbleHBox.setAlignment(Pos.CENTER_LEFT);
-//        }
-//
-//        Label messageLbl= new Label(text);
-//        messageLbl.wrapTextProperty().set(true);
-//        messageLbl.maxWidthProperty().setValue(300);
-//        messageLbl.paddingProperty().setValue(new Insets(5));
-//
-//        BackgroundFill fillColor= isMine ?
-//                new BackgroundFill(Color.LIGHTGREEN,new CornerRadii(5),Insets.EMPTY):
-//                new BackgroundFill(Color.WHITE,new CornerRadii(5),Insets.EMPTY);
-//
-//        messageLbl.backgroundProperty().set(new Background(fillColor));
-//
-//        messageLbl.borderProperty().set(
-//                new Border(new BorderStroke(Color.GRAY,
-//                        BorderStrokeStyle.SOLID,new CornerRadii(5),new BorderWidths(1)))
-//        );
-//        if(isMine){
-//            bubbleHBox.getChildren().addAll(spacer(),messageLbl);
-//            bubbleHBox.alignmentProperty().set(Pos.CENTER_RIGHT);
-//        }
-//        else{
-//            bubbleHBox.getChildren().addAll(messageLbl , spacer());
-//            bubbleHBox.alignmentProperty().set(Pos.CENTER_LEFT);
-//        }
-//        return chat;
-//    }
+    public VBox CurrentChat(List<MessageDTO> messages){
+        VBox chat=new VBox();
+        String id=ApplicationState.getApplicationState().getId();
+        for (MessageDTO messageDTO : messages) {
+            HBox bubbleHBox= new HBox();
+            if(messageDTO.senderId()==id){
+                bubbleHBox.setAlignment(Pos.CENTER_RIGHT);
+            } else{
+                bubbleHBox.setAlignment(Pos.CENTER_LEFT);
+            }
+
+            Label messageLbl= new Label(messageDTO.content());
+            messageLbl.wrapTextProperty().set(true);
+            messageLbl.maxWidthProperty().setValue(300);
+            messageLbl.paddingProperty().setValue(new Insets(5));
+
+            BackgroundFill fillColor= (messageDTO.senderId()==id) ?
+                    new BackgroundFill(Color.LIGHTGREEN,new CornerRadii(5),Insets.EMPTY):
+                    new BackgroundFill(Color.WHITE,new CornerRadii(5),Insets.EMPTY);
+
+            messageLbl.backgroundProperty().set(new Background(fillColor));
+
+            messageLbl.borderProperty().set(
+                    new Border(new BorderStroke(Color.GRAY,
+                            BorderStrokeStyle.SOLID,new CornerRadii(5),new BorderWidths(1)))
+            );
+            if(messageDTO.senderId()==id){
+                bubbleHBox.getChildren().addAll(spacer(),messageLbl);
+                bubbleHBox.alignmentProperty().set(Pos.CENTER_RIGHT);
+            }
+            else{
+                bubbleHBox.getChildren().addAll(messageLbl , spacer());
+                bubbleHBox.alignmentProperty().set(Pos.CENTER_LEFT);
+            }
+        }
+        return chat;
+
+    }
+    private Region spacer() {
+        Region spacer=new Region();
+        HBox.setHgrow(spacer , Priority.ALWAYS );
+        return spacer;
+    }
 
     public VBox ContactList(){
         VBox contactsList=new VBox();
