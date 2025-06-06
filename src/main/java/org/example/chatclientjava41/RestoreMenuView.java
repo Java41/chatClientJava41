@@ -36,4 +36,5 @@ public class RestoreMenuView{
     public void setError(String error) {
         this.error.setText(error);
     }
+
 }
