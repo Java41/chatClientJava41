@@ -99,7 +99,7 @@ public class ProfileElementCreator {
         layout.getChildren().addAll(
                 new Label("Мой профиль"),
                 new Separator(),
-                createEditableField("ID", appState.getId(), false), // ID не редактируемый
+                createEditableField("ID",String.valueOf(appState.getId()) , false), // ID не редактируемый
                 createEditableField("Имя пользователя", appState.getUsername(), true),
                 createEditableField("Email", appState.getEmail(), true),
                 createEditableField("Имя", appState.getFirstname(), true),

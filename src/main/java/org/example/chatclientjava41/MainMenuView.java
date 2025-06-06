@@ -16,6 +16,7 @@ public class MainMenuView{
     private static MainMenuController mainMenuController;
     private VBox contactsList=new VBox();
     private VBox messagesContainer=new VBox();
+    private long currentRecipientId;
 
     public MainMenuView(MainMenuController mainMenuController) {
         this.mainMenuController = mainMenuController;
@@ -51,10 +52,10 @@ public class MainMenuView{
         TextField fieldCreateContact=new TextField();
         fieldCreateContact.setPromptText("Введите id пользователя");
         Button createChatsBtn = new Button("Новый чат");
-        createChatsBtn.setOnAction(actionEvent -> mainMenuController.CreateContact(fieldCreateContact.getText()));
+        createChatsBtn.setOnAction(actionEvent -> mainMenuController.CreateContact(Long.parseLong(fieldCreateContact.getText())));
 
-//         UserSearchComponent userSearch = new UserSearchComponent(); // Теперь загрузка внутри компонента
-//         userSearch.setOnUserClicked(System.out::println);
+         UserSearchComponent userSearch = new UserSearchComponent(); // Теперь загрузка внутри компонента
+         userSearch.setOnUserClicked(System.out::println);
 
 
         createChatsBtn.setMaxWidth(Double.MAX_VALUE);
@@ -65,9 +66,8 @@ public class MainMenuView{
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
 
-        contactsVBox.getChildren().addAll( fieldCreateContact,createChatsBtn, scrollPane);
+        contactsVBox.getChildren().addAll(userSearch.getView(), fieldCreateContact,createChatsBtn, scrollPane);
 
-        //contactsVBox.getChildren().addAll( userSearch.getView(), scrollPane);
 
 
         return contactsVBox;
@@ -186,7 +186,7 @@ public class MainMenuView{
 
 // Ввод сообщения и кнопки справа от него
         TextField messageInput= new TextField();
-        messageInput.setOnAction(event ->mainMenuController.sendMessageField(messageInput.getText()));
+        messageInput.setOnAction(event ->mainMenuController.sendMessageField(messageInput.getText(),currentRecipientId));
         messageInput.setPromptText("Введите сообщение");
 
         Button voiceMsgBtn= new Button("\uD83D\uDD0A"); // Микрофон или голосовое сообщение
@@ -208,6 +208,15 @@ public class MainMenuView{
 // Общий блок с сообщениями и вводом
         return new VBox(headerTopRow, messagesScroll, messageInputArea );
     }
+    public void setMessagesContainer(VBox messagesContainer) {
+        this.messagesContainer = messagesContainer;
+    }
 
+    public void setContactsList(VBox contactsList) {
+        this.contactsList = contactsList;
+    }
 
+    public void setCurrentRecipientId(long currentRecipientId) {
+        this.currentRecipientId = currentRecipientId;
+    }
 }

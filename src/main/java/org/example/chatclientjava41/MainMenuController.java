@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import org.example.chatclientjava41.dto.MessageDTO;
+import org.example.chatclientjava41.dto.UserDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +23,13 @@ public class MainMenuController {
     public void setSceneNavigator(SceneNavigator sceneNavigator){
         this.sceneNavigator=sceneNavigator;
     }
-    public static void sendMessageField(String textMessage){
-        System.out.println(AllResponse.SendMessage(1,textMessage));
+    public static void sendMessageField(String textMessage,Long id){
+        System.out.println(AllResponse.SendMessage(id,textMessage));
     }
 
     public VBox CurrentChat(List<MessageDTO> messages){
         VBox chat=new VBox();
-        long id=ApplicationState.getApplicationState().getId();
+        long id=ApplicationState.getApplicationState().getId();//наш id
         for (MessageDTO messageDTO : messages) {
             HBox bubbleHBox= new HBox();
             if(messageDTO.senderId()==id){
@@ -72,37 +73,26 @@ public class MainMenuController {
 
     public VBox ContactList(){
         VBox contactsList=new VBox();
-        ArrayList<Contact> contacts=ApplicationState.getApplicationState().getContacts();
+        List<Contact> contacts=ApplicationState.getApplicationState().getContacts();
         if(contacts!=null){
             for (int i = 0; i<contacts.size(); i++) {
-                Contact a1=contacts.get(i);
                 HBox contactItem = new HBox();
-                contactItem.setAlignment(Pos.CENTER_LEFT);
-                contactItem.setSpacing(10);
-                contactItem.setPadding(new Insets(5));
-                contactItem.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc;");
+                UserDTO recipientUser=contacts.get(i).getUserDTO();
                 // Аватарка
                 Circle avatarCircle = new Circle(20, Color.LIGHTGRAY);
-                Label initialsLabel = new Label(a1.getFirstname().indexOf(0)+"");
-                initialsLabel.setFont(Font.font(14));
+                Label initialsLabel = new Label(recipientUser.firstName());
                 StackPane avatarStack = new StackPane();
                 avatarStack.getChildren().addAll(avatarCircle, initialsLabel);
                 // Имя и последнее сообщение
                 VBox contactInfo = new VBox();
-                contactInfo.setSpacing(2);
-
-                Label nameLabel = new Label(a1.getFirstname()+" " + a1.getLastname());
-                nameLabel.setFont(Font.font(14));
-
+                Label nameLabel = new Label(recipientUser.firstName()+" " + recipientUser.lastName());
                 Label lastMsgLabel = new Label("Последнее сообщение...");
-                lastMsgLabel.setFont(Font.font(12));
-                lastMsgLabel.setTextFill(Color.GRAY);
-
                 contactInfo.getChildren().addAll(nameLabel, lastMsgLabel);
+
                 contactItem.getChildren().addAll(avatarStack, contactInfo);
-                ButtonChat contact=new ButtonChat("",contactItem);//кнопка будет содержать в себе чат
-                contact.prefWidthProperty().bind(contactsList.widthProperty());
-                contactsList.getChildren().add(contact);
+                contactItem.setOnMouseClicked(actionEvent ->CurrentChat(contacts.get(0).getMessages()));//вытащить id ИЗ КОНТАКТОВ
+                contactItem.prefWidthProperty().bind(contactsList.widthProperty());
+                contactsList.getChildren().add(ContactList());
             }
         }
         return contactsList;
