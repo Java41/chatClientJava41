@@ -1,17 +1,19 @@
 package org.example.chatclientjava41;
 
 import javafx.scene.Parent;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import org.controlsfx.control.SearchableComboBox;
 import org.example.chatclientjava41.dto.UserDTO;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class UserSearchComponent {
     private final TextField searchField = new TextField();
-    private final ListView<UserDTO> userList = new ListView<>();
+    private final SearchableComboBox<UserDTO> userList = new SearchableComboBox<>();
     private List<UserDTO> allUsers;
     private Consumer<UserDTO> userClickHandler;
     private boolean isLoaded = false;
@@ -24,13 +26,11 @@ public class UserSearchComponent {
     private void setupUI() {
         searchField.setPromptText("Поиск...");
         userList.setVisible(false); // Изначально скрываем список
-
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!isLoaded && !newVal.isEmpty()) {
                 loadUsers();
                 isLoaded = true;
             }
-
             if (newVal.isEmpty()) {
                 userList.setVisible(false); // Скрываем список при пустом поле
                 userList.getItems().clear();

@@ -235,7 +235,7 @@ public static List<MessageDTO> GetMessage(Long id) {
                             new TypeReference<>() {
                             });
         }
-        System.out.println("Users got it");
+        System.out.println("Messages got it");
     } catch (IOException ex) {
         throw new RuntimeException(ex);
     }

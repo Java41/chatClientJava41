@@ -10,9 +10,15 @@ public class Contact {
     private UserDTO contact;
     private ArrayList<MessageDTO> messages=new ArrayList<>();
 
-    private Contact(UserDTO contact) {
+    public Contact(UserDTO contact) {
         this.contact=contact;
+        System.out.println(contact.id()+"Добавлен в контакты");
         this.messages.addAll(AllResponse.GetMessage(contact.id()));
+        if(messages!=null){
+            for (MessageDTO i:messages){
+                System.out.println(i.content()+"/n");
+            }
+        }
     }
     public UserDTO getUserDTO() {
         return contact;
