@@ -3,8 +3,10 @@ package org.example.chatclientjava41;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.util.List;
 import java.util.Objects;
 
 public class MainMenuView{
@@ -17,15 +19,10 @@ public class MainMenuView{
     }
 
     public Scene MainScene(){
-        mainMenuController.ContactList();
         BorderPane root = new BorderPane();
-        VBox contactsBox =createContactsPane() ;// 1. Панель контактов слева
-        VBox profileBox = createProfilePane();// 2. Панель профиля справа
-        ScrollPane chat=new ScrollPane();// 3. Центр - окно чата
-        chat.setContent(messagesContainer);
-        root.setLeft(contactsBox);
-        root.setRight(profileBox);
-        root.setCenter(chat);
+        root.setLeft(createContactsPane());
+        root.setRight(createProfilePane());
+        root.setCenter(messagesContainer);
         Scene scene = new Scene(root, 1200, 500);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/StyleMainMenu.css")).toExternalForm());
         return scene;
@@ -38,9 +35,33 @@ public class MainMenuView{
         Button createChatsBtn = new Button("Новый чат");
         createChatsBtn.setOnAction(actionEvent -> mainMenuController.CreateContact(Long.parseLong(fieldCreateContact.getText())));
         UserSearchComponent userSearch = new UserSearchComponent(); // Теперь загрузка внутри компонента
-        ScrollPane scrollPane = new ScrollPane(contactsList);
+        createContactsList();
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(contactsList);
         contactsVBox.getChildren().addAll(userSearch.getView(), fieldCreateContact,createChatsBtn, scrollPane);
         return contactsVBox;
+    }
+    private void createContactsList(){
+        VBox chat=new VBox();
+        List<Contact> contacts=ApplicationState.getApplicationState().getContacts();
+        if(contacts!=null){
+            for (int i = 0; i<contacts.size(); i++) {
+                HBox contactItem = new HBox();
+                Contact interlocutor=contacts.get(i);
+                Circle avatarCircle = new Circle(20, Color.LIGHTGRAY);
+                Label initialsLabel = new Label(interlocutor.getUserDTO().firstName());
+                StackPane avatarStack = new StackPane(avatarCircle, initialsLabel);// Аватарка
+                Label nameLabel = new Label(interlocutor.getUserDTO().firstName()+" " + interlocutor.getUserDTO().lastName());
+                Label lastMsgLabel = new Label("Последнее сообщение...");
+                contactItem.getChildren().addAll(avatarStack, new VBox(nameLabel, lastMsgLabel));
+                contactItem.setOnMousePressed(e -> {
+                    contactItem.setStyle("-fx-background-color: #cccccc;"); // Эффект нажатия
+                    mainMenuController.CurrentChat(interlocutor);
+                });
+                chat.getChildren().add(contactItem);
+            }
+        }
+        contactsList=chat;
     }
 
     private VBox createProfilePane() {

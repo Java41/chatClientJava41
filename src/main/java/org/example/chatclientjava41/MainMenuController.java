@@ -3,6 +3,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -28,7 +29,7 @@ public class MainMenuController {
     }
 
     public void CurrentChat(Contact contact){
-        long id=ApplicationState.getApplicationState().getId();//наш id
+        long id=ApplicationState.getApplicationState().getId();
         ArrayList<MessageDTO> messages=contact.getMessages();
         UserDTO currentInterlocutor=contact.getUserDTO();
         //____________шапка чата________________
@@ -52,11 +53,13 @@ public class MainMenuController {
                 } else{
                     bubbleHBox.setAlignment(Pos.CENTER_LEFT);
                     messageLbl.backgroundProperty().set(new Background(new BackgroundFill(Color.WHITE,new CornerRadii(5),Insets.EMPTY)));
-                    bubbleHBox.getChildren().addAll(messageLbl , new Region());
+                    bubbleHBox.getChildren().addAll(messageLbl, new Region());
                 }
                 messagesVbox.getChildren().add(bubbleHBox);
             }
         }
+        ScrollPane scrollPane=new ScrollPane();
+        scrollPane.setContent(messagesVbox);
         //________________низ чата______________________________
         TextField messageInput= new TextField();
         messageInput.setOnAction(event ->sendMessageField(messageInput.getText(),currentInterlocutor.id()));
@@ -65,31 +68,10 @@ public class MainMenuController {
         Button emojiBtn= new Button("\uD83D\uDE03");     // Эмодзи
         Button imageBtn= new Button("\uD83D\uDCF7");     // Изображение
         HBox messageInputArea= new HBox(messageInput,voiceMsgBtn,emojiBtn,imageBtn);
-        VBox chat=new VBox(header,messagesVbox,messageInputArea);
+        VBox chat=new VBox(header,scrollPane,messageInputArea);
         view.setMessagesContainer(chat);
     }
-    public void ContactList(){
-        VBox contactsList=new VBox();
-        List<Contact> contacts=ApplicationState.getApplicationState().getContacts();
-        if(contacts!=null){
-            for (int i = 0; i<contacts.size(); i++) {
-                HBox contactItem = new HBox();
-                Contact interlocutor=contacts.get(i);
-                Circle avatarCircle = new Circle(20, Color.LIGHTGRAY);
-                Label initialsLabel = new Label(interlocutor.getUserDTO().firstName());
-                StackPane avatarStack = new StackPane(avatarCircle, initialsLabel);// Аватарка
-                Label nameLabel = new Label(interlocutor.getUserDTO().firstName()+" " + interlocutor.getUserDTO().lastName());
-                Label lastMsgLabel = new Label("Последнее сообщение...");
-                contactItem.getChildren().addAll(avatarStack, new VBox(nameLabel, lastMsgLabel));
-                contactItem.setOnMousePressed(e -> {
-                    contactItem.setStyle("-fx-background-color: #cccccc;"); // Эффект нажатия
-                    CurrentChat(interlocutor);
-                });
-                contactsList.getChildren().add(contactItem);
-            }
-        }
-        view.setContactsList(contactsList);
-    }
+
     public void Logout(){
         AllResponse.Logout();
     }
