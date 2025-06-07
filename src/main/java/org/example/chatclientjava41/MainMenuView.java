@@ -30,15 +30,24 @@ public class MainMenuView{
 
     private VBox createContactsPane() {
         VBox contactsVBox = new VBox();
-        TextField fieldCreateContact=new TextField();
-        fieldCreateContact.setPromptText("Введите id пользователя");
-        Button createChatsBtn = new Button("Новый чат");
-        createChatsBtn.setOnAction(actionEvent -> mainMenuController.CreateContact(Long.parseLong(fieldCreateContact.getText())));
+
+//        TextField fieldCreateContact=new TextField();
+//        fieldCreateContact.setPromptText("Введите id пользователя");
+//        Button createChatsBtn = new Button("Новый чат");
+//        createChatsBtn.setOnAction(actionEvent -> mainMenuController.CreateContact(Long.parseLong(fieldCreateContact.getText())));
+
         UserSearchComponent userSearch = new UserSearchComponent(); // Теперь загрузка внутри компонента
+        userSearch.setOnUserClicked(user -> mainMenuController.CreateContact(user.id()));
+
+        contactsVBox.setSpacing(5);
+
         createContactsList();
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(contactsList);
-        contactsVBox.getChildren().addAll(userSearch.getView(), fieldCreateContact,createChatsBtn, scrollPane);
+        contactsVBox.getChildren().addAll(userSearch.getView(),
+//                fieldCreateContact,
+//                createChatsBtn,
+                scrollPane);
         return contactsVBox;
     }
     private void createContactsList(){
