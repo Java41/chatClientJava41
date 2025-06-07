@@ -12,7 +12,6 @@ import org.example.chatclientjava41.dto.MessageDTO;
 import org.example.chatclientjava41.dto.UserDTO;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainMenuController {
     private MainMenuView view;
@@ -28,7 +27,7 @@ public class MainMenuController {
         System.out.println(AllResponse.SendMessage(id,textMessage));
     }
 
-    public void CurrentChat(Contact contact){
+    public VBox CurrentChat(Contact contact){
         long id=ApplicationState.getApplicationState().getId();
         ArrayList<MessageDTO> messages=contact.getMessages();
         UserDTO currentInterlocutor=contact.getUserDTO();
@@ -69,7 +68,7 @@ public class MainMenuController {
         Button imageBtn= new Button("\uD83D\uDCF7");     // Изображение
         HBox messageInputArea= new HBox(messageInput,voiceMsgBtn,emojiBtn,imageBtn);
         VBox chat=new VBox(header,scrollPane,messageInputArea);
-        view.setMessagesContainer(chat);
+        return chat;
     }
 
     public void Logout(){

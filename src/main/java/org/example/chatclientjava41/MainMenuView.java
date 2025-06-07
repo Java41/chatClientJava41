@@ -56,7 +56,7 @@ public class MainMenuView{
                 contactItem.getChildren().addAll(avatarStack, new VBox(nameLabel, lastMsgLabel));
                 contactItem.setOnMousePressed(e -> {
                     contactItem.setStyle("-fx-background-color: #cccccc;"); // Эффект нажатия
-                    mainMenuController.CurrentChat(interlocutor);
+                    messagesContainer= mainMenuController.CurrentChat(interlocutor);
                 });
                 chat.getChildren().add(contactItem);
             }
