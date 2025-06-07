@@ -222,7 +222,7 @@ public class AllResponse {
 //_____________________________Получение сообщения_______________________________
 public static List<MessageDTO> GetMessage(Long id) {
     Request request = new Request.Builder()
-            .url(SERVER_URL + SEND_MESSAGE+"?since="+applicationState.getLastTimeResponseMassage()+"&with=<"+id+">")
+            .url(SERVER_URL + SEND_MESSAGE+"?since="+applicationState.getLastTimeResponseMassage()+"&with="+id)
             .method("GET", null)
             .addHeader("Accept", "application/json")
             .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
