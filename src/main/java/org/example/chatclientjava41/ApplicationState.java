@@ -3,6 +3,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.SignatureException;
+import org.example.chatclientjava41.dto.UserDTO;
 
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -88,16 +89,15 @@ public class ApplicationState {
         }
         if(accessToken!=null&&refreshToken!=null&&jwtParser!=null){
             if (!isAuthenticated){
-                AllResponse.getAllContacts();
+                List< UserDTO> list = AllResponse.getAllContacts();
+                for(UserDTO i:list){
+                    contacts.add(new Contact(i));
+                }
                 isAuthenticated=true;
                 sceneNavigator.setMain();
             }
             refreshTokenRequest.scheduleAtFixedRate(_TimerTask(),1000,tokenExpirationTime-System.currentTimeMillis() / 1000);
         }else sceneNavigator.setAuth();
-    }
-
-    public void setContacts(ArrayList<Contact> contacts) {
-        this.contacts.addAll(contacts);
     }
     public void addContact(Contact contact) {contacts.add(contact);}
 
