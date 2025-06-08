@@ -80,9 +80,11 @@ public class MainMenuController {
         messageInput.prefWidthProperty().bind(messageInputArea.widthProperty());
         messageInputArea.setSpacing(5);
         VBox chat=new VBox(header,scrollPane,messageInputArea);
+
         chat.prefWidthProperty().bind(chat.widthProperty());//хз как это работает
         messagesVbox.prefWidthProperty().bind(chat.widthProperty());
         messagesVbox.prefHeightProperty().bind(chat.heightProperty());
+
         return chat;
     }
 
