@@ -93,6 +93,7 @@ public class ApplicationState {
                 for(UserDTO i:list){
                     contacts.add(new Contact(i));
                 }
+                updateAllMessages();
                 isAuthenticated=true;
                 sceneNavigator.setMain();
             }
@@ -133,7 +134,7 @@ public class ApplicationState {
                             isTokenRefreshInProgress=true;
                         }else {
                             AllResponse.RefreshToken();
-                            setLastTimeResponseMassage();
+                            updateAllMessages();
                         }
                     }
 
@@ -181,11 +182,11 @@ public class ApplicationState {
         return lastname;
     }
 
-    public void setLastTimeResponseMassage() {
+    public void updateAllMessages() {
         for (Contact i:contacts){
             i.updateMessage();
         }
-        LocalDateTime epoch = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+        LocalDateTime epoch = LocalDateTime.now(ZoneOffset.UTC);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         lastTimeResponseMassage=epoch.format(formatter);
     }
