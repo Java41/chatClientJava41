@@ -115,9 +115,9 @@ public class AllResponse {
     }
 
     //_____________________________Регистрация пользователя_______________________________
-    public static String RegistrationUser(String email, String login, String password, String date) {
+    public static String RegistrationUser(String email,  String password, String date, String firstname, String lastname) {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + email + "\",\n  \"login\": \"" + login + "\",\n  \"password\": \"" + password + "\",\n  \"birthdate\": \"" + date + "\"\n}");
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + email + "\",\n  \"password\": \"" + password + "\",\n  \"birthdate\": \"" + date + "\",\n  \"firstName\": \"" + firstname + "\",\n  \"lastName\": \""+lastname+"\"\n}");
         Request request = new Request.Builder()
                 .url(SERVER_URL + REGISTRATION_PATH)
                 .method("POST", body)
@@ -261,7 +261,7 @@ public static List<UserDTO> getAllContacts(){
     }
 
     //_________________________Добавить контакт__________________________________
-    public static void AddContact(Long id){
+    public static boolean AddContact(Long id){
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"id\":" + id + "\n}");
         Request request = new Request.Builder()
@@ -279,6 +279,7 @@ public static List<UserDTO> getAllContacts(){
                             .readValue(responseBody,
                                     new TypeReference<>() {
                                     }));
+                    return true;
                 };
 
             } else if(response.code()==404||response.code()==400){
@@ -290,6 +291,7 @@ public static List<UserDTO> getAllContacts(){
         } catch (IOException e) {
             System.out.println("Error auth");
         }
+        return false;
     }
     public static List<UserDTO> getUsers(){
         System.out.println("Get all users from server method called");

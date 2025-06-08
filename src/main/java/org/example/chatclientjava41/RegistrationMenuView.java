@@ -17,27 +17,29 @@ public class RegistrationMenuView {
     public Scene RegistrationScene() {
 
         VBox vBox = new VBox();
-        Scene scene = new Scene(vBox,500, 250);
+        Scene scene = new Scene(vBox,500, 400);
         scene.getStylesheets().add(getClass().getResource("/StyleRestoreMenu.css").toExternalForm());
 
-        TextField login = new TextField();
-        login.setPromptText("Логин:");
-        TextField password = new TextField();
-        password.setPromptText("Пароль:");
         TextField email = new TextField();
         email.setPromptText("Email:");
+        TextField password = new TextField();
+        password.setPromptText("Пароль:");
         TextField date = new TextField();
-        date.setPromptText("Дата рождения");
+        date.setPromptText("Дата рождения: 1990-01-01");
+        TextField firstname = new TextField();
+        firstname.setPromptText("Имя:");
+        TextField lastname = new TextField();
+        lastname.setPromptText("Фамилия:");
 
         Button authMenuButton = new Button("Назад к авторизации");
         Button registrationButton = new Button("Зарегистрироваться");
-        registrationButton.setOnAction(actionEvent -> registrationController.clickRegistration(login.getText(),password.getText(), email.getText(), date.getText()));
+        registrationButton.setOnAction(actionEvent -> registrationController.clickRegistration(email.getText(),password.getText(), date.getText(), firstname.getText(),lastname.getText()));
         //authMenuButton.getStyleClass().add("secondary");
         authMenuButton.setOnAction(actionEvent -> registrationController.clickMenuAuth());
 
         HBox hBox1 = new HBox(registrationButton,authMenuButton);
 
-        vBox.getChildren().addAll(login, email, password, date, hBox1, error);
+        vBox.getChildren().addAll(email, password, date,firstname,lastname, hBox1, error);
         vBox.setSpacing(10);//расстояние между объектами внутри
         vBox.setAlignment(Pos.CENTER);//позиционируем по центру
         hBox1.setSpacing(10);//расстояние между объектами внутри

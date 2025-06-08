@@ -18,50 +18,27 @@ public class RegistrationMenuController {
     public void clickMenuAuth(){
         sceneNavigator.setAuth();
     }
-    public void clickRegistration(String login, String password, String email, String date) {
-        if (login.isEmpty() || password.isEmpty() || email.isEmpty()) {
+    public void clickRegistration(String email,String password, String date, String firstname, String lastname) {
+        if (email.isEmpty() || password.isEmpty() || date.isEmpty()|| firstname.isEmpty()|| lastname.isEmpty()) {
             view.setError("Все поля обязательны");
             return;
         }
 
-        if(!(InputValidator.UserInputValidator.isLoginValid(login))){
-            view.setError("Длина логина: 3-20 символов");
-            return;
-        }
-
-        if (!(InputValidator.UserInputValidator.isPasswordValid(password))){
-            view.setError("Пароль не меньше 8 символов, с заглавной, строчной, цифрой и спецсимволом");
-            return;
-        }
+//        if (!(InputValidator.UserInputValidator.isPasswordValid(password))){
+//            view.setError("Пароль не меньше 8 символов, с заглавной, строчной, цифрой и спецсимволом");
+//            return;
+//        }
 
         if (!(InputValidator.UserInputValidator.isEmailValid(email))){
             view.setError("Неверный формат Email");
             return;
         }
 
-        String resp = AllResponse.RegistrationUser(email, login, password, date);
+        String resp = AllResponse.RegistrationUser(email, password, date,firstname,lastname);
         view.setError(resp);
 
         if ("Регистрация прошла успешно".equals(resp)){
             sceneNavigator.setAuth();
         }
-
-        //Успешный ответ_______________________________
-//         {
-//        "id": "<long>",
-//        "username": "<string>",
-//        "email": "<string>",
-//        "accessToken": "<string>",
-//        "refreshToken": "<string>"
-//        }
-        //Неполные данные_______________________________
-//        {
-//        "error": "Email, пароль и дата рождения обязательны"
-//        }
-        //такой пользователь уже существует_______________________________
-//        {
-//        "error": "Пользователь с таким email уже существует"
-//        }
-
     }
 }
