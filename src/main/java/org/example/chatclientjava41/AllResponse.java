@@ -115,9 +115,9 @@ public class AllResponse {
     }
 
     //_____________________________Регистрация пользователя_______________________________
-    public static String RegistrationUser(String email, String login, String password, String date) {
+    public static String RegistrationUser(String email,  String password, String date, String firstname, String lastname) {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + email + "\",\n  \"login\": \"" + login + "\",\n  \"password\": \"" + password + "\",\n  \"birthdate\": \"" + date + "\"\n}");
+        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + email + "\",\n  \"password\": \"" + password + "\",\n  \"birthdate\": \"" + date + "\",\n  \"firstName\": \"" + firstname + "\",\n  \"lastName\": \""+lastname+"\"\n}");
         Request request = new Request.Builder()
                 .url(SERVER_URL + REGISTRATION_PATH)
                 .method("POST", body)
@@ -194,7 +194,7 @@ public class AllResponse {
     }
 
     //_____________________________Отправка сообщения_______________________________
-    public static String SendMessage(Long recipientId, String message) {
+    public static boolean SendMessage(Long recipientId, String message) {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"recipientId\":" + recipientId + ",\n  \"content\": \"" + message + "\"\n}");
         Request request = new Request.Builder()
@@ -205,19 +205,15 @@ public class AllResponse {
                 .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            String responseBody = response.body().string();
-            System.out.println(response.code());
             if (response.code() == 201) {
-                return "Сообщение отправлено";
-            } else if (response.code() == 401) {
-                return "Вы не авторизованы";
-            } else if (response.code() == 403) {
-                return "Доступ запрещен";
-            } else return "Получатель не найден";
+                applicationState.updateAllMessages();
+                return true;
+            }
 
         } catch (IOException e) {
-            return "Error auth";
+            System.out.println("Error auth");
         }
+        return false;
     }
 //_____________________________Получение сообщения_______________________________
 public static List<MessageDTO> GetMessage(Long id) {
@@ -265,7 +261,7 @@ public static List<UserDTO> getAllContacts(){
     }
 
     //_________________________Добавить контакт__________________________________
-    public static void AddContact(Long id){
+    public static boolean AddContact(Long id){
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"id\":" + id + "\n}");
         Request request = new Request.Builder()
@@ -283,6 +279,7 @@ public static List<UserDTO> getAllContacts(){
                             .readValue(responseBody,
                                     new TypeReference<>() {
                                     }));
+                    return true;
                 };
 
             } else if(response.code()==404||response.code()==400){
@@ -294,6 +291,7 @@ public static List<UserDTO> getAllContacts(){
         } catch (IOException e) {
             System.out.println("Error auth");
         }
+        return false;
     }
     public static List<UserDTO> getUsers(){
         System.out.println("Get all users from server method called");

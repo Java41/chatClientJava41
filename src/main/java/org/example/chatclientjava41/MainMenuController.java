@@ -1,6 +1,7 @@
 package org.example.chatclientjava41;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -8,13 +9,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import org.example.chatclientjava41.dto.MessageDTO;
 import org.example.chatclientjava41.dto.UserDTO;
 
 import java.util.ArrayList;
 
 public class MainMenuController {
-    private MainMenuView view;
+    private static MainMenuView view;
     private SceneNavigator sceneNavigator;
 
     public void setView(MainMenuView view){
@@ -23,8 +25,10 @@ public class MainMenuController {
     public void setSceneNavigator(SceneNavigator sceneNavigator){
         this.sceneNavigator=sceneNavigator;
     }
-    public static void sendMessageField(String textMessage,Long id){
-        System.out.println(AllResponse.SendMessage(id,textMessage));
+    public static void sendMessageField(String textMessage,Contact contact){
+        if(AllResponse.SendMessage(contact.getUserDTO().id(), textMessage)){
+            view.setMessagesContainer(contact);
+        }
     }
 
     public VBox CurrentChat(Contact contact){
@@ -34,9 +38,11 @@ public class MainMenuController {
         //____________шапка чата________________
         Label nameLbl= new Label(currentInterlocutor.username());
         Label timeLbl= new Label("Последняя активность: 12:45");
+        timeLbl.setFont(Font.font(12));
         Button callBtn= new Button("Звонок");
         Button videoCallBtn= new Button("Видео звонок");
-        HBox header=new HBox(new VBox(nameLbl,timeLbl),new HBox(callBtn,videoCallBtn));
+        HBox header=new HBox(new VBox(nameLbl,timeLbl),callBtn,videoCallBtn);
+        header.setAlignment(Pos.CENTER_LEFT);
         //____________поле чата___________________
         VBox messagesVbox=new VBox();
         if(messages!=null){
@@ -48,26 +54,37 @@ public class MainMenuController {
                 if(messageDTO.senderId()==id){
                     bubbleHBox.setAlignment(Pos.CENTER_RIGHT);
                     messageLbl.backgroundProperty().set(new Background(new BackgroundFill(Color.LIGHTGREEN,new CornerRadii(5),Insets.EMPTY)));
-                    bubbleHBox.getChildren().addAll(new Region(),messageLbl);
+                    bubbleHBox.getChildren().addAll(messageLbl);
                 } else{
                     bubbleHBox.setAlignment(Pos.CENTER_LEFT);
                     messageLbl.backgroundProperty().set(new Background(new BackgroundFill(Color.WHITE,new CornerRadii(5),Insets.EMPTY)));
-                    bubbleHBox.getChildren().addAll(messageLbl, new Region());
+                    bubbleHBox.getChildren().addAll(messageLbl);
                 }
                 messagesVbox.getChildren().add(bubbleHBox);
             }
         }
         ScrollPane scrollPane=new ScrollPane();
         scrollPane.setContent(messagesVbox);
+        scrollPane.setFitToWidth(true);
         //________________низ чата______________________________
         TextField messageInput= new TextField();
-        messageInput.setOnAction(event ->sendMessageField(messageInput.getText(),currentInterlocutor.id()));
+        messageInput.setOnAction(event ->sendMessageField(messageInput.getText(),contact));
         messageInput.setPromptText("Введите сообщение");
         Button voiceMsgBtn= new Button("\uD83D\uDD0A"); // Микрофон или голосовое сообщение
+        voiceMsgBtn.setPrefWidth(50);
         Button emojiBtn= new Button("\uD83D\uDE03");     // Эмодзи
+        voiceMsgBtn.setPrefWidth(50);
         Button imageBtn= new Button("\uD83D\uDCF7");     // Изображение
+        voiceMsgBtn.setPrefWidth(50);
         HBox messageInputArea= new HBox(messageInput,voiceMsgBtn,emojiBtn,imageBtn);
+        messageInput.prefWidthProperty().bind(messageInputArea.widthProperty());
+        messageInputArea.setSpacing(5);
         VBox chat=new VBox(header,scrollPane,messageInputArea);
+
+        chat.prefWidthProperty().bind(chat.widthProperty());//хз как это работает
+        messagesVbox.prefWidthProperty().bind(chat.widthProperty());
+        messagesVbox.prefHeightProperty().bind(chat.heightProperty());
+
         return chat;
     }
 
@@ -76,7 +93,9 @@ public class MainMenuController {
     }
 
     public void CreateContact(long id){
-        AllResponse.AddContact(id);
+        if(AllResponse.AddContact(id)){
+            view.setContactsList();
+        }
     }
     public void getProfileMainUser(){//добавить окно
         ProfileElementCreator.showProfileWindow(ApplicationState.getApplicationState());

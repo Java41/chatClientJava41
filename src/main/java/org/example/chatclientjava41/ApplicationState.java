@@ -93,6 +93,7 @@ public class ApplicationState {
                 for(UserDTO i:list){
                     contacts.add(new Contact(i));
                 }
+                updateAllMessages();
                 isAuthenticated=true;
                 sceneNavigator.setMain();
             }
@@ -131,13 +132,12 @@ public class ApplicationState {
                     if(!isTokenRefreshInProgress){
                         if((System.currentTimeMillis() / 1000)+7000>tokenExpirationTime){
                             isTokenRefreshInProgress=true;
-//                            LocalDateTime epoch = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
-//                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-//                            lastTimeTakeMassage=epoch.format(formatter);
                         }else {
                             AllResponse.RefreshToken();
+                            updateAllMessages();
                         }
                     }
+
                 }
             }
         };
@@ -180,6 +180,15 @@ public class ApplicationState {
 
     public String getLastname() {
         return lastname;
+    }
+
+    public void updateAllMessages() {
+        for (Contact i:contacts){
+            i.updateMessage();
+        }
+        LocalDateTime epoch = LocalDateTime.now(ZoneOffset.UTC);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        lastTimeResponseMassage=epoch.format(formatter);
     }
 
     public long getId() {

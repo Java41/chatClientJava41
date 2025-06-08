@@ -5,20 +5,16 @@ import org.example.chatclientjava41.dto.UserDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+interface ObservMessage{
+    void updateMessage();
+}
 
-public class Contact {
+public class Contact implements ObservMessage{
     private UserDTO contact;
     private ArrayList<MessageDTO> messages=new ArrayList<>();
 
     public Contact(UserDTO contact) {
         this.contact=contact;
-        System.out.println(contact.id()+"Добавлен в контакты");
-        this.messages.addAll(AllResponse.GetMessage(contact.id()));
-        if(messages!=null){
-            for (MessageDTO i:messages){
-                System.out.println(i.content()+"/n");
-            }
-        }
     }
     public UserDTO getUserDTO() {
         return contact;
@@ -26,5 +22,10 @@ public class Contact {
 
     public ArrayList<MessageDTO> getMessages() {
         return messages;
+    }
+
+    @Override
+    public void updateMessage() {
+       messages.addAll(AllResponse.GetMessage(contact.id()));
     }
 }
