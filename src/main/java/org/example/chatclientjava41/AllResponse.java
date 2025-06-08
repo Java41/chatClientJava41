@@ -194,7 +194,7 @@ public class AllResponse {
     }
 
     //_____________________________Отправка сообщения_______________________________
-    public static String SendMessage(Long recipientId, String message) {
+    public static boolean SendMessage(Long recipientId, String message) {
         MediaType mediaType = MediaType.parse(JSON_MEDIA);
         RequestBody body = RequestBody.create(mediaType, "{\n  \"recipientId\":" + recipientId + ",\n  \"content\": \"" + message + "\"\n}");
         Request request = new Request.Builder()
@@ -205,19 +205,15 @@ public class AllResponse {
                 .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            String responseBody = response.body().string();
-            System.out.println(response.code());
             if (response.code() == 201) {
-                return "Сообщение отправлено";
-            } else if (response.code() == 401) {
-                return "Вы не авторизованы";
-            } else if (response.code() == 403) {
-                return "Доступ запрещен";
-            } else return "Получатель не найден";
+                applicationState.setLastTimeResponseMassage();
+                return true;
+            }
 
         } catch (IOException e) {
-            return "Error auth";
+            System.out.println("Error auth");
         }
+        return false;
     }
 //_____________________________Получение сообщения_______________________________
 public static List<MessageDTO> GetMessage(Long id) {
