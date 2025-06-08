@@ -131,13 +131,12 @@ public class ApplicationState {
                     if(!isTokenRefreshInProgress){
                         if((System.currentTimeMillis() / 1000)+7000>tokenExpirationTime){
                             isTokenRefreshInProgress=true;
-//                            LocalDateTime epoch = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
-//                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-//                            lastTimeTakeMassage=epoch.format(formatter);
                         }else {
                             AllResponse.RefreshToken();
+                            setLastTimeResponseMassage();
                         }
                     }
+
                 }
             }
         };
@@ -180,6 +179,15 @@ public class ApplicationState {
 
     public String getLastname() {
         return lastname;
+    }
+
+    public void setLastTimeResponseMassage() {
+        for (Contact i:contacts){
+            i.updateMessage();
+        }
+        LocalDateTime epoch = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        lastTimeResponseMassage=epoch.format(formatter);
     }
 
     public long getId() {
