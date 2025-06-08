@@ -16,7 +16,6 @@ public class Chat41Client extends Application {
         primaryStage.setX((Screen.getPrimary().getVisualBounds().getWidth() / 2)-600);
         primaryStage.setY((Screen.getPrimary().getVisualBounds().getHeight() / 2)-250);
         primaryStage.show();
-        //изза запуска потока на запросы обновления токена, приложение теперь закрывается не доконца
     }
 
     public static void main(String[] args) {

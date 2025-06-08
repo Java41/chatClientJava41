@@ -206,7 +206,7 @@ public class AllResponse {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             if (response.code() == 201) {
-                applicationState.setLastTimeResponseMassage();
+                applicationState.updateAllMessages();
                 return true;
             }
 

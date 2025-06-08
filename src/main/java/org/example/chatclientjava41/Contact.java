@@ -15,7 +15,6 @@ public class Contact implements ObservMessage{
 
     public Contact(UserDTO contact) {
         this.contact=contact;
-        this.messages.addAll(AllResponse.GetMessage(contact.id()));
     }
     public UserDTO getUserDTO() {
         return contact;
