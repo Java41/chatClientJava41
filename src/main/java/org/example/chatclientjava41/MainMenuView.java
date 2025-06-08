@@ -37,18 +37,7 @@ public class MainMenuView{
         Button createChatsBtn = new Button("Новый чат");
         createChatsBtn.setOnAction(actionEvent -> mainMenuController.CreateContact(Long.parseLong(fieldCreateContact.getText())));
         UserSearchComponent userSearch = new UserSearchComponent(); // Теперь загрузка внутри компонента
-        createContactsList();
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(contactsList);
-        VBox contactsVBox = new VBox(userSearch.getView(), fieldCreateContact,createChatsBtn, scrollPane);
-        contactsVBox.setPadding(new Insets(10));
-        contactsVBox.setSpacing(10);
-        contactsVBox.setPrefWidth(300);
-        contactsVBox.setStyle("-fx-background-color: #f0f0f0;");
-        return contactsVBox;
-    }
-    private void createContactsList(){
-        VBox chat=new VBox();
+        VBox list=new VBox();
         List<Contact> contacts=ApplicationState.getApplicationState().getContacts();
         if(contacts!=null){
             for (int i = 0; i<contacts.size(); i++) {
@@ -64,10 +53,17 @@ public class MainMenuView{
                     contactItem.setStyle("-fx-background-color: #cccccc;"); // Эффект нажатия
                     setMessagesContainer(interlocutor);
                 });
-                chat.getChildren().add(contactItem);
+                list.getChildren().add(contactItem);
             }
         }
-        contactsList=chat;
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(list);
+        VBox contactsPane = new VBox(userSearch.getView(), fieldCreateContact,createChatsBtn, scrollPane);
+        contactsPane.setPadding(new Insets(10));
+        contactsPane.setSpacing(10);
+        contactsPane.setPrefWidth(300);
+        contactsPane.setStyle("-fx-background-color: #f0f0f0;");
+        return contactsPane;
     }
 
     private VBox createProfilePane() {
@@ -103,5 +99,10 @@ public class MainMenuView{
     public void setMessagesContainer(Contact contact){
         messagesContainer= mainMenuController.CurrentChat(contact);
         root.setCenter(messagesContainer);
+    }
+
+    public void setContactsList() {
+        this.contactsList = createContactsPane();
+        root.setCenter(contactsList);
     }
 }

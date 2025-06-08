@@ -26,6 +26,6 @@ public class Contact implements ObservMessage{
 
     @Override
     public void updateMessage() {
-       messages.addAll(AllResponse.GetMessage(contact.id()));//должны приходить сообщения новые, а приходят все
+       messages.addAll(AllResponse.GetMessage(contact.id()));
     }
 }

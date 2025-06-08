@@ -22,8 +22,10 @@ public class AuthorizationMenuView {
         Scene scene = new Scene(vbox, 500, 250);
         // логин и пароль захардкожены для удобства)
         TextField login = new TextField("user@example.com");
-        login.setPromptText("Логин:");
         TextField password = new TextField("password123");
+//        TextField login = new TextField("www.galkin_daniil.ru@mail.ru");
+//        TextField password = new TextField("internet123");
+        login.setPromptText("Логин:");
         password.setPromptText("Пароль:");
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/StyleRestoreMenu.css")).toExternalForm());
         Button logInButton = new Button("Войти");

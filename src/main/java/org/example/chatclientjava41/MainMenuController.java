@@ -41,7 +41,7 @@ public class MainMenuController {
         timeLbl.setFont(Font.font(12));
         Button callBtn= new Button("Звонок");
         Button videoCallBtn= new Button("Видео звонок");
-        HBox header=new HBox(new VBox(nameLbl,timeLbl),new HBox(callBtn,videoCallBtn));
+        HBox header=new HBox(new VBox(nameLbl,timeLbl),callBtn,videoCallBtn);
         header.setAlignment(Pos.CENTER_LEFT);
         //____________поле чата___________________
         VBox messagesVbox=new VBox();
@@ -93,7 +93,9 @@ public class MainMenuController {
     }
 
     public void CreateContact(long id){
-        AllResponse.AddContact(id);
+        if(AllResponse.AddContact(id)){
+            view.setContactsList();
+        }
     }
     public void getProfileMainUser(){//добавить окно
         ProfileElementCreator.showProfileWindow(ApplicationState.getApplicationState());
