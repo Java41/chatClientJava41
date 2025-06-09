@@ -314,6 +314,5 @@ public static List<UserDTO> getAllContacts(){
             throw new RuntimeException(ex);
         }
         return List.of();
-
     }
 }

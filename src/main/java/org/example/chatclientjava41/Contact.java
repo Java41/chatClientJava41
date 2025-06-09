@@ -1,5 +1,6 @@
 package org.example.chatclientjava41;
 
+import javafx.scene.image.ImageView;
 import org.example.chatclientjava41.dto.MessageDTO;
 import org.example.chatclientjava41.dto.UserDTO;
 
@@ -12,6 +13,7 @@ interface ObservMessage{
 public class Contact implements ObservMessage{
     private UserDTO contact;
     private ArrayList<MessageDTO> messages=new ArrayList<>();
+    private ImageView avatar=new ImageView();
 
     public Contact(UserDTO contact) {
         this.contact=contact;
