@@ -26,294 +26,317 @@ public class AllResponse {
     private static final String USER_PATH = "/users";
     private static final OkHttpClient client = new OkHttpClient().newBuilder().build();
 
+    private static abstract class ResponseTemplate<T> {
+        protected abstract Request buildRequest();
+        protected abstract T parseSuccessfulResponse(String responseBody) throws IOException;
+        protected T handleError(int statusCode, String responseBody) {
+            return null;
+        }
+
+        public final T execute() {
+            Request request = buildRequest();
+            try (Response response = client.newCall(request).execute()) {
+                String responseBody = response.body() != null ? response.body().string() : "";
+                return response.isSuccessful() ? parseSuccessfulResponse(responseBody) : handleError(response.code(), responseBody);
+            } catch (IOException ioException) {
+                return handleError(-1, ioException.getMessage());
+            }
+        }
+    }
+
     public static String getPublicKey() {
-        Request request = new Request.Builder()
-                .url(SERVER_URL + PUB_KEY_PATH)
-                .get()
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            String responseBody = response.body() != null ? response.body().string() : null;
-            if (responseBody.contains("-----BEGIN PUBLIC KEY-----") && responseBody.contains("-----END PUBLIC KEY-----")) {
-                responseBody = responseBody.replace("-----BEGIN PUBLIC KEY-----", "")
-                        .replace("-----END PUBLIC KEY-----", "").replaceAll("\\s", "");
-                return responseBody;
-            } else return "Публичный ключ не был получен";
-        } catch (IOException e) {
-            return "Ошибка";
-        }
+        return new ResponseTemplate<String>() {
+            protected Request buildRequest() {
+                return new Request.Builder()
+                        .url(SERVER_URL + PUB_KEY_PATH)
+                        .get()
+                        .build();
+            }
+            protected String parseSuccessfulResponse(String responseBody) {
+                if (responseBody.contains("-----BEGIN PUBLIC KEY-----") && responseBody.contains("-----END PUBLIC KEY-----")) {
+                    return responseBody
+                            .replace("-----BEGIN PUBLIC KEY-----", "")
+                            .replace("-----END PUBLIC KEY-----", "")
+                            .replaceAll("\\s", "");
+                }
+                return "Публичный ключ не был получен";
+            }
+            protected String handleError(int statusCode, String responseBody) {
+                return statusCode == -1 ? "Ошибка" : "Публичный ключ не был получен";
+            }
+        }.execute();
     }
 
-    public static String Authorisation(String login, String password) {//при положительном ответе данные в состояние приложения на updateAuthState(String accessToken, String refreshToken)
-        MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + login + "\",\n  \"password\": \"" + password + "\"\n}");
-        Request request = new Request.Builder()
-                .url(SERVER_URL + LOGIN_PATH)
-                .post(body)
-                .header("Content-Type", JSON_MEDIA)
-                .header("Accept", JSON_MEDIA)
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            String responseBody = response.body().string();
-            if (responseBody.contains("\"accessToken\":\"") && responseBody.contains("\",\"refreshToken\":\"")) {
-                responseBody = responseBody.replaceAll("[{}\"]", "");
-                responseBody = responseBody.replace("accessToken:", "");
-                String[] tokens = responseBody.split(",refreshToken:");
-                applicationState.updateAuthState(tokens);
-                return "Вход успешно состоялся";
-            } else return "Неверный логин или пароль";
-
-        } catch (IOException e) {
-            return "Error auth";
-        }
+    public static String Authorisation(String email, String password) {
+        return new ResponseTemplate<String>() {
+            protected Request buildRequest() {
+                MediaType mediaType = MediaType.parse(JSON_MEDIA);
+                RequestBody requestBody = RequestBody.create(mediaType, "{ \"email\":\"" + email + "\", \"password\":\"" + password + "\" }");
+                return new Request.Builder()
+                        .url(SERVER_URL + LOGIN_PATH)
+                        .post(requestBody)
+                        .header("Content-Type", JSON_MEDIA)
+                        .header("Accept", JSON_MEDIA)
+                        .build();
+            }
+            protected String parseSuccessfulResponse(String responseBody) {
+                if (responseBody.contains("\"accessToken\":\"") && responseBody.contains("\",\"refreshToken\":\"")) {
+                    String cleanedTokens = responseBody.replaceAll("[{}\" ]", "")
+                            .replace("accessToken:", "");
+                    String[] tokens = cleanedTokens.split(",refreshToken:");
+                    applicationState.updateAuthState(tokens);
+                    return "Вход успешно состоялся";
+                }
+                return "Неверный логин или пароль";
+            }
+            protected String handleError(int statusCode, String responseBody) {
+                return "Error auth";
+            }
+        }.execute();
     }
-    //_____________________________Выход пользователя_______________________________
+
     public static void Logout() {
-        MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"" + applicationState.getRefreshToken() + "\"\n}");
-        Request request = new Request.Builder()
-                .url(SERVER_URL + LOGOUT_PATH)
-                .method("POST", body)
-                .addHeader("Content-Type", JSON_MEDIA)
-                .addHeader("Accept", JSON_MEDIA)
-                .build();
-        try (Response response = client.newCall(request).execute();){
-            if(response.code()==200){
+        new ResponseTemplate<Void>() {
+            protected Request buildRequest() {
+                MediaType mediaType = MediaType.parse(JSON_MEDIA);
+                RequestBody requestBody = RequestBody.create(mediaType, "{ \"refreshToken\":\"" + applicationState.getRefreshToken() + "\" }");
+                return new Request.Builder()
+                        .url(SERVER_URL + LOGOUT_PATH)
+                        .post(requestBody)
+                        .header("Content-Type", JSON_MEDIA)
+                        .header("Accept", JSON_MEDIA)
+                        .build();
+            }
+            protected Void parseSuccessfulResponse(String responseBody) {
                 applicationState.LogOut();
-            }else System.out.println("чет запрос не сработал");
-        }catch (IOException e){
-            System.out.println(e.getMessage());
-        }
+                return null;
+            }
+            protected Void handleError(int statusCode, String responseBody) {
+                System.out.println(statusCode == -1 ? responseBody : "чет запрос не сработал");
+                return null;
+            }
+        }.execute();
     }
 
-    //_____________________________Обновление токена_______________________________
     public static void RefreshToken() {
-        MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"refreshToken\": \"" + applicationState.getRefreshToken() + "\"\n}");
-        Request request = new Request.Builder()
-                .url(SERVER_URL + REFRESH_PATH)
-                .method("POST", body)
-                .addHeader("Content-Type", JSON_MEDIA)
-                .addHeader("Accept", JSON_MEDIA)
-                .build();
-        try {
-            Response response = client.newCall(request).execute();
-            String responseBody = response.body().string();
-            if (response.code() == 400) {
-                System.out.println(response.code() + " " + response.message());
-            } else if (response.code() == 401) {
-                applicationState.updateAuthState(null);
-            }else {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
-                String accessToken = jsonNode.get("accessToken").asText();
-                String refreshToken = jsonNode.get("refreshToken").asText();
-                applicationState.updateAuthState(new String[]{accessToken, refreshToken});
+        new ResponseTemplate<Void>() {
+            protected Request buildRequest() {
+                MediaType mediaType = MediaType.parse(JSON_MEDIA);
+                RequestBody requestBody = RequestBody.create(mediaType, "{ \"refreshToken\":\"" + applicationState.getRefreshToken() + "\" }");
+                return new Request.Builder()
+                        .url(SERVER_URL + REFRESH_PATH)
+                        .post(requestBody)
+                        .header("Content-Type", JSON_MEDIA)
+                        .header("Accept", JSON_MEDIA)
+                        .build();
             }
-        } catch (IOException e) {
-            System.out.println("Ошибка получения токена");
-        }
+            protected Void parseSuccessfulResponse(String responseBody) throws IOException {
+                JsonNode json = new ObjectMapper().readTree(responseBody);
+                applicationState.updateAuthState(new String[]{json.get("accessToken").asText(), json.get("refreshToken").asText()});
+                return null;
+            }
+            protected Void handleError(int statusCode, String responseBody) {
+                if (statusCode == -1){
+                    System.out.println("Ошибка получения токена");
+                }
+                else if (statusCode == 400) {
+                    System.out.println("400 " + responseBody);
+                }
+                else if (statusCode == 401) {
+                    applicationState.updateAuthState(null);
+                }
+                return null;
+            }
+        }.execute();
     }
 
-    //_____________________________Регистрация пользователя_______________________________
-    public static String RegistrationUser(String email,  String password, String date, String firstname, String lastname) {
-        MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"email\": \"" + email + "\",\n  \"password\": \"" + password + "\",\n  \"birthdate\": \"" + date + "\",\n  \"firstName\": \"" + firstname + "\",\n  \"lastName\": \""+lastname+"\"\n}");
-        Request request = new Request.Builder()
-                .url(SERVER_URL + REGISTRATION_PATH)
-                .method("POST", body)
-                .addHeader("Content-Type", JSON_MEDIA)
-                .addHeader("Accept", JSON_MEDIA)
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            String responseBody = response.body().string();
-            if (response.code() == 201) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
-                String accessToken = jsonNode.get("accessToken").asText();
-                String refreshToken = jsonNode.get("refreshToken").asText();
-                applicationState.updateAuthState(new String[]{accessToken, refreshToken});
-                return "Регистрация прошла успешна";
+    public static String RegistrationUser(String email, String password, String birthdate, String firstName, String lastName) {
+        return new ResponseTemplate<String>() {
+            protected Request buildRequest() {
+                MediaType mediaType = MediaType.parse(JSON_MEDIA);
+                RequestBody requestBody = RequestBody.create(
+                        mediaType,
+                        "{ \"email\":\"" + email + "\", \"password\":\"" + password + "\", "
+                                + "\"birthdate\":\"" + birthdate + "\", "
+                                + "\"firstName\":\"" + firstName + "\", "
+                                + "\"lastName\":\"" + lastName + "\" }");
+                return new Request.Builder()
+                        .url(SERVER_URL + REGISTRATION_PATH)
+                        .post(requestBody)
+                        .header("Content-Type", JSON_MEDIA)
+                        .header("Accept", JSON_MEDIA)
+                        .build();
             }
-            return "Ошибка регистрации: " + response.code();
-        } catch (IOException e) {
-            return "error registration";
-        }
-        //Способ выше подглядел у гпт, насколько я понял всю рутину ковыряния json передаем Jackson-у
-        // ObjectMapper это основной класс Jackson для преобразования между Json и Java
-        // JsonNode — это узел (node) в дереве JSON, полученном через ObjectMapper.readTree(). С его помощью можно «гулять» по структуре ответа без создания дополнительных DTO-классов.
-
-        //Ниже второй вариант, пока закомментил
-        /*
-        try (Response resp = client.newCall(request).execute()) {
-        String body = resp.body().string();
-        if (resp.code() == 201 && body.contains("accessToken")) {
-            // повторяем логику replaceAll/split из Authorisation
-            String cleaned = body.replaceAll("[{}\"]","")
-                               .replace("accessToken:","");
-            String[] tokens = cleaned.split(",refreshToken:");
-            applicationState.updateAuthState(tokens);
-            return "Регистрация прошла успешно";
-        }
-        return "Ошибка регистрации: " + resp.code();
-    } catch (IOException e) {
-        return "error registration";
-    }
-         */
+            protected String parseSuccessfulResponse(String responseBody) throws IOException {
+                JsonNode json = new ObjectMapper().readTree(responseBody);
+                if (json.has("accessToken") && json.has("refreshToken")) {
+                    applicationState.updateAuthState(new String[]{json.get("accessToken").asText(), json.get("refreshToken").asText()});
+                    return "Регистрация прошла успешна";
+                }
+                return "Ошибка регистрации: некорректный ответ";
+            }
+            protected String handleError(int statusCode, String responseBody) {
+                return statusCode == -1 ? "error registration" : "Ошибка регистрации: " + statusCode;
+            }
+        }.execute();
     }
 
     public static void updateProfileFieldsAPI(String jsonData) {
-        RequestBody body = RequestBody.create(
-                jsonData,
-                MediaType.parse(JSON_MEDIA)
-        );
-
-        Request request = new Request.Builder()
-                .url(SERVER_URL + "/profile")
-                .patch(body)
-                .addHeader("Content-Type", JSON_MEDIA)
-                .addHeader("Accept", JSON_MEDIA)
-                .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            String responseBody = response.body().string();
-            System.out.println(response.code() + " " + responseBody);
-
-            if (responseBody.contains("\"accessToken\":\"") && responseBody.contains("\",\"refreshToken\":\"")) {
-                responseBody = responseBody.replaceAll("[{}\"]", "");
-                responseBody = responseBody.replace("accessToken:", "");
-                String[] tokens = responseBody.split(",refreshToken:");
-                applicationState.updateAuthState(tokens);
-                System.out.println("Попытка обновить поле удалась так как ответ содержит токен");
-            } else {
-                System.out.println(response.code() + " " + responseBody);
+        new ResponseTemplate<Void>() {
+            protected Request buildRequest() {
+                RequestBody requestBody = RequestBody.create(jsonData, MediaType.parse(JSON_MEDIA));
+                return new Request.Builder()
+                        .url(SERVER_URL + "/profile")
+                        .patch(requestBody)
+                        .header("Content-Type", JSON_MEDIA)
+                        .header("Accept", JSON_MEDIA)
+                        .header("Authorization", "Bearer " + applicationState.getAccessToken())
+                        .build();
             }
-        } catch (Exception e) {
-            System.out.println("Ошибка обновления профиля: " + e.getMessage());
-        }
+            protected Void parseSuccessfulResponse(String responseBody) {
+                if (responseBody.contains("\"accessToken\":\"") && responseBody.contains("\",\"refreshToken\":\"")) {
+                    String cleanedTokens = responseBody.replaceAll("[{}\" ]", "")
+                            .replace("accessToken:", "");
+                    String[] tokens = cleanedTokens.split(",refreshToken:");
+                    applicationState.updateAuthState(tokens);
+                    System.out.println("Попытка обновить поле удалась так как ответ содержит токен");
+                } else {
+                    System.out.println(responseBody);
+                }
+                return null;
+            }
+            protected Void handleError(int statusCode, String responseBody) {
+                System.out.println("Ошибка обновления профиля: " + (statusCode == -1 ? responseBody : statusCode + " " + responseBody));
+                return null;
+            }
+        }.execute();
     }
 
-    //_____________________________Отправка сообщения_______________________________
-    public static boolean SendMessage(Long recipientId, String message) {
-        MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"recipientId\":" + recipientId + ",\n  \"content\": \"" + message + "\"\n}");
-        Request request = new Request.Builder()
-                .url(SERVER_URL + SEND_MESSAGE)
-                .method("POST", body)
-                .addHeader("Content-Type", JSON_MEDIA)
-                .addHeader("Accept", JSON_MEDIA)
-                .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            if (response.code() == 201) {
+    public static boolean SendMessage(Long recipientId, String messageText) {
+        return new ResponseTemplate<Boolean>() {
+            protected Request buildRequest() {
+                MediaType mediaType = MediaType.parse(JSON_MEDIA);
+                RequestBody requestBody = RequestBody.create(mediaType, "{ \"recipientId\":" + recipientId + ", \"content\":\"" + messageText + "\" }");
+                return new Request.Builder()
+                        .url(SERVER_URL + SEND_MESSAGE)
+                        .post(requestBody)
+                        .header("Content-Type", JSON_MEDIA)
+                        .header("Accept", JSON_MEDIA)
+                        .header("Authorization", "Bearer " + applicationState.getAccessToken())
+                        .build();
+            }
+            protected Boolean parseSuccessfulResponse(String responseBody) {
                 applicationState.updateAllMessages();
                 return true;
             }
-
-        } catch (IOException e) {
-            System.out.println("Error auth");
-        }
-        return false;
-    }
-//_____________________________Получение сообщения_______________________________
-public static List<MessageDTO> GetMessage(Long id) {
-    Request request = new Request.Builder()
-            .url(SERVER_URL + SEND_MESSAGE+"?since="+applicationState.getLastTimeResponseMassage()+"&with="+id)
-            .method("GET", null)
-            .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
-            .build();
-    try (Response response = client.newCall(request).execute()) {
-        String responseBody = response.body().string();
-        if (response.isSuccessful()) {
-            return new ObjectMapper()
-                    .readValue(responseBody,
-                            new TypeReference<>() {
-                            });
-        }
-        System.out.println("Messages got it");
-    } catch (IOException ex) {
-        throw new RuntimeException(ex);
-    }
-    return List.of();
-}
-//_____________________________Получить все контакты_______________________________
-public static List<UserDTO> getAllContacts(){
-    Request request = new Request.Builder()
-            .url(SERVER_URL+CONTACTS_PATH)
-            .method("GET", null)
-            .addHeader("Accept", "application/json")
-            .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
-            .build();
-    try (Response response = client.newCall(request).execute()) {
-        String responseBody = response.body().string();
-        if (response.isSuccessful()) {
-            return new ObjectMapper()
-                    .readValue(responseBody,
-                            new TypeReference<>() {
-                            });
-        }
-        System.out.println("Users got it");
-    } catch (IOException ex) {
-        throw new RuntimeException(ex);
-    }
-    return List.of();
-    }
-
-    //_________________________Добавить контакт__________________________________
-    public static boolean AddContact(Long id){
-        MediaType mediaType = MediaType.parse(JSON_MEDIA);
-        RequestBody body = RequestBody.create(mediaType, "{\n  \"id\":" + id + "\n}");
-        Request request = new Request.Builder()
-                .url(SERVER_URL+CONTACTS_PATH)
-                .method("POST", body)
-                .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
-                .addHeader("Accept", JSON_MEDIA)
-                .build();
-        try(Response response = client.newCall(request).execute()) {
-            String responseBody = response.body().string();
-            System.out.println(responseBody);
-            if (response.code()==201){
-                if (response.isSuccessful()) {
-                    applicationState.addContact(new ObjectMapper()
-                            .readValue(responseBody,
-                                    new TypeReference<>() {
-                                    }));
-                    return true;
-                };
-
-            } else if(response.code()==404||response.code()==400){
-                System.out.println("Такого пользователя не существует");
-            }else if(response.code()==409){
-                System.out.println("Переключение на уже существующий контакт");
+            protected Boolean handleError(int statusCode, String responseBody) {
+                if (statusCode == -1){
+                    System.out.println("Error auth");
+                }
+                return false;
             }
-
-        } catch (IOException e) {
-            System.out.println("Error auth");
-        }
-        return false;
+        }.execute();
     }
-    public static List<UserDTO> getUsers(){
-        System.out.println("Get all users from server method called");
-        Request request = new Request.Builder()
-                .url(SERVER_URL+USER_PATH)
-                .method("GET", null)
-                .addHeader("Accept", "application/json")
-                .addHeader("Authorization", "Bearer " + applicationState.getAccessToken())
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            String responseBody = response.body().string();
-            if (response.isSuccessful()) {
-                return new ObjectMapper()
-                        .readValue(responseBody,
-                                new TypeReference<>() {
-                                });
+
+    public static List<MessageDTO> GetMessage(Long id) {
+        return new ResponseTemplate<List<MessageDTO>>() {
+            protected Request buildRequest() {
+                return new Request.Builder()
+                        .url(SERVER_URL + SEND_MESSAGE+"?since="+applicationState.getLastTimeResponseMassage()+"&with="+id)
+                        .get()
+                        .header("Accept", "application/json")
+                        .header("Authorization", "Bearer " + applicationState.getAccessToken())
+                        .build();
             }
+            protected List<MessageDTO> parseSuccessfulResponse(String responseBody) throws IOException {
+                return new ObjectMapper().readValue(responseBody, new TypeReference<>() {});
+            }
+            protected List<MessageDTO> handleError(int statusCode, String responseBody) {
+                System.out.println(statusCode == -1 ? "Error auth" : "Messages got it");
+                return List.of();
+            }
+        }.execute();
+    }
+
+    public static List<UserDTO> getAllContacts() {
+        return new ResponseTemplate<List<UserDTO>>() {
+            protected Request buildRequest() {
+                return new Request.Builder()
+                        .url(SERVER_URL + CONTACTS_PATH)
+                        .get()
+                        .header("Accept", "application/json")
+                        .header("Authorization", "Bearer " + applicationState.getAccessToken())
+                        .build();
+            }
+            protected List<UserDTO> parseSuccessfulResponse(String responseBody) throws IOException {
+                return new ObjectMapper().readValue(responseBody, new TypeReference<>() {});
+            }
+            protected List<UserDTO> handleError(int statusCode, String responseBody) {
+                if (statusCode == -1){
+                    System.out.println("Error auth");
+                }
+                else {
+                    System.out.println("Users got it");
+                }
+                return List.of();
+            }
+        }.execute();
+    }
+
+    public static boolean AddContact(Long userId) {
+        return new ResponseTemplate<Boolean>() {
+            protected Request buildRequest() {
+                MediaType mediaType = MediaType.parse(JSON_MEDIA);
+                RequestBody requestBody = RequestBody.create(mediaType, "{ \"id\":" + userId + " }");
+                return new Request.Builder()
+                        .url(SERVER_URL + CONTACTS_PATH)
+                        .post(requestBody)
+                        .header("Authorization", "Bearer " + applicationState.getAccessToken())
+                        .header("Accept", JSON_MEDIA)
+                        .build();
+            }
+            protected Boolean parseSuccessfulResponse(String responseBody) throws IOException {
+                applicationState.addContact(new ObjectMapper()
+                        .readValue(responseBody, new TypeReference<>() {}));
+                System.out.println("contact add");
+                return true;
+            }
+            protected Boolean handleError(int statusCode, String responseBody) {
+                if (statusCode == -1){
+                    System.out.println("Error auth");
+                }
+                else if (statusCode == 404 || statusCode == 400){
+                    System.out.println("Такого пользователя не существует");
+                }
+                else if (statusCode == 409){
+                    System.out.println("Переключение на уже существующий контакт");
+                }
+                else{
+                    System.out.println(responseBody);
+                }
+                return false;
+            }
+        }.execute();
+    }
+
+    public static List<UserDTO> getUsers() {
+        return new ResponseTemplate<List<UserDTO>>() {
+
+            protected Request buildRequest() {
+                return new Request.Builder()
+                        .url(SERVER_URL + USER_PATH)
+                        .get()
+                        .header("Accept", "application/json")
+                        .header("Authorization", "Bearer " + applicationState.getAccessToken())
+                        .build();
+            }
+            protected List<UserDTO> parseSuccessfulResponse(String responseBody) throws IOException {
+                return new ObjectMapper().readValue(responseBody, new TypeReference<>() {});
+            }
+            protected List<UserDTO> handleError(int statusCode, String responseBody) {
                 System.out.println("Users got it");
-            } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        return List.of();
-
+                return List.of();
+            }
+        }.execute();
     }
 }
