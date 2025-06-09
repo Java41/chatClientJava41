@@ -335,6 +335,7 @@ public class AllResponse {
             }
             protected List<UserDTO> handleError(int statusCode, String responseBody) {
                 System.out.println("Users got it");
+
                 return List.of();
             }
         }.execute();

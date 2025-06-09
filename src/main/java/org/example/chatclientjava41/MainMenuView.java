@@ -10,6 +10,7 @@ import javafx.scene.text.Font;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class MainMenuView{
     private static MainMenuController mainMenuController;
@@ -88,11 +89,8 @@ public class MainMenuView{
         Button sendImageBtn = new Button("Отправленные изображение");
         Button moreInfoBtn = new Button("Больше информации");
         Button logout=new Button("Выйти из аккаунта");
-        viewProfileBtn.setMaxWidth(Double.MAX_VALUE);
-        findInChatBtn.setMaxWidth(Double.MAX_VALUE);
-        sendImageBtn.setMaxWidth(Double.MAX_VALUE);
-        moreInfoBtn.setMaxWidth(Double.MAX_VALUE);
-        logout.setMaxWidth(Double.MAX_VALUE);
+        Stream.of(viewProfileBtn, findInChatBtn, sendImageBtn, moreInfoBtn, logout)
+                .forEach(btn -> btn.setMaxWidth(Double.MAX_VALUE));//метод применяющий макс размер к кнопкам
         logout.setOnAction(actionEvent -> mainMenuController.Logout());
         VBox buttonsBox = new VBox(viewProfileBtn,findInChatBtn,sendImageBtn,moreInfoBtn,logout);// Кнопки профиля
         profileVBox.getChildren().addAll(avatarStack,nameLabel,lastSeenLabel,buttonsBox);
