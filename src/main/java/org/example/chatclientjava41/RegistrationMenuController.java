@@ -18,8 +18,8 @@ public class RegistrationMenuController {
     public void clickMenuAuth(){
         sceneNavigator.setAuth();
     }
-    public void clickRegistration(String email,String password, String date, String firstname, String lastname) {
-        if (email.isEmpty() || password.isEmpty() || date.isEmpty()|| firstname.isEmpty()|| lastname.isEmpty()) {
+    public void clickRegistration(String email,String password, String date) {
+        if (email.isEmpty() || password.isEmpty() || date.isEmpty()) {
             view.setError("Все поля обязательны");
             return;
         }
@@ -34,7 +34,7 @@ public class RegistrationMenuController {
             return;
         }
 
-        String resp = AllResponse.RegistrationUser(email, password, date,firstname,lastname);
+        String resp = AllResponse.RegistrationUser(email, password, date);
         view.setError(resp);
 
         if ("Регистрация прошла успешно".equals(resp)){
