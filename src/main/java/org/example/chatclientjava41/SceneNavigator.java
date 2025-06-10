@@ -25,6 +25,11 @@ public class SceneNavigator extends Stage {
         mainMenuController.setView(mainView);
         mainMenuController.setSceneNavigator(this);
     }
+
+    public void updateMessage() {
+        mainView.setMessagesContainer(mainView.getCurrentContact());
+    }
+
     public void setAuth(){
         this.setScene(authorizationView.AuthorizationScene());
         this.setTitle("Авторизация");
