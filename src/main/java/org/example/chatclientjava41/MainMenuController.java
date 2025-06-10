@@ -49,6 +49,7 @@ public class MainMenuController {
             for (MessageDTO messageDTO : messages) {
                 HBox bubbleHBox= new HBox();
                 Label messageLbl= new Label(messageDTO.content());
+                messageLbl.setPadding(new Insets(5));
                 messageLbl.borderProperty().set(new Border(new BorderStroke(Color.GRAY,BorderStrokeStyle.SOLID,new CornerRadii(5),new BorderWidths(1)))
                 );
                 if(messageDTO.senderId()==id){

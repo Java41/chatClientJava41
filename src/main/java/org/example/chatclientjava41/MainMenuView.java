@@ -59,6 +59,7 @@ public class MainMenuView{
                     setMessagesContainer(interlocutor);
                 });
                 list.getChildren().add(contactItem);
+                VBox.setMargin(contactItem, new Insets(5));
             }
         }
         ScrollPane scrollPane = new ScrollPane();
