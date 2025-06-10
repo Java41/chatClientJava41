@@ -17,6 +17,7 @@ public class MainMenuView{
     private VBox contactsList=new VBox();
     private VBox messagesContainer=new VBox();
     private BorderPane root;
+    private Contact currentContact=null;
 
     public MainMenuView(MainMenuController mainMenuController) {
         this.mainMenuController = mainMenuController;
@@ -47,13 +48,14 @@ public class MainMenuView{
                 HBox contactItem = new HBox();
                 Contact interlocutor=contacts.get(i);
                 Circle avatarCircle = new Circle(20, Color.LIGHTGRAY);
-                Label initialsLabel = new Label(interlocutor.getUserDTO().firstName());
+                Label initialsLabel = new Label(interlocutor.getUserDTO().firstName().charAt(0)+"");
                 StackPane avatarStack = new StackPane(avatarCircle, initialsLabel);// Аватарка
                 Label nameLabel = new Label(interlocutor.getUserDTO().firstName()+" " + interlocutor.getUserDTO().lastName());
                 Label lastMsgLabel = new Label("Последнее сообщение...");
                 contactItem.getChildren().addAll(avatarStack, new VBox(nameLabel, lastMsgLabel));
                 contactItem.setOnMousePressed(e -> {
                     contactItem.setStyle("-fx-background-color: #cccccc;"); // Эффект нажатия
+                    currentContact=interlocutor;
                     setMessagesContainer(interlocutor);
                 });
                 list.getChildren().add(contactItem);
@@ -97,12 +99,18 @@ public class MainMenuView{
         return profileVBox;
     }
     public void setMessagesContainer(Contact contact){
-        messagesContainer= mainMenuController.CurrentChat(contact);
-        root.setCenter(messagesContainer);
+        if(contact!=null&&messagesContainer!=null){
+            messagesContainer= mainMenuController.CurrentChat(contact);
+            root.setCenter(messagesContainer);
+        }
     }
 
     public void setContactsList() {
         this.contactsList = createContactsPane();
         root.setCenter(contactsList);
+    }
+
+    public Contact getCurrentContact() {
+        return currentContact;
     }
 }

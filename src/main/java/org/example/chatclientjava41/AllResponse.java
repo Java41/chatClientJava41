@@ -217,6 +217,7 @@ public class AllResponse {
             protected Request buildRequest() {
                 MediaType mediaType = MediaType.parse(JSON_MEDIA);
                 RequestBody requestBody = RequestBody.create(mediaType, "{ \"recipientId\":" + recipientId + ", \"content\":\"" + messageText + "\" }");
+
                 return new Request.Builder()
                         .url(SERVER_URL + SEND_MESSAGE)
                         .post(requestBody)
