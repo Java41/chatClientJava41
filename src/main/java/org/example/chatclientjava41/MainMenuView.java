@@ -40,7 +40,8 @@ public class MainMenuView{
 //         Button createChatsBtn = new Button("Новый чат");
 //         createChatsBtn.setOnAction(actionEvent -> mainMenuController.CreateContact(Long.parseLong(fieldCreateContact.getText())));
         UserSearchComponent userSearch = new UserSearchComponent(); // Теперь загрузка внутри компонента
-        userSearch.setOnUserClicked(user -> mainMenuController.CreateContact(user.id()));
+        userSearch.setOnUserClicked(user -> mainMenuController.CreateContact(user.id()));//консумер-интерфейс для применения разных функций для одного типа объектов,
+        // т.е. тут можно задать другие функции но промежуточный просчет будет темже
         VBox list=new VBox();
         List<Contact> contacts=ApplicationState.getApplicationState().getContacts();
         if(contacts!=null){
