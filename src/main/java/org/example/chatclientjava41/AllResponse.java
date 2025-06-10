@@ -150,16 +150,21 @@ public class AllResponse {
         }.execute();
     }
 
-    public static String RegistrationUser(String email, String password, String birthdate, String firstName, String lastName) {
+    public static String RegistrationUser(String email, String password, String birthdate) {
         return new ResponseTemplate<String>() {
             protected Request buildRequest() {
                 MediaType mediaType = MediaType.parse(JSON_MEDIA);
-                RequestBody requestBody = RequestBody.create(
-                        mediaType,
-                        "{ \"email\":\"" + email + "\", \"password\":\"" + password + "\", "
-                                + "\"birthdate\":\"" + birthdate + "\", "
-                                + "\"firstName\":\"" + firstName + "\", "
-                                + "\"lastName\":\"" + lastName + "\" }");
+                String json =
+                        "{\n" +
+                                "  \"email\": \"" + email + "\",\n" +
+                                "  \"password\": \"" + password + "\",\n" +
+                                "  \"birthdate\": \"" + birthdate + "\"\n" +
+                                "}";
+
+                System.out.println("REGISTRATION JSON:\n" + json);   // ←  печатаем
+
+                RequestBody requestBody = RequestBody.create(mediaType, json);
+                System.out.println("REGISTRATION JSON:\n" + requestBody);
                 return new Request.Builder()
                         .url(SERVER_URL + REGISTRATION_PATH)
                         .post(requestBody)
