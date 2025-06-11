@@ -26,7 +26,7 @@ public class SceneNavigator extends Stage {
         mainMenuController.setSceneNavigator(this);
     }
 
-    public void updateMessage() {
+    public void MainViewUpdate() {
         mainView.setMessagesContainer(mainView.getCurrentContact());
     }
 

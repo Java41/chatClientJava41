@@ -84,7 +84,6 @@ public class MainMenuController {
         chat.prefWidthProperty().bind(chat.widthProperty());//хз как это работает
         messagesVbox.prefWidthProperty().bind(chat.widthProperty());
         messagesVbox.prefHeightProperty().bind(chat.heightProperty());
-
         return chat;
     }
 

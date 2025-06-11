@@ -3,6 +3,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.SignatureException;
+import javafx.application.Platform;
 import org.example.chatclientjava41.dto.UserDTO;
 
 import java.security.KeyFactory;
@@ -12,6 +13,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ApplicationState {
 
@@ -25,7 +29,7 @@ public class ApplicationState {
     private String lastTimeResponseMassage="1970-01-01T00:00:00";
     private static volatile boolean isTokenRefreshInProgress = false;//защита от множественных запросов на обновление токена
     private boolean isInitialAuthCheckDone = false;//Индикатор того, что приложение проверило наличие сохранённых токенов при старте
-    private final Timer refreshTokenRequest= new Timer();
+    private ScheduledExecutorService updateTokensAndMessages = Executors.newSingleThreadScheduledExecutor();
 
     //_____________________________________пользователь________________
     private long id;
@@ -59,7 +63,6 @@ public class ApplicationState {
 
     public void updateAuthState(String []tokens) {
         if(isAuthenticated){
-            refreshTokenRequest.purge();
             if (tokens==null) {
                 LogOut();
             }
@@ -95,10 +98,10 @@ public class ApplicationState {
                 }
                 updateAllMessages();
                 isAuthenticated=true;
+                _TimerTask();
                 sceneNavigator.setMain();
             }
             isTokenRefreshInProgress=false;
-            refreshTokenRequest.scheduleAtFixedRate(_TimerTask(),1000,tokenExpirationTime-System.currentTimeMillis() / 1000);
         }else sceneNavigator.setAuth();
     }
     public void addContact(Contact contact) {contacts.add(contact);}
@@ -113,7 +116,6 @@ public class ApplicationState {
         isAuthenticated=false;
         isTokenRefreshInProgress=false;
         tokenExpirationTime=0;
-        refreshTokenRequest.purge();
         contacts.clear();
         id=0;
         role=null;
@@ -125,27 +127,32 @@ public class ApplicationState {
         sceneNavigator.setAuth();
     }
 
-    private TimerTask _TimerTask(){
-        return new TimerTask() {
-            @Override
-            public void run() {
-                while(isAuthenticated){
+    private void _TimerTask(){
+        this.updateTokensAndMessages.scheduleAtFixedRate(() -> {
+            try {
+                while (isAuthenticated) {
                     updateAllMessages();
-                    sceneNavigator.updateMessage();
-                    if(!isTokenRefreshInProgress){
-                        if((System.currentTimeMillis() / 1000)+7000>tokenExpirationTime){
-                            isTokenRefreshInProgress=true;
-                        }else {
+
+                    if (!isTokenRefreshInProgress) {
+                        if ((System.currentTimeMillis() / 1000) + 10000 > tokenExpirationTime) {
+                            isTokenRefreshInProgress = true;
+                        } else {
                             AllResponse.RefreshToken();
+                            isTokenRefreshInProgress = false;
                         }
                     }
-
+                    //фоновый поток который постоянно запрашивает у сервера не имеет доступа к UI и для разрешения этой проблемы нужен Platform
+                    Platform.runLater(sceneNavigator::MainViewUpdate);
                 }
+
+            } catch (Exception e) {
+                System.out.println("Ошибка: " + e.getMessage());
             }
-        };
+        }, 0, 5, TimeUnit.SECONDS);
     }
-    public void setRefreshTokenRequest() {//неработает остановка таймера при закрытии приложения
-        refreshTokenRequest.cancel();
+    public void stopUpdateMessagesAndContacts() {
+        updateTokensAndMessages.close();
+        updateTokensAndMessages.shutdown();
     }
 
     public String getLastTimeResponseMassage() {
