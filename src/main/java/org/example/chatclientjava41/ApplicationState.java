@@ -97,6 +97,7 @@ public class ApplicationState {
                 isAuthenticated=true;
                 sceneNavigator.setMain();
             }
+            isTokenRefreshInProgress=false;
             refreshTokenRequest.scheduleAtFixedRate(_TimerTask(),1000,tokenExpirationTime-System.currentTimeMillis() / 1000);
         }else sceneNavigator.setAuth();
     }
@@ -129,12 +130,13 @@ public class ApplicationState {
             @Override
             public void run() {
                 while(isAuthenticated){
+                    updateAllMessages();
+                    sceneNavigator.updateMessage();
                     if(!isTokenRefreshInProgress){
                         if((System.currentTimeMillis() / 1000)+7000>tokenExpirationTime){
                             isTokenRefreshInProgress=true;
                         }else {
                             AllResponse.RefreshToken();
-                            updateAllMessages();
                         }
                     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class UserSearchComponent {
+public class UserSearchComponent {//консумер-интерфейс для применения разных функций для одного типа объектов, т.е. это
     private final TextField searchField = new TextField();
     private final ListView<UserDTO> userList = new ListView<>();
     private List<UserDTO> allUsers;
@@ -45,7 +45,6 @@ public class UserSearchComponent {
                 }
             }
         });
-
         userList.setCellFactory(lv -> new ListCell<>() {
             {
                 // Стиль при наведении
