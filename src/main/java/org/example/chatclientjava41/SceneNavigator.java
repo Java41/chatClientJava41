@@ -27,7 +27,7 @@ public class SceneNavigator extends Stage {
     }
 
     public void MainViewUpdate() {
-        mainView.setMessagesContainer(mainView.getCurrentContact());
+        mainView.CenterShardChat();
     }
 
     public void setAuth(){
@@ -38,9 +38,11 @@ public class SceneNavigator extends Stage {
         this.setScene(restoreView.RestoreScene());
         this.setTitle("Восстановление пароля");
     }
-    public void setMain(){
+    public void setMain(long id){
+        mainView.setUserId(id);
         this.setScene(mainView.MainScene());
         this.setTitle("Чат41");
+
     }
     public void setRegistration(){
         this.setScene(registrationView.RegistrationScene());

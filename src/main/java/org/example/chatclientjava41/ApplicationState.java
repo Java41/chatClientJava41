@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public class ApplicationState {
 
@@ -39,7 +40,7 @@ public class ApplicationState {
     private String username;
     private String firstname;
     private String lastname;
-    private ArrayList<Contact> contacts=new ArrayList<>();
+    private final ArrayList<Contact> contacts=new ArrayList<>();
 
     public SceneNavigator getSceneNavigator() {
         return sceneNavigator;
@@ -94,17 +95,20 @@ public class ApplicationState {
             if (!isAuthenticated){
                 List< UserDTO> list = AllResponse.getAllContacts();
                 for(UserDTO i:list){
-                    contacts.add(new Contact(i));
+                    addContact(i);
                 }
-                updateAllMessages();
                 isAuthenticated=true;
                 _TimerTask();
-                sceneNavigator.setMain();
+                sceneNavigator.setMain(id);
             }
             isTokenRefreshInProgress=false;
         }else sceneNavigator.setAuth();
     }
-    public void addContact(Contact contact) {contacts.add(contact);}
+    public void addContact(UserDTO contact) {
+        if(!contacts.stream().map(Contact::getUserDTO).anyMatch(contact::equals)){//сличение с списком в существующих контактах по полю UserDTO
+                contacts.add(new Contact(contact));
+        }
+    }
 
     public ArrayList<Contact> getContacts() {
         return contacts;
@@ -134,7 +138,8 @@ public class ApplicationState {
                     updateAllMessages();
 
                     if (!isTokenRefreshInProgress) {
-                        if ((System.currentTimeMillis() / 1000) + 10000 > tokenExpirationTime) {
+                        if ((System.currentTimeMillis() / 1000) + 7000 > tokenExpirationTime) {
+                            System.out.println("время обновления токена");
                             isTokenRefreshInProgress = true;
                         } else {
                             AllResponse.RefreshToken();
@@ -149,6 +154,14 @@ public class ApplicationState {
                 System.out.println("Ошибка: " + e.getMessage());
             }
         }, 0, 5, TimeUnit.SECONDS);
+    }
+    public void updateAllMessages() {
+        for (Contact i:contacts){
+            i.updateMessage();
+        }
+        LocalDateTime epoch = LocalDateTime.now(ZoneOffset.UTC);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        lastTimeResponseMassage=epoch.format(formatter);
     }
     public void stopUpdateMessagesAndContacts() {
         updateTokensAndMessages.close();
@@ -189,15 +202,6 @@ public class ApplicationState {
 
     public String getLastname() {
         return lastname;
-    }
-
-    public void updateAllMessages() {
-        for (Contact i:contacts){
-            i.updateMessage();
-        }
-        LocalDateTime epoch = LocalDateTime.now(ZoneOffset.UTC);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        lastTimeResponseMassage=epoch.format(formatter);
     }
 
     public long getId() {
