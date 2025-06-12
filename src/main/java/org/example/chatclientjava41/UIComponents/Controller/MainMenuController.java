@@ -16,11 +16,10 @@ public class MainMenuController {
     public void setSceneNavigator(SceneNavigator sceneNavigator){
         this.sceneNavigator=sceneNavigator;
     }
-
     public static void sendMessageField(String textMessage,long id){
         if(AllResponse.SendMessage(id, textMessage)){
             System.out.println("Сообщение отправлено");
-       }
+        }
     }
     public void Logout(){
         view.setCurrentContact();
