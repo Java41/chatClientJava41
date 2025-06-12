@@ -32,7 +32,7 @@ public class MainMenuView{
     }
 
     public Scene MainScene(){
-        root = new BorderPane();
+        root = new BorderPane();//потребовалось разделить основной borderPane на побочные т.к. для обновления VBox с сообщениями обновляло и ввод сообщения(т.е. каждый пару секунд стирало все что ты не успел отправить), ну и тоже самое с панелью контактов
         centerShard=new BorderPane();
         leftShard=new BorderPane();
         UserSearchComponent userSearch = new UserSearchComponent(); // Теперь загрузка внутри компонента
@@ -50,7 +50,8 @@ public class MainMenuView{
         return scene;
     }
 
-    public void createContactsPane() {
+    public void createContactsPane() {  //оптимальнее всего в каждой функции сборки отдельного vbox устанавливать его в borderPane, а не возвращать для сборки в другом месте.
+                                        // Таким образом мы можем в любой момент заставить отрисовать конкретную часть окна, а не пересобирать все окно заново
         VBox list=new VBox();
         List<Contact> contacts=ApplicationState.getApplicationState().getContacts();
         if(contacts!=null){
