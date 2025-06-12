@@ -17,4 +17,14 @@ module org.example.chatclientjava41 {
     opens org.example.chatclientjava41 to javafx.fxml;
     exports org.example.chatclientjava41;
     exports org.example.chatclientjava41.dto;
+    exports org.example.chatclientjava41.Utility;
+    opens org.example.chatclientjava41.Utility to javafx.fxml;
+    exports org.example.chatclientjava41.Data;
+    opens org.example.chatclientjava41.Data to javafx.fxml;
+    exports org.example.chatclientjava41.Main;
+    opens org.example.chatclientjava41.Main to javafx.fxml;
+    exports org.example.chatclientjava41.UIComponents.View;
+    opens org.example.chatclientjava41.UIComponents.View to javafx.fxml;
+    exports org.example.chatclientjava41.UIComponents.Controller;
+    opens org.example.chatclientjava41.UIComponents.Controller to javafx.fxml;
 }

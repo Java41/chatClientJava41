@@ -1,5 +1,8 @@
-package org.example.chatclientjava41;
-import com.fasterxml.jackson.databind.ObjectMapper;
+package org.example.chatclientjava41.UIComponents.Controller;
+import org.example.chatclientjava41.UIComponents.View.AuthorizationMenuView;
+import org.example.chatclientjava41.Data.AllResponse;
+import org.example.chatclientjava41.Main.SceneNavigator;
+import org.example.chatclientjava41.Utility.InputValidator;
 
 
 public class AuthorizationMenuController {

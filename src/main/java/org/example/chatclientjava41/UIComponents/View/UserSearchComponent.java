@@ -1,8 +1,9 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.UIComponents.View;
 
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.example.chatclientjava41.Data.AllResponse;
 import org.example.chatclientjava41.dto.UserDTO;
 
 import java.util.List;

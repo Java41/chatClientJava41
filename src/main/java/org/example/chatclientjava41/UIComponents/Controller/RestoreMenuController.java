@@ -1,4 +1,7 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.UIComponents.Controller;
+
+import org.example.chatclientjava41.Main.SceneNavigator;
+import org.example.chatclientjava41.UIComponents.View.RestoreMenuView;
 
 public class RestoreMenuController {
     private RestoreMenuView view;

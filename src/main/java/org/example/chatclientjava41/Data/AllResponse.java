@@ -1,4 +1,4 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.Data;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
