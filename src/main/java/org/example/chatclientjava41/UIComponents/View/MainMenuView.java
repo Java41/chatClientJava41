@@ -126,7 +126,10 @@ public class MainMenuView{
             centerShard.setTop(header);
             //________________низ чата______________________________
             TextField messageInput= new TextField();
-            messageInput.setOnAction(event -> sendMessageField(messageInput.getText(),currentContact.getUserDTO().id()));
+            messageInput.setOnAction(event -> {
+                sendMessageField(messageInput.getText(), currentContact.getUserDTO().id());
+                messageInput.clear();
+            });
             messageInput.setPromptText("Введите сообщение");
             Button voiceMsgBtn= new Button("\uD83D\uDD0A"); // Микрофон или голосовое сообщение
             voiceMsgBtn.setPrefWidth(50);
