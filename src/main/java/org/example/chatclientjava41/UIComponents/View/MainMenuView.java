@@ -44,6 +44,7 @@ public class MainMenuView{
         leftShard.setTop(userSearch.getView());
         createContactsPane();
         CenterShardChat();
+
         TopAndBottomShardChat();
         root.setLeft(leftShard);
         root.setRight(createProfilePane());
@@ -148,12 +149,17 @@ public class MainMenuView{
         if(currentContact!=null){
             ArrayList<MessageDTO> messages = currentContact.getMessages();
             VBox messagesVbox=new VBox();
+            messagesVbox.setSpacing(10);
             if(messages!=null){
                 for (MessageDTO messageDTO : messages) {
                     HBox bubbleHBox= new HBox();
                     Label messageLbl= new Label(messageDTO.content());
-                    messageLbl.borderProperty().set(new Border(new BorderStroke(Color.GRAY,BorderStrokeStyle.SOLID,new CornerRadii(5),new BorderWidths(1)))
-                    );
+                    messageLbl.borderProperty().set(new Border(new BorderStroke(Color.GRAY,BorderStrokeStyle.SOLID,new CornerRadii(5),new BorderWidths(1))));
+                    messageLbl.setMinWidth(100);
+                    messageLbl.setMinHeight(40);
+                    messageLbl.setPadding(new Insets(5));
+                    messageLbl.setWrapText(true);
+
                     if(messageDTO.senderId()==userId){
                         bubbleHBox.setAlignment(Pos.CENTER_RIGHT);
                         messageLbl.backgroundProperty().set(new Background(new BackgroundFill(Color.LIGHTGREEN,new CornerRadii(5),Insets.EMPTY)));
