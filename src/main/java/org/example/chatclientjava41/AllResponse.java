@@ -227,7 +227,7 @@ public class AllResponse {
                         .build();
             }
             protected Boolean parseSuccessfulResponse(String responseBody) {
-                applicationState.updateAllMessages();
+//                applicationState.updateAllMessages();
                 return true;
             }
             protected Boolean handleError(int statusCode, String responseBody) {
@@ -299,7 +299,6 @@ public class AllResponse {
             protected Boolean parseSuccessfulResponse(String responseBody) throws IOException {
                 applicationState.addContact(new ObjectMapper()
                         .readValue(responseBody, new TypeReference<>() {}));
-                System.out.println("contact add");
                 return true;
             }
             protected Boolean handleError(int statusCode, String responseBody) {
