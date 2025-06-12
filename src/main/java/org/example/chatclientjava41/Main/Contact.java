@@ -1,11 +1,12 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.Main;
 
 import javafx.scene.image.ImageView;
+import org.example.chatclientjava41.Data.AllResponse;
 import org.example.chatclientjava41.dto.MessageDTO;
 import org.example.chatclientjava41.dto.UserDTO;
 
 import java.util.ArrayList;
-import java.util.List;
+
 interface ObservMessage{
     void updateMessage();
 }

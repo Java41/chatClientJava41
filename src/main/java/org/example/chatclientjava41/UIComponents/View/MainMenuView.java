@@ -1,4 +1,4 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.UIComponents.View;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,6 +8,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import org.example.chatclientjava41.Data.ApplicationState;
+import org.example.chatclientjava41.Main.Contact;
+import org.example.chatclientjava41.UIComponents.Controller.MainMenuController;
 import org.example.chatclientjava41.dto.MessageDTO;
 
 import java.util.ArrayList;
@@ -15,10 +18,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static org.example.chatclientjava41.MainMenuController.sendMessageField;
+import static org.example.chatclientjava41.UIComponents.Controller.MainMenuController.sendMessageField;
 
 public class MainMenuView{
-    private final  MainMenuController mainMenuController;
+    private final MainMenuController mainMenuController;
     private BorderPane leftShard;
     private BorderPane centerShard;
     private BorderPane root;
@@ -53,7 +56,7 @@ public class MainMenuView{
     public void createContactsPane() {  //оптимальнее всего в каждой функции сборки отдельного vbox устанавливать его в borderPane, а не возвращать для сборки в другом месте.
                                         // Таким образом мы можем в любой момент заставить отрисовать конкретную часть окна, а не пересобирать все окно заново
         VBox list=new VBox();
-        List<Contact> contacts=ApplicationState.getApplicationState().getContacts();
+        List<Contact> contacts= ApplicationState.getApplicationState().getContacts();
         if(contacts!=null){
             for (int i = 0; i<contacts.size(); i++) {
                 HBox contactItem = new HBox();

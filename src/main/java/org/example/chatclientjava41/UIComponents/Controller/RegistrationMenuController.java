@@ -1,7 +1,9 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.UIComponents.Controller;
 
-import java.io.IOException;
-import java.time.LocalDate;
+import org.example.chatclientjava41.Data.AllResponse;
+import org.example.chatclientjava41.Main.SceneNavigator;
+import org.example.chatclientjava41.UIComponents.View.RegistrationMenuView;
+import org.example.chatclientjava41.Utility.InputValidator;
 
 public class RegistrationMenuController {
 

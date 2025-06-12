@@ -1,4 +1,4 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.Utility;
 
 import java.util.regex.Pattern;
 

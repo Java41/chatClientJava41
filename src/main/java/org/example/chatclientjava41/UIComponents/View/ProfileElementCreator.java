@@ -1,4 +1,4 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.UIComponents.View;
 
 
 import javafx.geometry.Insets;
@@ -10,8 +10,9 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.example.chatclientjava41.Data.ApplicationState;
 
-import static org.example.chatclientjava41.AllResponse.updateProfileFieldsAPI;
+import static org.example.chatclientjava41.Data.AllResponse.updateProfileFieldsAPI;
 
 
 public class ProfileElementCreator {

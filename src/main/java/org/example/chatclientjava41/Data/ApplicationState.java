@@ -1,9 +1,11 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.Data;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.security.SignatureException;
 import javafx.application.Platform;
+import org.example.chatclientjava41.Main.Contact;
+import org.example.chatclientjava41.Main.SceneNavigator;
 import org.example.chatclientjava41.dto.UserDTO;
 
 import java.security.KeyFactory;
@@ -16,7 +18,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 public class ApplicationState {
 

@@ -1,6 +1,14 @@
-package org.example.chatclientjava41;
+package org.example.chatclientjava41.Main;
 
 import javafx.stage.Stage;
+import org.example.chatclientjava41.UIComponents.Controller.AuthorizationMenuController;
+import org.example.chatclientjava41.UIComponents.Controller.MainMenuController;
+import org.example.chatclientjava41.UIComponents.Controller.RegistrationMenuController;
+import org.example.chatclientjava41.UIComponents.Controller.RestoreMenuController;
+import org.example.chatclientjava41.UIComponents.View.AuthorizationMenuView;
+import org.example.chatclientjava41.UIComponents.View.MainMenuView;
+import org.example.chatclientjava41.UIComponents.View.RegistrationMenuView;
+import org.example.chatclientjava41.UIComponents.View.RestoreMenuView;
 
 public class SceneNavigator extends Stage {
     private final RestoreMenuView restoreView;
