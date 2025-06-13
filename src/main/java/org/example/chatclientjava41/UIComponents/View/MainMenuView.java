@@ -26,6 +26,7 @@ public class MainMenuView{
     private BorderPane centerShard;
     private BorderPane root;
     private Contact currentContact=null;
+    private ScrollPane scrollPane=new ScrollPane();
 
 
     private long userId;
@@ -43,8 +44,10 @@ public class MainMenuView{
         // т.е. тут можно задать другие функции но промежуточный просчет будет темже
         leftShard.setTop(userSearch.getView());
         createContactsPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setVvalue(1.0);
+        centerShard.setCenter(scrollPane);
         CenterShardChat();
-
         TopAndBottomShardChat();
         root.setLeft(leftShard);
         root.setRight(createProfilePane());
@@ -174,17 +177,15 @@ public class MainMenuView{
                     }
                     messagesVbox.getChildren().add(bubbleHBox);
                 }
+                scrollPane.setContent(messagesVbox);//чтоб при обновлении сообщений scrollPane не скакал постоянно ввниз, нужно обновлять VBox внутри scrollPane а не сам scrollPane
             }
-            ScrollPane scrollPane=new ScrollPane();
-            scrollPane.setContent(messagesVbox);
-            scrollPane.setFitToWidth(true);
-            scrollPane.setVvalue(1.0);
-            centerShard.setCenter(scrollPane);
-        }else centerShard.setCenter(new ScrollPane(new VBox()));
+
+        }else scrollPane.setContent(new VBox());
     }
 
     public void setCurrentContact() {
         currentContact = null;
+        scrollPane.setContent(new VBox());
     }
 
     public void setUserId(long userId) {
